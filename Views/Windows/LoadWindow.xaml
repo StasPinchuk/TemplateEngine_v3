@@ -1,0 +1,33 @@
+﻿<Window x:Class="TemplateEngine_v3.Views.Windows.LoadWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TemplateEngine_v3.Views.Windows"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        Width="280"
+        Height="280"
+        Title="LoadWindow">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="230"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        <ProgressBar IsIndeterminate="True"
+                     Width="200"
+                     Height="200"
+                     Style="{StaticResource MaterialDesignCircularProgressBar}"
+                     Value="35"
+                     Grid.Row="0"/>
+        <TextBlock TextAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontWeight="SemiBold"
+                   Grid.Row="1">
+            <Hyperlink Style="{StaticResource MaterialDesignHeadline6Hyperlink}">
+                Загрузка...
+            </Hyperlink>
+        </TextBlock>
+    </Grid>
+</Window>

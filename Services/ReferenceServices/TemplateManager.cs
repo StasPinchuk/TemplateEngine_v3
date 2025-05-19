@@ -1,0 +1,363 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using TemplateEngine_v3.Helpers;
+using TemplateEngine_v3.Interfaces;
+using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.FileServices;
+using TFlex.DOCs.Model;
+using TFlex.DOCs.Model.Classes;
+using TFlex.DOCs.Model.References;
+using TFlex.DOCs.Model.Structure;
+
+namespace TemplateEngine_v3.Services.ReferenceServices
+{
+    /// <summary>
+    /// Менеджер шаблонов изделий для генератора.
+    /// </summary>
+    public class TemplateManager : ITemplateManager
+    {
+        private readonly ServerReferenceLoader _referenceLoader;
+        private readonly ReferenceInfo _templateInfo;
+        private readonly MaterialManager _materialManager;
+        private readonly Reference _reference;
+        private readonly ParameterInfo _nameParameter;
+        private readonly ParameterInfo _objectStringParameter;
+        private readonly ClassObject _readyTemplateType;
+        private readonly ClassObject _draftTemplateType;
+        private readonly ClassObject _trashCanType;
+
+        /// <summary>
+        /// Помощник для контекстного меню.
+        /// </summary>
+        public ContextMenuHelper MenuHelper { get; set; }
+
+        /// <summary>
+        /// Выбранный шаблон.
+        /// </summary>
+        public Template SelectedTemplate { get; private set; }
+
+        private ObservableCollection<ReferenceModelInfo>? _cachedTemplates;
+
+        /// <summary>
+        /// Конструктор менеджера шаблонов.
+        /// </summary>
+        /// <param name="referenceLoader">Загрузчик справочных данных.</param>
+        /// <param name="templateInfo">Информация о справочнике шаблонов.</param>
+        /// <param name="materialManager">Менеджер материалов.</param>
+        public TemplateManager(ServerReferenceLoader referenceLoader, ReferenceInfo templateInfo, MaterialManager materialManager)
+        {
+            _referenceLoader = referenceLoader;
+            _templateInfo = templateInfo;
+            _materialManager = materialManager;
+            _reference = _templateInfo.CreateReference();
+
+            _nameParameter = _reference.ParameterGroup.Parameters.FindByName("Наименование");
+            _objectStringParameter = _reference.ParameterGroup.Parameters.FindByName("Структура файла");
+            _readyTemplateType = _templateInfo.Classes.Find("Изделия для генератора");
+            _draftTemplateType = _templateInfo.Classes.Find("Незавершённые изделия для генератора");
+            _trashCanType = _templateInfo.Classes.Find("Корзина");
+        }
+
+        /// <summary>
+        /// Обеспечивает загрузку шаблонов, если они еще не загружены.
+        /// </summary>
+        private void EnsureTemplatesLoaded()
+        {
+            _cachedTemplates = _referenceLoader.LoadReference(_templateInfo);
+        }
+
+        /// <summary>
+        /// Получить коллекцию незавершённых шаблонов.
+        /// </summary>
+        /// <returns>Коллекция незавершённых шаблонов.</returns>
+        public ObservableCollection<ReferenceModelInfo> GetDraftTemplates()
+        {
+            EnsureTemplatesLoaded();
+            return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates.Where(template => template.Type.Equals(_draftTemplateType)));
+        }
+
+        /// <summary>
+        /// Получить коллекцию готовых шаблонов.
+        /// </summary>
+        /// <returns>Коллекция готовых шаблонов, отсортированных по имени в обратном порядке.</returns>
+        public ObservableCollection<ReferenceModelInfo> GetReadyTemplate()
+        {
+            EnsureTemplatesLoaded();
+            return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates
+                .Where(template => template.Type.Equals(_readyTemplateType))
+                .OrderBy(template => template.Name)
+                .Reverse());
+        }
+
+        /// <summary>
+        /// Получить коллекцию шаблонов из корзины.
+        /// </summary>
+        /// <returns>Коллекция шаблонов из корзины, отсортированных по имени.</returns>
+        public ObservableCollection<ReferenceModelInfo> GetTrashCanTemplates()
+        {
+            EnsureTemplatesLoaded();
+            return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates
+                .Where(template => template.Type.Equals(_trashCanType))
+                .OrderBy(template => template.Name));
+        }
+
+        /// <summary>
+        /// Найти шаблон по уникальному идентификатору.
+        /// </summary>
+        /// <param name="id">Идентификатор шаблона.</param>
+        /// <returns>Найденный шаблон или null.</returns>
+        public ReferenceModelInfo? GetTemplateById(Guid id)
+        {
+            EnsureTemplatesLoaded();
+            return _cachedTemplates.FirstOrDefault(template => template.Id.Equals(id));
+        }
+
+        /// <summary>
+        /// Создает копию выбранного шаблона асинхронно.
+        /// </summary>
+        /// <param name="selectedTemplate">Шаблон для копирования.</param>
+        /// <returns>True, если копирование прошло успешно, иначе false.</returns>
+        public Task<bool> CopyTemplateAsync(ReferenceModelInfo selectedTemplate)
+        {
+            if (_nameParameter == null || _objectStringParameter == null)
+                return Task.FromResult(false);
+
+            return DoAsync();
+
+            async Task<bool> DoAsync()
+            {
+                try
+                {
+                    var newTemplate = _reference.CreateReferenceObject(selectedTemplate.Type);
+                    var newName = $"{selectedTemplate.Name} - копия";
+
+                    newTemplate[_nameParameter.Guid].Value = newName;
+
+                    if (selectedTemplate.ObjectStruct != null)
+                    {
+                        newTemplate[_objectStringParameter.Guid].Value =
+                            selectedTemplate.ObjectStruct
+                                .Replace(selectedTemplate.Name, newName)
+                                .Replace(selectedTemplate.Id.ToString(), newTemplate.Guid.ToString());
+                    }
+
+                    await newTemplate.EndChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[TemplateManager] Ошибка при копировании: {ex.Message}");
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Асинхронно удаляет шаблон. Если шаблон является готовым или незавершённым, перемещает его в корзину.
+        /// </summary>
+        /// <param name="referenceModelInfo">Шаблон для удаления.</param>
+        /// <returns>True при успешном удалении, иначе false.</returns>
+        public async Task<bool> RemoveTemplateAsync(ReferenceModelInfo referenceModelInfo)
+        {
+            try
+            {
+                var templateToRemove = await _reference.FindAsync(referenceModelInfo.Id);
+
+                if (templateToRemove == null)
+                    return false;
+
+                if (templateToRemove.Class == _readyTemplateType || templateToRemove.Class == _draftTemplateType)
+                {
+                    var trashCopy = templateToRemove.CreateCopy(_trashCanType);
+
+                    if (_objectStringParameter != null)
+                    {
+                        referenceModelInfo.ObjectStruct = referenceModelInfo.ObjectStruct?
+                            .Replace(referenceModelInfo.Id.ToString(), trashCopy.Guid.ToString());
+
+                        trashCopy[_objectStringParameter.Guid].Value = referenceModelInfo.ObjectStruct;
+                    }
+
+                    await trashCopy.EndChangesAsync();
+                    await templateToRemove.DeleteAsync();
+
+                    referenceModelInfo = null;
+                }
+                else
+                {
+                    await templateToRemove.DeleteAsync();
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[TemplateManager] Ошибка при удалении: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Асинхронно редактирует существующий шаблон.
+        /// </summary>
+        /// <param name="editTemplate">Шаблон с изменениями.</param>
+        /// <returns>True при успешном редактировании, иначе false.</returns>
+        public async Task<bool> EditTemplateAsync(Template editTemplate)
+        {
+            try
+            {
+                var editReference = await _reference.FindAsync(editTemplate.Id);
+
+                if (editReference == null || _nameParameter == null || _objectStringParameter == null)
+                    return false;
+
+                editReference.BeginChanges();
+                editReference[_nameParameter.Guid].Value = editTemplate.Name;
+                editReference[_objectStringParameter.Guid].Value = new JsonSerializer().Serialize(editTemplate);
+                await editReference.EndChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Асинхронно добавляет новый шаблон.
+        /// </summary>
+        /// <param name="createTemplate">Создаваемый шаблон.</param>
+        /// <param name="classObject">Класс объекта шаблона.</param>
+        /// <returns>True при успешном добавлении, иначе false.</returns>
+        public Task<bool> AddTemplateAsync(Template createTemplate, ClassObject classObject)
+        {
+            if (_nameParameter == null || _objectStringParameter == null)
+                return Task.FromResult(false);
+
+            return DoAsync();
+
+            async Task<bool> DoAsync()
+            {
+                try
+                {
+                    var newTemplate = _reference.CreateReferenceObject(classObject);
+
+                    createTemplate.Id = newTemplate.Guid;
+                    newTemplate[_nameParameter.Guid].Value = createTemplate.Name;
+                    newTemplate[_objectStringParameter.Guid].Value = new JsonSerializer().Serialize(createTemplate);
+
+                    await newTemplate.EndChangesAsync();
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Устанавливает текущий выбранный шаблон из объекта ReferenceModelInfo.
+        /// </summary>
+        /// <param name="referenceModel">Объект модели справочника шаблонов.</param>
+        public void SetTemplate(ReferenceModelInfo referenceModel)
+        {
+            Template template = new JsonSerializer().Deserialize<Template>(referenceModel.ObjectStruct);
+
+            template.ProductMarkingAttributes = SetMarkingAttributes(template.ExampleMarkings);
+
+            MenuHelper = new ContextMenuHelper(template, _materialManager);
+            MenuHelper.CreateContextMenu();
+            SelectedTemplate = template;
+        }
+
+        /// <summary>
+        /// Устанавливает текущий выбранный шаблон из объекта Template.
+        /// </summary>
+        /// <param name="template">Объект шаблона.</param>
+        public void SetTemplate(Template template)
+        {
+            template.ProductMarkingAttributes = SetMarkingAttributes(template.ExampleMarkings);
+
+            MenuHelper = new ContextMenuHelper(template, _materialManager);
+            MenuHelper.CreateContextMenu();
+            SelectedTemplate = template;
+        }
+
+        /// <summary>
+        /// Получает текущий выбранный шаблон.
+        /// </summary>
+        /// <returns>Выбранный шаблон.</returns>
+        public Template GetSelectedTemplate()
+        {
+            return SelectedTemplate;
+        }
+
+        /// <summary>
+        /// Очищает текущий выбранный шаблон.
+        /// </summary>
+        public void ClearTemplate()
+        {
+            SelectedTemplate = null;
+        }
+
+        /// <summary>
+        /// Сохраняет выбранный шаблон, определяя тип (draft или ready).
+        /// </summary>
+        /// <param name="type">Тип шаблона ("draft" или "ready").</param>
+        /// <returns>True при успешном сохранении, иначе false.</returns>
+        public async Task<bool> SaveTemplate(string type)
+        {
+            try
+            {
+                var currentList = type.Equals("draft") ? GetDraftTemplates() : GetReadyTemplate();
+                if (currentList.Any(temp => temp.Id.Equals(SelectedTemplate.Id)))
+                    return await EditTemplateAsync(SelectedTemplate);
+                else
+                {
+                    ClassObject templateType = type.Equals("draft") ? _draftTemplateType : _readyTemplateType;
+
+                    return await AddTemplateAsync(SelectedTemplate, templateType);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Создает список уникальных слов из коллекции примерных маркировок.
+        /// </summary>
+        /// <param name="exampleMarkings">Коллекция строк с примерными маркировками.</param>
+        /// <returns>Список уникальных слов.</returns>
+        private List<string> SetMarkingAttributes(ObservableCollection<string> exampleMarkings)
+        {
+            List<string> markings = new List<string>();
+
+            foreach (var exampleMarking in exampleMarkings)
+            {
+                var splitExample = exampleMarking.Split(new string[] { " ", "-", "*", "_" }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in splitExample)
+                {
+                    if (!markings.Contains(line))
+                    {
+                        markings.Add(line);
+                    }
+                }
+            }
+
+            return markings;
+        }
+    }
+}
