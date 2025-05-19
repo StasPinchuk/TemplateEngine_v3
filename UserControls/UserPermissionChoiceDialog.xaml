@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="TemplateEngine_v3.UserControls.UserPermissionChoiceDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"  
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:TemplateEngine_v3.UserControls"
+             mc:Ignorable="d" 
+             Width="500"
+             Height="250"
+             x:Name="userPermissionChoiceDialog">
+    <Grid
+        Margin="20">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="160"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" LastChildFill="True">
+            
+            <Button Style="{StaticResource MaterialDesignIconButton}"
+                    DockPanel.Dock="Right"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                    CommandParameter="cancel">
+                <materialDesign:PackIcon Kind="Close"
+                                         Foreground="Red"/>
+            </Button>
+
+            <CheckBox Content="Администратор"
+                      IsChecked="{Binding SelectedUser.IsAdmin, ElementName=userPermissionChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                      DockPanel.Dock="Right"/>
+
+
+            <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                      materialDesign:HintAssist.Hint="Пользователи без доступов"
+                      ItemsSource="{Binding AllUsers, ElementName=userPermissionChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding SelectedUser, ElementName=userPermissionChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                      IsEditable="True"
+                      VerticalAlignment="Center"
+                      DisplayMemberPath="FullName"
+                      Margin="0,0,20,0">
+            </ComboBox>
+        </DockPanel>
+
+        <ItemsControl ItemsSource="{Binding PermissionCollection, ElementName=userPermissionChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                      BorderBrush="Gray"
+                      BorderThickness="0,0,0,1"
+                      Grid.Row="1">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="{Binding PermissionCollection.Count, ElementName=userPermissionChoiceDialog, UpdateSourceTrigger=PropertyChanged}"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <RadioButton HorizontalAlignment="Stretch"
+                                 Style="{StaticResource MaterialDesignTabRadioButton}"
+                                 IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 GroupName="PermissionPages"
+                                 Cursor="Hand"
+                                 Command="{Binding SelPermissionGroupCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                 CommandParameter="{Binding}">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{Binding PermissionPageName}" 
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <ItemsControl ItemsSource="{Binding UserPermissionsList, ElementName=userPermissionChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                      Grid.Row="2"
+                      Margin="0,10,0,0">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Content="{Binding Key}"
+                              Margin="0,0,0,10"
+                              IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Command="{Binding SetPermissionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                              CommandParameter="{Binding}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

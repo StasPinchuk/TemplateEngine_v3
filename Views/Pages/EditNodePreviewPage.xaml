@@ -1,0 +1,138 @@
+﻿<Page x:Class="TemplateEngine_v3.Views.Pages.EditNodePreviewPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"    
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:converters="clr-namespace:TemplateEngine_v3.Converters" 
+      xmlns:local="clr-namespace:TemplateEngine_v3.Views.Pages"
+      mc:Ignorable="d" 
+      Width="750"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="EditNodePreviewPage">
+
+    <Page.Resources>
+        <converters:MaxWidthConverter x:Key="MaxWidthConverter"/>
+    </Page.Resources>
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"
+                          MaxWidth="500"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Margin="10,10,10,0"
+          VerticalAlignment="Stretch">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     materialDesign:HintAssist.Hint="Название детали"
+                     Text="{Binding CurrentNode.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                     ContextMenu="{Binding TextBoxContextMenu, UpdateSourceTrigger=PropertyChanged}"
+                     Grid.Row="0"/>
+
+            <ComboBox ItemsSource="{Binding NodeTypes}"
+                      IsEditable="True"
+                      materialDesign:HintAssist.Hint="Тип детали"
+                      SelectedItem="{Binding NodeType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Style="{StaticResource MaterialDesignOutlinedComboBox}"  
+                      Margin="0, 10"
+                      Grid.Row="1"/>
+
+            <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     materialDesign:HintAssist.Hint="КД" 
+                     ContextMenu="{Binding TextBoxContextMenu, UpdateSourceTrigger=PropertyChanged}"
+                     Text="{Binding CurrentNode.Designation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                     Grid.Row="2"/>
+
+            <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     materialDesign:HintAssist.Hint="Количество" 
+                     ContextMenu="{Binding TextBoxContextMenu, UpdateSourceTrigger=PropertyChanged}"
+                     Text="{Binding CurrentNode.Amount.Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
+                     GotFocus="TextBox_GotFocus"
+                     Margin="0, 10"
+                     Grid.Row="3"/>
+
+            <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     materialDesign:HintAssist.Hint="Комментарий"
+                     Text="{Binding CurrentNode.NodeComment, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                     Grid.Row="4"/>
+
+            <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     materialDesign:HintAssist.Hint="Условие использования детали" 
+                     ContextMenu="{Binding TextBoxContextMenu, UpdateSourceTrigger=PropertyChanged}"
+                     Text="{Binding CurrentNode.UsageCondition, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
+                     Margin="0, 10"
+                     Grid.Row="5"/>
+
+            <StackPanel Orientation="Horizontal"
+                        Grid.Row="6"
+                        Margin="0,10,0,10"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom">
+
+                <Button VerticalAlignment="Center"
+                        Background="Green"
+                        BorderBrush="Green"
+                        Margin="0,0,10,0"
+                        Command="{Binding EditNodeCommand}"
+                        Content="Изменить" />
+
+                <Button VerticalAlignment="Center"
+                        Background="Red"
+                        BorderBrush="Red"
+                        Command="{x:Static materialDesign:DrawerHost.CloseDrawerCommand}"
+                        Content="Отмена" />
+            </StackPanel>
+        </Grid>
+        <TreeView ItemsSource="{Binding Parts}"
+                  Width="0"
+                  x:Name="Tree"
+                  Grid.Column="1"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  BorderBrush="Transparent"
+                  Background="#FFF"
+                  SelectedItemChanged="Tree_SelectedItemChanged"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+              BorderThickness="0">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding TreeEvaluators}">
+                    <Grid Cursor="Hand" 
+                        Margin="4" 
+                        MaxWidth="{Binding ElementName=Tree, Path=ActualWidth}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="{Binding ConditionEvaluator.Name}"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                TextWrapping="Wrap"
+                                Grid.Row="0" />
+
+                        <TextBlock Text="{Binding ConditionEvaluator.Value}"
+                                FontSize="12"
+                                FontWeight="Medium"
+                                TextWrapping="Wrap"
+                                Grid.Row="1"
+                                HorizontalAlignment="Left" />
+                    </Grid>
+                </HierarchicalDataTemplate>
+
+            </TreeView.ItemTemplate>
+        </TreeView>
+
+    </Grid>
+</Page>

@@ -1,0 +1,86 @@
+﻿<UserControl x:Class="TemplateEngine_v3.UserControls.DeteilTypeChoiceDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:TemplateEngine_v3.UserControls"
+             mc:Ignorable="d"
+             x:Name="deteilTypeChoice"
+             MinWidth="300"
+             Width="400"
+             MaxWidth="500">
+    <Grid Margin="20">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="300"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <Button Style="{StaticResource MaterialDesignIconButton}"
+                Width="30"
+                Height="30"
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                CommandParameter="cancel"
+                Grid.Row="0"
+                HorizontalAlignment="Right">
+            <materialDesign:PackIcon Kind="Close"
+                                     Foreground="Red"/>
+        </Button>
+        
+        <TextBlock Text="Список типов для деталей"
+                   FontSize="16"
+                   Grid.Row="1"/>
+
+        <Border BorderBrush="Black"
+                BorderThickness="1"
+                CornerRadius="8"
+                Grid.Row="2"
+                Padding="10">
+            <ListBox ItemsSource="{Binding DeteilTypeList, ElementName=deteilTypeChoice, UpdateSourceTrigger=PropertyChanged}"
+                     SelectedItem="{Binding DeteilType, ElementName=deteilTypeChoice, UpdateSourceTrigger=PropertyChanged}"
+                     Cursor="Hand">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+
+        <TextBox materialDesign:HintAssist.Hint="Название типа"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 Text="{Binding DeteilType, ElementName=deteilTypeChoice, UpdateSourceTrigger=PropertyChanged}"
+                 Margin="0, 10"
+                 Grid.Row="3"/>
+
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Grid.Row="4">
+
+            <Button Content="{Binding ButtonText, ElementName=deteilTypeChoice, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Background="Green"
+                    BorderBrush="Green"
+                    Command="{Binding ModifyTypeCommand, ElementName=deteilTypeChoice}"/>
+
+            <Button Content="Отменить"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Background="Red"
+                    BorderBrush="Red"
+                    Margin="10, 0"
+                    Command="{Binding CancelCommand, ElementName=deteilTypeChoice}"/>
+
+            <Button Content="Удалить"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Background="Red"
+                    BorderBrush="Red"
+                    Command="{Binding RemoveTypeCommand, ElementName=deteilTypeChoice}"/>
+            
+        </StackPanel>
+    </Grid>
+</UserControl>

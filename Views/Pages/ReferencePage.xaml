@@ -1,0 +1,58 @@
+﻿<Page x:Class="TemplateEngine_v3.Views.Pages.ReferencePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:controls="clr-namespace:TemplateEngine_v3.UserControls"
+      xmlns:local="clr-namespace:TemplateEngine_v3.Views.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ReferencePage">
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+            <Grid>
+                <ItemsControl ItemsSource="{Binding ReferencesList}"
+                              VirtualizingStackPanel.IsVirtualizing="True">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel IsItemsHost="True"
+                                       Orientation="Horizontal"
+                                       HorizontalAlignment="Center"
+                                       Margin="8"
+                                       ItemWidth="520"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <controls:ReferenceBlock CurrentReferenceModel="{Binding}" 
+                                                     RemoveCommand ="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                     CloneCommand ="{Binding DataContext.CloneCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                     EditCommand ="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                     Margin="8"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </ScrollViewer>
+
+        <Button Style="{StaticResource MaterialDesignFloatingActionSecondaryLightButton}"
+                Background="Green"
+                BorderBrush="Green"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Width="35"
+                Height="35"
+                Margin="25, 10"
+                Command="{Binding CreateCommand}">
+            <materialDesign:PackIcon Kind="Plus"
+                                     Width="25"
+                                     Height="25"
+                                     Foreground="White"/>
+        </Button>
+    </Grid>
+
+
+</Page>

@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="TemplateEngine_v3.UserControls.TableChoiceDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+             xmlns:local="clr-namespace:TemplateEngine_v3.UserControls"
+             mc:Ignorable="d" 
+             MinWidth="300"
+             Width="400"
+             MaxWidth="500"
+             x:Name="tableChoiceDialog">
+    <Grid Margin="20">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="270"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+        <Button Style="{StaticResource MaterialDesignIconButton}"
+                Width="30"
+                Height="30"
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                CommandParameter="cancel"
+                Grid.Row="0"
+                HorizontalAlignment="Right">
+            <materialDesign:PackIcon Kind="Close"
+                                     Foreground="Red"/>
+        </Button>
+
+        <ComboBox ItemsSource="{Binding TableList, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedTable, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                  materialDesign:HintAssist.Hint="Название таблицы"
+                  Grid.Row="1"/>
+
+        <ComboBox ItemsSource="{Binding Sheet, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedSheet, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                  materialDesign:HintAssist.Hint="Название листа"
+                  Grid.Row="2"/>
+
+        <ComboBox ItemsSource="{Binding FindParameterList, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding FindParameter, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                  materialDesign:HintAssist.Hint="Выберие данные для поиска"
+                  Grid.Row="3"/>
+
+        <TextBox materialDesign:HintAssist.Hint="Значение по строке"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 Text="{Binding ColString, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                 ContextMenu="{Binding ParametersMenu, ElementName=tableChoiceDialog}"
+                 Margin="0,10"
+                 Grid.Row="4"/>
+
+        <TextBox materialDesign:HintAssist.Hint="Значение по столбцу"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 Text="{Binding RowString, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                 ContextMenu="{Binding ParametersMenu, ElementName=tableChoiceDialog}"
+                 Grid.Row="5"/>
+
+        <Border Background="#FFF"
+                CornerRadius="8"
+                Height="250"
+                Margin="0,10"
+                Grid.Row="6">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding ParametersCollection, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBox materialDesign:HintAssist.Hint="{Binding Key}"
+                                     materialDesign:HintAssist.Background="#FFF"
+                                     materialDesign:HintAssist.HintPaddingBrush="#FFF"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                     Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" 
+                                     Margin="15,8,15,8"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+        <StackPanel HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Grid.Row="7">
+            <Button Content="Применить"
+                Style="{StaticResource MaterialDesignRaisedButton}"
+                Background="Green"
+                BorderBrush="Green"
+                Margin="0,0,10,0"
+                Command="{Binding SetTableFormulaCommand, ElementName=tableChoiceDialog}"/>
+            <Button Content="Отмена"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Background="Red"
+                    BorderBrush="Red"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                    CommandParameter="cancel"/>
+        </StackPanel>
+        
+    </Grid>
+</UserControl>

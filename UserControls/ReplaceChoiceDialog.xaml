@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="TemplateEngine_v3.UserControls.ReplaceChoiceDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:TemplateEngine_v3.UserControls"
+             mc:Ignorable="d" 
+             x:Name="ReplaceDialog"
+             MinHeight="400"
+             MaxHeight="500"
+             MaxWidth="500"
+             MinWidth="500">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+        <TextBox materialDesign:HintAssist.Hint="Искомое значение"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 Text="{Binding FindString, ElementName=ReplaceDialog, UpdateSourceTrigger=PropertyChanged}"
+                 Grid.Row="0"/>
+
+        <TextBox materialDesign:HintAssist.Hint="Заменить"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 Text="{Binding ReplaceString, ElementName=ReplaceDialog, UpdateSourceTrigger=PropertyChanged}"
+                 Margin="0, 10"
+                 Grid.Row="1"/>
+
+        <TextBlock Text="Шаблоны для замены"
+                   VerticalAlignment="Center"
+                   FontSize="16"
+                   Grid.Row="2"/>
+
+        <Border BorderBrush="Black"
+                BorderThickness="1"
+                CornerRadius="8"
+                Grid.Row="3">
+            <ItemsControl ItemsSource="{Binding ReferencesList, ElementName=ReplaceDialog, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True"
+                                   Orientation="Horizontal"
+                                   HorizontalAlignment="Center"
+                                   Margin="8"
+                                   ItemWidth="200"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox Content="{Binding Name}"
+                                  Cursor="Hand"
+                                  Checked="CheckBox_Checked"
+                                  Unchecked="CheckBox_Unchecked"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+        
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Grid.Row="4">
+            <Button Content="Заменить"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Background="Green"
+                    BorderBrush="Green"
+                    Margin="0,0,10,0"
+                    Command="{Binding ReplaceCommand, ElementName=ReplaceDialog}"/>
+            <Button Content="Отмена"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Background="Red"
+                    BorderBrush="Red"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                    CommandParameter="cancel"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="TemplateEngine_v3.UserControls.CopyNodeChoiceDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+             xmlns:model="clr-namespace:TemplateEngine_v3.Models"
+             xmlns:local="clr-namespace:TemplateEngine_v3.UserControls"
+             mc:Ignorable="d" 
+             x:Name="copyNodeChoiceDialog"
+             Width="450"
+             Height="500"
+             MaxWidth="550">
+    <Grid Margin="20">
+
+        <Grid.RowDefinitions>
+            
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="Auto" 
+                           MaxHeight="50"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="*"/>
+            
+        </Grid.RowDefinitions>
+
+        <Button Style="{StaticResource MaterialDesignIconButton}"
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                CommandParameter="cancel"
+                HorizontalAlignment="Right"
+                Width="30"
+                Height="30"
+                Grid.Row="0">
+            <materialDesign:PackIcon Kind="Close"
+                             Foreground="Red"/>
+        </Button>
+
+        <ComboBox x:Name="TemplateComboBox"
+                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                  materialDesign:HintAssist.Hint="Изделие"
+                  ItemsSource="{Binding Templates, ElementName=copyNodeChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding CurrentTemplate, Mode=TwoWay, ElementName=copyNodeChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  DisplayMemberPath="Name"
+                  Grid.Row="1"/>
+
+        <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                  materialDesign:HintAssist.Hint="КД"
+                  ItemsSource="{Binding Relations, ElementName=copyNodeChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedRelation, Mode=TwoWay, ElementName=copyNodeChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  Margin="0,10"
+                  DisplayMemberPath="Designation"
+                  Grid.Row="2"/>
+
+        <TreeView ItemsSource="{Binding Nodes, ElementName=copyNodeChoiceDialog}"
+                  x:Name="Tree"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  SelectedItemChanged="TreeView_OnSelectedItemChanged"
+                  Grid.Row="3">
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type model:Node}" ItemsSource="{Binding Nodes}">
+                    <TextBlock Text="{Binding Name}" 
+                               TextWrapping="Wrap"
+                               MaxWidth="{Binding ElementName=Tree, Path=ActualWidth}"/>
+                </HierarchicalDataTemplate>
+            </TreeView.Resources>
+        </TreeView>
+
+
+    </Grid>
+</UserControl>

@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{69E8D24F-450F-422C-9D59-90A982CFBCF0}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>TemplateEngine_v3</RootNamespace>
+    <AssemblyName>TemplateEngine_v3</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Aspose.Cells, Version=25.5.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <HintPath>packages\Aspose.Cells.25.5.0\lib\net40\Aspose.Cells.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=6.3.1.120, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>packages\AvalonEdit.6.3.1.120\lib\net462\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignColors, Version=5.2.1.0, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
+      <HintPath>packages\MaterialDesignColors.5.2.1\lib\net462\MaterialDesignColors.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.Wpf, Version=5.2.1.0, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
+      <HintPath>packages\MaterialDesignThemes.5.2.1\lib\net462\MaterialDesignThemes.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Xaml.Behaviors.Wpf.1.1.39\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
+    <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
+      <HintPath>packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="TFlex.DOCs.Common">
+      <HintPath>lib\TFlex.DOCs.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="TFlex.DOCs.Model">
+      <HintPath>lib\TFlex.DOCs.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="TFlex.DOCs.Resources">
+      <HintPath>lib\TFlex.DOCs.Resources.dll</HintPath>
+    </Reference>
+    <Reference Include="TFlex.DOCs.SynchronizerReference">
+      <HintPath>lib\TFlex.DOCs.SynchronizerReference.dll</HintPath>
+    </Reference>
+    <Reference Include="TFlex.DOCs.UI.Common">
+      <HintPath>lib\TFlex.DOCs.UI.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="TFlex.DOCs.UI.Messages">
+      <HintPath>lib\TFlex.DOCs.UI.Messages.dll</HintPath>
+    </Reference>
+    <Reference Include="TFlex.DOCs.UI.Types">
+      <HintPath>lib\TFlex.DOCs.UI.Types.dll</HintPath>
+    </Reference>
+    <Reference Include="TFlex.PdmFramework.Resolve">
+      <HintPath>lib\TFlex.PdmFramework.Resolve.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Command\RelayCommand.cs" />
+    <Compile Include="Converters\CollectionToVisibilityConverter.cs" />
+    <Compile Include="Converters\EmptyStringToVisibilityConverter.cs" />
+    <Compile Include="Converters\MaxWidthConverter.cs" />
+    <Compile Include="Converters\ProductMarkingAttributesNameListConverter.cs" />
+    <Compile Include="Helpers\AvalonEditHelper.cs" />
+    <Compile Include="Helpers\CalculateHelper.cs" />
+    <Compile Include="Helpers\ContextMenuHelper.cs" />
+    <Compile Include="Helpers\MarkingSpliter.cs" />
+    <Compile Include="Helpers\Permissions.cs" />
+    <Compile Include="Interfaces\IBranchManager.cs" />
+    <Compile Include="Interfaces\IConnectionService.cs" />
+    <Compile Include="Interfaces\IEvaluatorManager.cs" />
+    <Compile Include="Interfaces\IManagerInitializer.cs" />
+    <Compile Include="Interfaces\INavigationItem.cs" />
+    <Compile Include="Interfaces\INodeManager.cs" />
+    <Compile Include="Interfaces\IPermissions.cs" />
+    <Compile Include="Interfaces\IReferenceLoader.cs" />
+    <Compile Include="Interfaces\ITechnologiesManager.cs" />
+    <Compile Include="Interfaces\ITemplateManager.cs" />
+    <Compile Include="Mappers\ReferenceMapper.cs" />
+    <Compile Include="Mappers\UserMapper.cs" />
+    <Compile Include="Models\BaseNotifyPropertyChanged.cs" />
+    <Compile Include="Models\GroupNode.cs" />
+    <Compile Include="Models\LogModels\UserLogEntry.cs" />
+    <Compile Include="Models\LogModels\UserLogOperation.cs" />
+    <Compile Include="Models\NodeGroup.cs" />
+    <Compile Include="Models\PageCollection\NavigationItem.cs" />
+    <Compile Include="Models\PageCollection\PageModel.cs" />
+    <Compile Include="Models\ParameterItem.cs" />
+    <Compile Include="Models\PermissionModel.cs" />
+    <Compile Include="Models\ReferenceModelInfo.cs" />
+    <Compile Include="Models\TemplateModels\Branch.cs" />
+    <Compile Include="Models\TemplateModels\BranchDivisionDetails.cs" />
+    <Compile Include="Models\TemplateModels\ConditionEvaluator.cs" />
+    <Compile Include="Models\TemplateModels\ExpressionRepository.cs" />
+    <Compile Include="Models\TemplateModels\ITemplatedFile.cs" />
+    <Compile Include="Models\TemplateModels\Materials.cs" />
+    <Compile Include="Models\TemplateModels\Node.cs" />
+    <Compile Include="Models\TemplateModels\Operation.cs" />
+    <Compile Include="Models\TemplateModels\Technologies.cs" />
+    <Compile Include="Models\TemplateModels\Template.cs" />
+    <Compile Include="Models\TemplateModels\TemplateRelations.cs" />
+    <Compile Include="Models\TemplateModels\UserModel.cs" />
+    <Compile Include="Models\TreeEvaluator.cs" />
+    <Compile Include="Models\UserPermission.cs" />
+    <Compile Include="Services\FileServices\FileService.cs" />
+    <Compile Include="Services\FileServices\JsonFileManager.cs" />
+    <Compile Include="Services\FileServices\JsonReferenceLoader.cs" />
+    <Compile Include="Services\FileServices\JsonSerializer.cs" />
+    <Compile Include="Services\MenuHistory.cs" />
+    <Compile Include="Services\ReferenceServices\BranchManager.cs" />
+    <Compile Include="Services\ReferenceServices\EvaluatorManager.cs" />
+    <Compile Include="Services\ReferenceServices\MaterialManager.cs" />
+    <Compile Include="Services\ReferenceServices\NodeManager.cs" />
+    <Compile Include="Services\ReferenceServices\NodeTypeManager.cs" />
+    <Compile Include="Services\ReferenceServices\OperationNamesManager.cs" />
+    <Compile Include="Services\ReferenceServices\ReferenceManager.cs" />
+    <Compile Include="Services\ReferenceServices\ServerReferenceLoader.cs" />
+    <Compile Include="Services\ReferenceServices\TableService.cs" />
+    <Compile Include="Services\ReferenceServices\TechnologiesManager.cs" />
+    <Compile Include="Services\ReferenceServices\TemplateManager.cs" />
+    <Compile Include="Services\ServerServices\DefaultConnectionService.cs" />
+    <Compile Include="Services\ServerServices\DefaultManagerInitializer.cs" />
+    <Compile Include="Services\ServerServices\ServerManager.cs" />
+    <Compile Include="Services\UsersServices\AllowedUsersManager.cs" />
+    <Compile Include="Services\UsersServices\AllUsersManager.cs" />
+    <Compile Include="Services\UsersServices\UserManager.cs" />
+    <Compile Include="Storage\UserCredentialsStorage.cs" />
+    <Compile Include="UserControls\Breadcrumb.xaml.cs">
+      <DependentUpon>Breadcrumb.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CopyNodeChoiceDialog.xaml.cs">
+      <DependentUpon>CopyNodeChoiceDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\DeteilTypeChoiceDialog.xaml.cs">
+      <DependentUpon>DeteilTypeChoiceDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\EvalutorBlock.xaml.cs">
+      <DependentUpon>EvalutorBlock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ReferenceBlock.xaml.cs">
+      <DependentUpon>ReferenceBlock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ReplaceChoiceDialog.xaml.cs">
+      <DependentUpon>ReplaceChoiceDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\SaveChoiceDialog.xaml.cs">
+      <DependentUpon>SaveChoiceDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\SideNavigation.xaml.cs">
+      <DependentUpon>SideNavigation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\TableChoiceDialog.xaml.cs">
+      <DependentUpon>TableChoiceDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserBlock.xaml.cs">
+      <DependentUpon>UserBlock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPermissionChoiceDialog.xaml.cs">
+      <DependentUpon>UserPermissionChoiceDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\BranchMainPage.xaml.cs">
+      <DependentUpon>BranchMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\EditNodePreviewPage.xaml.cs">
+      <DependentUpon>EditNodePreviewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\EditOperationPreviewPage.xaml.cs">
+      <DependentUpon>EditOperationPreviewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\EditParametersPreviewPage.xaml.cs">
+      <DependentUpon>EditParametersPreviewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\FormulasAndTermsPage.xaml.cs">
+      <DependentUpon>FormulasAndTermsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\MainNodePage.xaml.cs">
+      <DependentUpon>MainNodePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\MainTemplateInfoPage.xaml.cs">
+      <DependentUpon>MainTemplateInfoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\ParametersPage.xaml.cs">
+      <DependentUpon>ParametersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\PartsListPage.xaml.cs">
+      <DependentUpon>PartsListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\ReferencePage.xaml.cs">
+      <DependentUpon>ReferencePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\TechnologiesPage.xaml.cs">
+      <DependentUpon>TechnologiesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\TemplateEditPage.xaml.cs">
+      <DependentUpon>TemplateEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\TemplatePreviewPage.xaml.cs">
+      <DependentUpon>TemplatePreviewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\UsersPage.xaml.cs">
+      <DependentUpon>UsersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Windows\LoadWindow.xaml.cs">
+      <DependentUpon>LoadWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Windows\SignInWindow.xaml.cs">
+      <DependentUpon>SignInWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VM\Pages\BranchMainPageVM.cs" />
+    <Compile Include="VM\Pages\EditNodePreviewVM.cs" />
+    <Compile Include="VM\Pages\EditOperationPreviewEditVM.cs" />
+    <Compile Include="VM\Pages\EditParametersPreviewVM.cs" />
+    <Compile Include="VM\Pages\FormulasAndTermsPageVM.cs" />
+    <Compile Include="VM\Pages\MainNodePageVM.cs" />
+    <Compile Include="VM\Pages\MainTemplateInfoPageVM.cs" />
+    <Compile Include="VM\Pages\NodePreviewVM.cs" />
+    <Compile Include="VM\Pages\ParametersPageVM.cs" />
+    <Compile Include="VM\Pages\PartsListPageVM.cs" />
+    <Compile Include="VM\Pages\ReferencePageVM.cs" />
+    <Compile Include="VM\Pages\TechnologiesPageVM.cs" />
+    <Compile Include="VM\Pages\TemplateEditPageVM.cs" />
+    <Compile Include="VM\Pages\TemplatePreviewVM.cs" />
+    <Compile Include="VM\Pages\UsersPageVM.cs" />
+    <Compile Include="VM\Windows\MainWindowVM.cs" />
+    <Compile Include="VM\Windows\SingInVM.cs" />
+    <Page Include="UserControls\Breadcrumb.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\CopyNodeChoiceDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\DeteilTypeChoiceDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\EvalutorBlock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ReferenceBlock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ReplaceChoiceDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SaveChoiceDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SideNavigation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\TableChoiceDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\UserBlock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserPermissionChoiceDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\BranchMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\EditNodePreviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\EditOperationPreviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\EditParametersPreviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\FormulasAndTermsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\MainNodePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\MainTemplateInfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\ParametersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\PartsListPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\ReferencePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\TechnologiesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\TemplateEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\TemplatePreviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\UsersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Windows\LoadWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Windows\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\Windows\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Views\Windows\SignInWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Interfaces\IUserCredentialsStorage.cs" />
+    <Compile Include="Models\UserCredentials.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets" Condition="Exists('packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets'))" />
+  </Target>
+</Project>
