@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ServerServices;
 using TemplateEngine_v3.Views.Windows;
@@ -26,9 +27,9 @@ namespace TemplateEngine_v3
 
             Application.Current.Dispatcher.InvokeAsync(async () =>
             {
-                var connectionEstablished = _serverManager.SetServerConnection();
+                bool connectionEstablished = await Task.Run(() => _serverManager.SetServerConnection());
 
-                Window windowToShow = await connectionEstablished
+                Window windowToShow = connectionEstablished
                     ? new MainWindow(_serverManager)
                     : new SignInWindow(_serverManager);
 

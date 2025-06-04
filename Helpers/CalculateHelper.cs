@@ -595,7 +595,11 @@ namespace TemplateEngine_v3.Helpers
                         width = findCondition.Value;
                     }
                 }
-                string heigth = string.Empty;
+                else
+                {
+                    width = args.Parameters[1].Evaluate()?.ToString();
+                }
+                    string heigth = string.Empty;
                 if (Guid.TryParse(args.Parameters[2].Evaluate()?.ToString(), out Guid heigthId))
                 {
                     var findCondition = FormulasAndTerms.FirstOrDefault(cond => cond.Id.Equals(heigthId.ToString()));
@@ -604,6 +608,10 @@ namespace TemplateEngine_v3.Helpers
                         findCondition.Value = GetEvaluatorForId(heigthId.ToString());
                         heigth = findCondition.Value;
                     }
+                }
+                else
+                {
+                    heigth = args.Parameters[2].Evaluate()?.ToString();
                 }
 
                 List<string> parameters = [];

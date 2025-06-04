@@ -323,17 +323,17 @@ namespace TemplateEngine_v3.Helpers
 
         public object? GetBoundPropertyObject(TextBox textBox, bool getParent = false)
         {
-            var binding = BindingOperations.GetBinding(textBox, TextBox.TextProperty);
-            if (binding == null) return null;
+            var bindingExpr = textBox.GetBindingExpression(TextBox.TextProperty);
+            if (bindingExpr == null) return null;
 
-            var dataContext = textBox.DataContext;
-            if (dataContext == null) return null;
+            var bindingPath = bindingExpr.ParentBinding.Path?.Path;
+            if (string.IsNullOrWhiteSpace(bindingPath)) return null;
 
-            var pathParts = binding.Path.Path.Split('.');
+            var pathParts = bindingPath.Split('.');
             if (getParent && pathParts.Length > 1)
-                pathParts = [.. pathParts.Take(pathParts.Length - 1)];
+                pathParts = pathParts.Take(pathParts.Length - 1).ToArray();
 
-            object? currentObject = dataContext;
+            object? currentObject = bindingExpr.DataItem;
             foreach (var propName in pathParts)
             {
                 if (currentObject == null) return null;
@@ -346,6 +346,7 @@ namespace TemplateEngine_v3.Helpers
 
             return currentObject;
         }
+
 
     }
 }

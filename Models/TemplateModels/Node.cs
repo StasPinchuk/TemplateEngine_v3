@@ -139,7 +139,7 @@ namespace TemplateEngine_v3.Models
         /// <summary>
         /// Спецификации деталей узла.
         /// </summary>
-        private ExpressionRepository _expressionRepository;
+        private ExpressionRepository _expressionRepository = new();
         public ExpressionRepository ExpressionRepository
         {
             get => _expressionRepository;
