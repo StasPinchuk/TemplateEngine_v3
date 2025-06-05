@@ -160,12 +160,12 @@ namespace TemplateEngine_v3.UserControls
             }
             if (!string.IsNullOrEmpty(replaceInfo))
             {
-                MessageBox.Show(replaceInfo);
+                MessageBox.Show(replaceInfo, "Замена значений в шаблонах");
                 TemplateManager.ClearTemplate();
             }
             else
             {
-                MessageBox.Show($"Строка '{FindString}' не найдена в выбранных шаблонах!!!");
+                MessageBox.Show($"Строка '{FindString}' не найдена в выбранных шаблонах!!!", "Ошибка");
             }
         }
 

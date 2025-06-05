@@ -9,7 +9,6 @@ using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
 using TemplateEngine_v3.Services;
-using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.UserControls;
 using TemplateEngine_v3.Views.Pages;
 
@@ -72,13 +71,13 @@ namespace TemplateEngine_v3.VM.Pages
                     isSave = await _templateManager.SaveTemplate(choice);
             }
 
-            if (isSave)
-                MessageBox.Show("Шаблон успешно сохранен!");
+            var msg = isSave ? "Шаблон успешно сохранен!" : "Шаблон не сохранен!";
+            MessageBox.Show(msg, "Сохранение шаблона");
         }
 
         private void PreviewTemplate()
         {
-            var mainTemplateInfo = new PageModel("Предварительный просмотр шаблона", typeof(TemplatePreviewPage), new object[] { _templateManager, _branchManager});
+            var mainTemplateInfo = new PageModel("Предварительный просмотр шаблона", typeof(TemplatePreviewPage), new object[] { _templateManager, _branchManager });
             MenuHistory.NextPage(mainTemplateInfo);
         }
     }

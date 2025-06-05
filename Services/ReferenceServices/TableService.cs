@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using TFlex.DOCs.Common;
@@ -34,7 +35,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
             if (_tableFolder == null)
             {
-                MessageBox.Show("Папка не найдена!");
+                MessageBox.Show("Папка не найдена!", "Ошибка");
                 return;
             }
 
@@ -46,11 +47,11 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
-        public ObservableCollection<string> GetWorksheets(string tableName)
+        public async Task<ObservableCollection<string>> GetWorksheets(string tableName)
         {
             ObservableCollection<string> worksheetNames = [];
 
-            string tablePath = GetSelectedTable(tableName);
+            string tablePath = await GetSelectedTable(tableName);
             _workbook = new Workbook(tablePath);
 
             foreach(var worksheet in _workbook.Worksheets)
@@ -61,13 +62,13 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             return worksheetNames;
         }
 
-        private string GetSelectedTable(string tableName)
+        private async Task<string> GetSelectedTable(string tableName)
         {
-            var file = _fileReference.FindByRelativePath(@$"Генератор шаблонов\Таблицы\{tableName}") as FileObject;
+            var file = await _fileReference.FindByRelativePathAsync(@$"Генератор шаблонов\Таблицы\{tableName}") as FileObject;
 
             if (file is null)
                 return string.Empty;
-            FileReference.GetHeadRevision(new[] { file });
+            await FileReference.GetHeadRevisionAsync(new[] { file });
 
             return file.LocalPath;
         }
@@ -174,7 +175,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         public string SetFormula(string tableName, string sheetName, string width, string heigth, string[] parameterValue = null, bool isRange = false)
         {
-            string formulaString = parameterValue == null ? $"'{tableName}', {sheetName}, {width}, {heigth}, '{isRange}'" : $"'{tableName}', {width}, {heigth}, {string.Join(",", parameterValue)} '{isRange}'";
+            string parameterString = parameterValue.Where(param => !string.IsNullOrEmpty(param))?.Count() > 0 ? string.Join(",", parameterValue) : string.Empty;
+            string formulaString = parameterValue == null || string.IsNullOrEmpty(parameterString) ? $"'{tableName}', {sheetName}, {width}, {heigth}, '{isRange}'" : $"'{tableName}', {sheetName}, {width}, {heigth}, {parameterString} '{isRange}'";
             return $"ReadTable({formulaString})";
         }
     }

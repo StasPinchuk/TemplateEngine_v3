@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TemplateEngine_v3.Models;
-using TFlex.DOCs.Model.References;
 
 namespace TemplateEngine_v3.UserControls
 {
@@ -62,6 +61,13 @@ namespace TemplateEngine_v3.UserControls
                 typeof(ReferenceBlock),
                 new PropertyMetadata(false));
 
+        public static readonly DependencyProperty ButtonTextProperty =
+            DependencyProperty.Register(
+                "ButtonText",
+                typeof(string),
+                typeof(ReferenceBlock),
+                new PropertyMetadata("Изменить"));
+
         public ReferenceModelInfo CurrentReferenceModel
         {
             get => (ReferenceModelInfo)GetValue(CurrentReferenceModelProperty);
@@ -104,6 +110,12 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(IsLockedProperty, value);
         }
 
+        public string ButtonText
+        {
+            get => (string)GetValue(ButtonTextProperty);
+            set => SetValue(ButtonTextProperty, value);
+        }
+
         public ReferenceBlock()
         {
             InitializeComponent();
@@ -112,7 +124,7 @@ namespace TemplateEngine_v3.UserControls
         private static void OnSetReferenceObject(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (ReferenceBlock)d;
-            if (control != null )
+            if (control != null)
             {
                 if (e.NewValue is ReferenceModelInfo reference)
                 {
@@ -120,6 +132,9 @@ namespace TemplateEngine_v3.UserControls
                         control.NewIndicate = Visibility.Visible;
                     if (reference.LastEditDate.Date == DateTime.Now.Date && reference.LastEditDate != reference.CreateDate)
                         control.EditIndicate = Visibility.Visible;
+
+                    if (reference.Type.Name.Equals("Корзина"))
+                        control.ButtonText = "Восстановить";
                 }
                 else
                     control.NewIndicate = Visibility.Collapsed;

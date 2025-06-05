@@ -97,7 +97,7 @@
                                        Margin="8,0,0,0" />
                         </StackPanel>
                     </Button>
-                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                    <!--<Button Style="{StaticResource MaterialDesignFlatButton}"
                             HorizontalContentAlignment="Left"
                             Foreground="#FFF">
                         <StackPanel Orientation="Horizontal">
@@ -112,7 +112,7 @@
                                        VerticalAlignment="Center"
                                        Margin="8,0,0,0" />
                         </StackPanel>
-                    </Button>
+                    </Button>-->
                 </StackPanel>
             </Border>
 

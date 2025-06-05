@@ -7,15 +7,15 @@
              xmlns:local="clr-namespace:TemplateEngine_v3.UserControls"
              mc:Ignorable="d" 
              Width="500"
-             Height="250"
+             Height="260"
              x:Name="userPermissionChoiceDialog">
     <Grid
         Margin="20">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="60"/>
             <RowDefinition Height="40"/>
-            <RowDefinition Height="160"/>
+            <RowDefinition Height="180"/>
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" LastChildFill="True">

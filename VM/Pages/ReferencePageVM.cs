@@ -255,6 +255,16 @@ namespace TemplateEngine_v3.VM.Pages
         {
             if(parameter is ReferenceModelInfo referenceModel)
             {
+                if (referenceModel.Type.Name.Equals("Корзина"))
+                {
+                    var isRestory = await _templateManager.RestoreTemplateAsync(referenceModel);
+                    string msg = isRestory ? "Шаблон успешно восстановлен" : "Шаблон не восстановлен";
+
+                    MessageBox.Show(msg, "Восстановление шаблона");
+
+                    return;
+                }
+
                 var isSetTemplate = await _templateManager.SetTemplateAsync(referenceModel);
                 if (!isSetTemplate)
                 {

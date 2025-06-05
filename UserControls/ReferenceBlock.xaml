@@ -103,7 +103,7 @@
                         IsEnabled="{Binding IsLocked, UpdateSourceTrigger=PropertyChanged}"
                         Command="{Binding EditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        Content="Изменить"/>
+                        Content="{Binding ButtonText, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
             </UniformGrid>
         </Grid>
         

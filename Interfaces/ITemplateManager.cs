@@ -92,6 +92,7 @@ namespace TemplateEngine_v3.Interfaces
         /// <param name="type">Тип шаблона для сохранения.</param>
         /// <returns>Задача, возвращающая результат успешности операции.</returns>
         Task<bool> SaveTemplate(string type);
+        Task<bool> RestoreTemplateAsync(ReferenceModelInfo reference);
 
         /// <summary>
         /// Получает выбранный в данный момент шаблон.

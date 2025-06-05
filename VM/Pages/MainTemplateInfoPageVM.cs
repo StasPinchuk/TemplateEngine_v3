@@ -25,7 +25,8 @@ namespace TemplateEngine_v3.VM.Pages
             set
             {
                 SetValue(ref _currentTemplate, value, nameof(CurrentTemplate));
-                CurrentRelation = _currentTemplate.TemplateRelations.FirstOrDefault();
+                if(_currentTemplate != null)
+                    CurrentRelation = _currentTemplate.TemplateRelations.FirstOrDefault();
             }
         }
 

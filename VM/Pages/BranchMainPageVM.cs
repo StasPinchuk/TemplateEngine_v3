@@ -48,7 +48,7 @@ namespace TemplateEngine_v3.VM.Pages
             bool IsEdit = await _branchManager.EditBranch(CurrentBranch);
             if (IsEdit)
             {
-                MessageBox.Show($"Для филиала {CurrentBranch.Name} применены изменения!");
+                MessageBox.Show($"Для филиала {CurrentBranch.Name} применены изменения!", "Изменение филиала");
             }
         }
 
@@ -57,7 +57,7 @@ namespace TemplateEngine_v3.VM.Pages
             bool IsCreate = await _branchManager.AddBranch(CurrentBranch);
             if (IsCreate)
             {
-                MessageBox.Show($"Филиал {CurrentBranch.Name} успешно добавлен!");
+                MessageBox.Show($"Филиал {CurrentBranch.Name} успешно добавлен!", "Добавление филиала");
             }
         }
     }

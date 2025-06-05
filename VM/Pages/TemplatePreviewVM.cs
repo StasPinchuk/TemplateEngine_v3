@@ -380,11 +380,13 @@ namespace TemplateEngine_v3.VM.Pages
             {
                 if (materials.ContainsKey(name))
                 {
-                    materials[name] += double.Parse(weight.Replace('.', ','));
+                    if(!string.IsNullOrEmpty(weight))
+                        materials[name] += double.Parse(weight.Replace('.', ','));
                 }
                 else
                 {
-                    materials.Add(name, double.Parse(weight.Replace('.', ',')));
+                    if (!string.IsNullOrEmpty(weight))
+                        materials.Add(name, double.Parse(weight.Replace('.', ',')));
                 }
             }
         }

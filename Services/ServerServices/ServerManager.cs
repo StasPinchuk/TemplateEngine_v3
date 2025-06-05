@@ -69,8 +69,8 @@ namespace TemplateEngine_v3.Services.ServerServices
                     var templates = FileService.ReadeFromFolder("configs\\UnhandledException");
                     foreach (var template in templates)
                     {
-                        ReferenceManager.TemplateManager.SetTemplateAsync(template);
-                        ReferenceManager.TemplateManager.SaveTemplate("Ready");
+                        await ReferenceManager.TemplateManager.SetTemplateAsync(template);
+                        await ReferenceManager.TemplateManager.SaveTemplate("Ready");
                     }
                     return true;
                 }
@@ -79,7 +79,7 @@ namespace TemplateEngine_v3.Services.ServerServices
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при подключении к серверу: {ex.Message}");
+                MessageBox.Show($"Ошибка при подключении к серверу: {ex.Message}", "Ошибка");
                 Application.Current.Shutdown();
                 return false;
             }

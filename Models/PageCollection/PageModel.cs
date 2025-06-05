@@ -207,7 +207,7 @@ namespace TemplateEngine_v3.Models.PageCollection
                 return (Page)defaultConstructor.Invoke(null);
             }
 
-            MessageBox.Show("Для указанного типа страницы не найдено подходящего конструктора.");
+            MessageBox.Show("Для указанного типа страницы не найдено подходящего конструктора.", "Ошибка");
 
             return null;
         }

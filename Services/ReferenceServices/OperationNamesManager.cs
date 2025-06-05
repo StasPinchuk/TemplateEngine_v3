@@ -60,7 +60,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             catch (Exception ex)
             {
                 // Отображаем сообщение об ошибке
-                MessageBox.Show($"Ошибка при загрузке названий операций: {ex.Message}");
+                MessageBox.Show($"Ошибка при загрузке названий операций: {ex.Message}", "Ошибка");
             }
         }
     }

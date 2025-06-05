@@ -35,33 +35,33 @@
         </Button>
 
         <ComboBox ItemsSource="{Binding TableList, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
-                  SelectedItem="{Binding SelectedTable, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedTable, ElementName=tableChoiceDialog, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   Style="{StaticResource MaterialDesignOutlinedComboBox}"
                   materialDesign:HintAssist.Hint="Название таблицы"
                   Grid.Row="1"/>
 
         <ComboBox ItemsSource="{Binding Sheet, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
-                  SelectedItem="{Binding SelectedSheet, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedSheet, ElementName=tableChoiceDialog, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   Style="{StaticResource MaterialDesignOutlinedComboBox}"
                   materialDesign:HintAssist.Hint="Название листа"
                   Grid.Row="2"/>
 
         <ComboBox ItemsSource="{Binding FindParameterList, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
-                  SelectedItem="{Binding FindParameter, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding FindParameter, ElementName=tableChoiceDialog, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   Style="{StaticResource MaterialDesignOutlinedComboBox}"
                   materialDesign:HintAssist.Hint="Выберие данные для поиска"
                   Grid.Row="3"/>
 
         <TextBox materialDesign:HintAssist.Hint="Значение по строке"
                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                 Text="{Binding ColString, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding ColString.Value, ElementName=tableChoiceDialog, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  ContextMenu="{Binding ParametersMenu, ElementName=tableChoiceDialog}"
                  Margin="0,10"
                  Grid.Row="4"/>
 
         <TextBox materialDesign:HintAssist.Hint="Значение по столбцу"
                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                 Text="{Binding RowString, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding RowString.Value, ElementName=tableChoiceDialog, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  ContextMenu="{Binding ParametersMenu, ElementName=tableChoiceDialog}"
                  Grid.Row="5"/>
 
@@ -71,7 +71,7 @@
                 Margin="0,10"
                 Grid.Row="6">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding ParametersCollection, ElementName=tableChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                <ItemsControl ItemsSource="{Binding ParametersCollection, ElementName=tableChoiceDialog, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>

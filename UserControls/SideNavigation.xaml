@@ -18,7 +18,6 @@
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
-                             ToolTip="{Binding Title}"
                              MinWidth="60"
                              Foreground="White"
                              IsChecked="{Binding IsSelected}"

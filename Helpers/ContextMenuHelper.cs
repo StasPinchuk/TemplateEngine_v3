@@ -19,6 +19,7 @@ namespace TemplateEngine_v3.Helpers
         private readonly MaterialManager _materialManager;
 
         public ConditionEvaluator CurrentEvaluator { get; set; }
+        public object DataContext { get; set; }
 
         private ICommand SetEvaluatorTextBoxCommand { get; set; }
 
@@ -304,10 +305,6 @@ namespace TemplateEngine_v3.Helpers
                         textBox.Text += $"[{evaluator.Name}]";
                         condition.Parts.Add(evaluator.Id);
                     }
-                    else
-                    {
-                        textBox.Text += $"'{evaluator.Id}'";
-                    }
 
                 }
 
@@ -333,19 +330,31 @@ namespace TemplateEngine_v3.Helpers
             if (getParent && pathParts.Length > 1)
                 pathParts = pathParts.Take(pathParts.Length - 1).ToArray();
 
-            object? currentObject = bindingExpr.DataItem;
-            foreach (var propName in pathParts)
-            {
-                if (currentObject == null) return null;
+            // Попробовать сначала с DataItem
+            object? result = TryResolvePath(bindingExpr.DataItem, pathParts);
+            if (result != null) return result;
 
-                var propInfo = currentObject.GetType().GetProperty(propName);
+            // Если не получилось — попробовать с DataContext
+            return TryResolvePath(DataContext, pathParts);
+        }
+
+        private object? TryResolvePath(object? root, string[] pathParts)
+        {
+            object? current = root;
+
+            foreach (var part in pathParts)
+            {
+                if (current == null) return null;
+
+                var propInfo = current.GetType().GetProperty(part);
                 if (propInfo == null) return null;
 
-                currentObject = propInfo.GetValue(currentObject);
+                current = propInfo.GetValue(current);
             }
 
-            return currentObject;
+            return current;
         }
+
 
 
     }

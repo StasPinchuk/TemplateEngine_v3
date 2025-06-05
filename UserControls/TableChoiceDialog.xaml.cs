@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -69,17 +71,17 @@ namespace TemplateEngine_v3.UserControls
         public static DependencyProperty ColStringProperty =
             DependencyProperty.Register(
                 "ColString",
-                typeof(string),
+                typeof(ConditionEvaluator),
                 typeof(TableChoiceDialog),
-                new PropertyMetadata(string.Empty)
+                new PropertyMetadata(new ConditionEvaluator())
             );
 
         public static DependencyProperty RowStringProperty =
             DependencyProperty.Register(
                 "RowString",
-                typeof(string),
+                typeof(ConditionEvaluator),
                 typeof(TableChoiceDialog),
-                new PropertyMetadata(string.Empty)
+                new PropertyMetadata(new ConditionEvaluator())
             );
 
         public static DependencyProperty SetTableFormulaCommandProperty =
@@ -142,15 +144,15 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(SelectedSheetProperty, value);
         }
 
-        public string ColString
+        public ConditionEvaluator ColString
         {
-            get => (string)GetValue(ColStringProperty);
+            get => (ConditionEvaluator)GetValue(ColStringProperty);
             set => SetValue(ColStringProperty, value);
         }
 
-        public string RowString
+        public ConditionEvaluator RowString
         {
-            get => (string)GetValue(RowStringProperty);
+            get => (ConditionEvaluator)GetValue(RowStringProperty);
             set => SetValue(RowStringProperty, value);
         }
 
@@ -182,6 +184,7 @@ namespace TemplateEngine_v3.UserControls
             _tableService = tableService;
             _evaluator = evaluator;
             _contextMenuHelper = contextMenuHelper;
+            _contextMenuHelper.DataContext = this;
             ParametersMenu = _contextMenuHelper.GetContextMenu();
             TableList = _tableService.TableNames;
             FindParameterList = new()
@@ -189,7 +192,7 @@ namespace TemplateEngine_v3.UserControls
                 "Значение",
                 "Диапазон"
             };
-            SetTableFormulaCommand = new RelayCommand(SetTableFormula);
+            SetTableFormulaCommand = new RelayCommand(SetTableFormula, CanSetTable);
         }
 
         private static void OnSelectedTableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -199,9 +202,20 @@ namespace TemplateEngine_v3.UserControls
 
             if (!string.IsNullOrEmpty(selectedTable))
             {
-                control.Sheet = control._tableService.GetWorksheets(selectedTable);
+                // Fire and forget
+                _ = control.LoadWorksheetsAsync(selectedTable);
             }
         }
+
+        private async Task LoadWorksheetsAsync(string selectedTable)
+        {
+            var sheets = await _tableService.GetWorksheets(selectedTable); // допустим, этот метод асинхронный
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Sheet = new ObservableCollection<string>(sheets);
+            });
+        }
+
 
         private static void OnSelectedSheetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -218,11 +232,37 @@ namespace TemplateEngine_v3.UserControls
             }
         }
 
-        private void SetTableFormula()
+        private bool CanSetTable(object parameter)
         {
-            var parameters = ParametersCollection.Select(param => param.Value).ToArray();
-            var isRange = FindParameter.Equals("Значение") ? false : true;
-            _evaluator.Value += _tableService.SetFormula(SelectedTable, SelectedSheet, ColString, RowString, parameters, isRange);
+            return !string.IsNullOrEmpty(SelectedTable) 
+                && !string.IsNullOrEmpty(SelectedSheet) 
+                && !string.IsNullOrEmpty(FindParameter) 
+                && !string.IsNullOrEmpty(ColString.Value) 
+                && !string.IsNullOrEmpty(RowString.Value);
+        }
+
+        private void SetTableFormula(object parameter)
+        {
+            try
+            {
+                var parameters = ParametersCollection.Select(param => param.Value).ToArray();
+                var isRange = FindParameter.Equals("Значение") ? false : true;
+                _evaluator.Value += _tableService.SetFormula(SelectedTable, SelectedSheet, ColString.Value, RowString.Value, parameters, isRange);
+                if(ColString.Parts.Count > 0)
+                    _evaluator.Parts.Add(ColString.Parts?.First());
+                if(RowString.Parts.Count > 0)
+                    _evaluator.Parts.Add(RowString.Parts?.First());
+                ColString = new();
+                RowString = new();
+                SelectedTable = null;
+                SelectedSheet = null;
+                FindParameter = null;
+                ParametersCollection = new();
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
     }
 }
