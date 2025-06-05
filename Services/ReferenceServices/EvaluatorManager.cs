@@ -30,7 +30,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             new(){ Name = "Содержит", Value = "Содержит(,)"},
             new(){ Name = "Ceil", Value = "Ceil()"},
             new(){ Name = "Четное", Value = "IsEven()"},
-            new(){ Name = "Число", Value = "IsNumber()"}
+            new(){ Name = "Число", Value = "IsNumber()"},
+            new(){ Name = "Поиск в диапазоне", Value = "InRange()"}
         };
 
         /// <summary>

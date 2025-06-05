@@ -150,9 +150,10 @@ namespace TemplateEngine_v3.UserControls
 
                 if (replaceCount > 0)
                 {
+                    selected.ObjectStruct = result;
                     if (!await TemplateManager.SetTemplateAsync(selected))
                         continue;
-                    TemplateManager.SaveTemplate("Ready");
+                    await TemplateManager.SaveTemplate("Ready");
                     replaceInfo += $"В шаблоне '{selected.Name}' заменено: {replaceCount}\n";
                 }
 

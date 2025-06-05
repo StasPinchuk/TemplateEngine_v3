@@ -349,7 +349,7 @@ namespace TemplateEngine_v3.VM.Pages
                 AddMaterial(materials, materialName, materialWeight);
                 AddMaterial(materials, coatingName, coatingWeight);
 
-                if (node.Type.Equals("Стандартное изделие") || node.Type.Equals("Прочее изделие"))
+                if (node.Type.Equals("Стандартное изделие") || node.Type.Equals("Прочее изделие") || node.Type.Equals("Материал"))
                 {
                     AddMaterial(materials, node.Name, node.Amount?.Value);
                 }

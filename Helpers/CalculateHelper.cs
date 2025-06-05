@@ -629,6 +629,20 @@ namespace TemplateEngine_v3.Helpers
 
                 return _tableService.GetFindParameter(tableName, width, heigth, parameters.ToArray(), isRange);
             },
+            ["InRange"] = args =>
+            {
+                var parameters = args.Parameters.ToList();
+                var findValue = parameters.Last();
+
+                parameters.Remove(parameters.Last());
+
+                if (parameters == null || findValue == null)
+                {
+                    throw new ArgumentException("Both parameters for Contains must be strings.");
+                }
+
+                return parameters.Contains(findValue);
+            },
 
         };
     }
