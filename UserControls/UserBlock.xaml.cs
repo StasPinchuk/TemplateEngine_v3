@@ -45,9 +45,9 @@ namespace TemplateEngine_v3.UserControls
                 new PropertyMetadata(default)
                 );
 
-        public static DependencyProperty DeletePermissionCommandProperty =
+        public static DependencyProperty DeleteAllPermissionCommandProperty =
             DependencyProperty.Register(
-                "DeletePermissionCommand",
+                "DeleteAllPermissionCommand",
                 typeof(ICommand),
                 typeof(UserBlock),
                 new PropertyMetadata(default)
@@ -77,10 +77,10 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(SelectUserCommandProperty, value);
         }
 
-        public ICommand DeletePermissionCommand
+        public ICommand DeleteAllPermissionCommand
         {
-            get => (ICommand)GetValue(DeletePermissionCommandProperty);
-            set => SetValue(DeletePermissionCommandProperty, value);
+            get => (ICommand)GetValue(DeleteAllPermissionCommandProperty);
+            set => SetValue(DeleteAllPermissionCommandProperty, value);
         }
 
         public UserBlock()
@@ -147,6 +147,7 @@ namespace TemplateEngine_v3.UserControls
                     "Edit" => "Право на редактирование филиалов",
                     "Delete" => "Право на удаление филиалов",
                     "Create" => "Право на создание филиалов",
+                    "Copy" => "Право на копирование филиалов",
                     _ => string.Empty,
                 };
             }
@@ -157,18 +158,10 @@ namespace TemplateEngine_v3.UserControls
                     "Edit" => "Право на редактирование тп",
                     "Delete" => "Право на удаление тп",
                     "Create" => "Право на создание тп",
+                    "Copy" => "Право на копирование тп",
                     _ => string.Empty,
                 };
             }
-            /*else if (enumValue is UserPer user)
-            {
-                return permissionName switch
-                {
-                    "AccessRole" => "Выдавать доступы",
-                    "ViewLogs" => "Просмотр логов",
-                    _ => string.Empty,
-                };
-            }*/
             else
             {
                 return "Неизвестное перечисление";

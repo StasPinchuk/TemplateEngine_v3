@@ -65,7 +65,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             {
                 try
                 {
-                    var newBranch = _reference.CreateReferenceObject();
+                    var newBranch = _reference.CreateReferenceObject(_branchClass);
 
                     createBranch.Id = newBranch.Guid;
 

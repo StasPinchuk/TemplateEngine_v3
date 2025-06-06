@@ -65,6 +65,21 @@ namespace TemplateEngine_v3.UserControls
                 new PropertyMetadata(null)
             );
 
+        public static DependencyProperty AddOrEditAllowedUserCommandProperty =
+            DependencyProperty.Register(
+                "AddOrEditAllowedUserCommand",
+                typeof(ICommand),
+                typeof(UserPermissionChoiceDialog),
+                new PropertyMetadata(null)
+            );
+
+        public static readonly DependencyProperty UserButtonTextProperty =
+            DependencyProperty.Register(
+                "UserButtonText",
+                typeof(string),
+                typeof(ReferenceBlock),
+                new PropertyMetadata("Изменить"));
+
         public ObservableCollection<UserModel> AllUsers
         {
             get => (ObservableCollection<UserModel>)GetValue(AllUsersProperty);
@@ -102,17 +117,41 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(SetPermissionCommandProperty, value);
         }
 
+        public ICommand AddOrEditAllowedUserCommand
+        {
+            get => (ICommand)GetValue(AddOrEditAllowedUserCommandProperty);
+            set => SetValue(AddOrEditAllowedUserCommandProperty, value);
+        }
+
+        public string UserButtonText
+        {
+            get => (string)GetValue(UserButtonTextProperty);
+            set => SetValue(UserButtonTextProperty, value);
+        }
+
+        private UserManager _userManager;
+
         public UserPermissionChoiceDialog(UserManager userManager, UserModel userModel)
         {
             InitializeComponent();
+            _userManager = userManager;
             AllUsers = new(userManager.GetAllUsers());
-            var matchedUser = AllUsers.FirstOrDefault(u => u.Id == userModel.Id);
-            if (matchedUser != null)
-                SelectedUser = matchedUser;
+            if(userModel != null)
+            {
+                var matchedUser = AllUsers.FirstOrDefault(u => u.Id == userModel.Id);
+                if (matchedUser != null)
+                    SelectedUser = matchedUser;
+                else
+                {
+                    AllUsers.Add(userModel);
+                    SelectedUser = userModel;
+                }
+                UserButtonText = "Изменить";
+            }
             else
             {
-                AllUsers.Add(userModel);
-                SelectedUser = userModel;
+                SelectedUser = new();
+                UserButtonText = "Добавить";
             }
 
             ObservableCollection<PermissionModel> permissionList = new()
@@ -161,6 +200,11 @@ namespace TemplateEngine_v3.UserControls
                             IsChecked = SelectedUser.BranchPermission.HasFlag(BranchPermissions.Edit)
                         },
                         new(){
+                            Key = "Копирование филиалов",
+                            Permission = BranchPermissions.Copy,
+                            IsChecked = SelectedUser.BranchPermission.HasFlag(BranchPermissions.Copy)
+                        },
+                        new(){
                             Key = "Удалять филиалы",
                             Permission = BranchPermissions.Delete,
                             IsChecked = SelectedUser.BranchPermission.HasFlag(BranchPermissions.Delete)
@@ -183,6 +227,11 @@ namespace TemplateEngine_v3.UserControls
                             IsChecked = SelectedUser.TechnologiesPermission.HasFlag(TechnologiesPermissions.Edit)
                         },
                         new(){
+                            Key = "Копировать тп",
+                            Permission = TechnologiesPermissions.Copy,
+                            IsChecked = SelectedUser.TechnologiesPermission.HasFlag(TechnologiesPermissions.Copy)
+                        },
+                        new(){
                             Key = "Удалять тп",
                             Permission = TechnologiesPermissions.Delete,
                             IsChecked = SelectedUser.TechnologiesPermission.HasFlag(TechnologiesPermissions.Delete)
@@ -196,6 +245,7 @@ namespace TemplateEngine_v3.UserControls
 
             SelPermissionGroupCommand = new RelayCommand(SelPermisionGroup);
             SetPermissionCommand = new RelayCommand(SetPermission);
+            AddOrEditAllowedUserCommand = new RelayCommand(AddOrEditAllowedUser);
         }
 
         private void SelPermisionGroup(object parameter)
@@ -233,6 +283,19 @@ namespace TemplateEngine_v3.UserControls
                 }
 
             }
+        }
+
+        private void AddOrEditAllowedUser(object parameter)
+        {
+            if (SelectedUser.IsAdmin == false && SelectedUser.TemplatePermission == TemplatePermissions.None &&
+                SelectedUser.BranchPermission == BranchPermissions.None && SelectedUser.TechnologiesPermission == TechnologiesPermissions.None)
+                return;
+
+            var currentUser = _userManager.GetAlloweUsers().FirstOrDefault(user => user.FullName.Equals(SelectedUser.FullName));
+            if (currentUser == null)
+                _userManager.AddAllowedUser(SelectedUser);
+            else
+                _userManager.EditAllowedUser(SelectedUser);
         }
     }
 }

@@ -31,6 +31,7 @@
                                                      RemoveCommand ="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=Page}}"
                                                      CloneCommand ="{Binding DataContext.CloneCommand, RelativeSource={RelativeSource AncestorType=Page}}"
                                                      EditCommand ="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                     CurrentPermission="{Binding DataContext.Permission, RelativeSource={RelativeSource AncestorType=Page}}"
                                                      Margin="8"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

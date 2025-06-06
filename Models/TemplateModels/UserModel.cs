@@ -28,7 +28,8 @@ namespace TemplateEngine_v3.Models
         Edit = 1 << 0,         // Право на редактирование
         Delete = 1 << 1,       // Право на удаление
         Create = 1 << 2,       // Право на создание
-        All = Edit | Delete | Create  // Все права
+        Copy = 1 << 3,         // Право на копирование
+        All = Edit | Delete | Create | Copy  // Все права
     }
 
     /// <summary>
@@ -41,7 +42,8 @@ namespace TemplateEngine_v3.Models
         Edit = 1 << 0,         // Право на редактирование
         Delete = 1 << 1,       // Право на удаление
         Create = 1 << 2,       // Право на создание
-        All = Edit | Delete | Create  // Все права
+        Copy = 1 << 3,         // Право на копирование
+        All = Edit | Delete | Create | Copy  // Все права
     }
 
     /// <summary>

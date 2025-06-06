@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using TemplateEngine_v3.Mappers;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.FileServices;
@@ -46,6 +47,7 @@ namespace TemplateEngine_v3.Services.UsersServices
         /// <returns>Коллекция разрешенных пользователей в виде <see cref="ObservableCollection{UserModel}"/>.</returns>
         public ObservableCollection<UserModel> GetAllowedUsers()
         {
+            SetAllowedUsersList();
             return _allowedUsers;
         }
 
@@ -54,12 +56,14 @@ namespace TemplateEngine_v3.Services.UsersServices
         /// </summary>
         private void SetAllowedUsersList()
         {
+            _allowedUsers.Clear();
             _userWithPermissionReference.Objects.Reload();
             var structObject = _userWithPermissionReference.ParameterGroup.Parameters.FindByName("Структура файла");
             foreach(var user in _userWithPermissionReference.Objects)
             {
                 string objectStruct = user[structObject.Guid].Value.ToString();
                 var curUser = new JsonSerializer().Deserialize<UserModel>(objectStruct);
+                curUser.Id = user.Guid.ToString();
                 _allowedUsers.Add(
                     curUser
                 );
@@ -79,6 +83,28 @@ namespace TemplateEngine_v3.Services.UsersServices
             }
 
             _allowedUsers.Add(user);
+
+            var nameParameter = _userWithPermissionReference.ParameterGroup.Parameters.FindByName("ФИО пользователя");
+            var structObjectParameter = _userWithPermissionReference.ParameterGroup.Parameters.FindByName("Структура файла");
+            var newAllowedUser = _userWithPermissionReference.CreateReferenceObject();
+            newAllowedUser[nameParameter].Value = user.FullName;
+            newAllowedUser[structObjectParameter].Value = new JsonSerializer().Serialize(user);
+            newAllowedUser.EndChanges();
+
+            return true;
+        }
+
+        public bool EditAllowedUser(UserModel user)
+        {
+            var editAllowedUser = _userWithPermissionReference.Find(new Guid(user.Id));
+            if (editAllowedUser == null)
+                return false;
+            editAllowedUser.BeginChanges();
+            var structObjectParameter = _userWithPermissionReference.ParameterGroup.Parameters.FindByName("Структура файла");
+
+            editAllowedUser[structObjectParameter].Value = new JsonSerializer().Serialize(user);
+            editAllowedUser.EndChanges();
+
             return true;
         }
 
@@ -89,15 +115,28 @@ namespace TemplateEngine_v3.Services.UsersServices
         /// <returns><c>true</c>, если пользователь был удален; иначе <c>false</c>.</returns>
         public bool RemoveAllowedUser(UserModel user)
         {
-            var userToRemove = GetUserByFullName(user.FullName);
-
-            if (userToRemove != null)
+            try
             {
-                _allowedUsers.Remove(userToRemove);
-                return true;
+                var userToRemove = GetUserByFullName(user.FullName);
+
+                if (userToRemove != null)
+                {
+                    _allowedUsers.Remove(userToRemove);
+                    var removeUser = _userWithPermissionReference.Find(new Guid(userToRemove.Id));
+                    if (removeUser != null)
+                    {
+                       removeUser.Delete();
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
 
-            return false;
         }
 
         /// <summary>

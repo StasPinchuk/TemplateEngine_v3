@@ -12,22 +12,41 @@
       Title="UsersPage">
 
     <Grid>
-        <ItemsControl ItemsSource="{Binding AlloweUsers, UpdateSourceTrigger=PropertyChanged}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True"
-                               Orientation="Horizontal"
-                               HorizontalAlignment="Center"
-                               Margin="8"
-                               ItemWidth="340"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <controls:UserBlock User="{Binding}"
-                                        SelectUserCommand="{Binding DataContext.SetUserPermissionsCommand, ElementName=usersPage}"/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding AlloweUsers, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True"
+                                   Orientation="Horizontal"
+                                   HorizontalAlignment="Center"
+                                   Margin="8"
+                                   ItemWidth="340"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <controls:UserBlock User="{Binding}"
+                                            SelectUserCommand="{Binding DataContext.SetUserPermissionsCommand, ElementName=usersPage}"
+                                            DeleteAllPermissionCommand="{Binding DataContext.DeleteAllPermissionCommand, ElementName=usersPage}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <Button Style="{StaticResource MaterialDesignFloatingActionSecondaryLightButton}"
+                Background="Green"
+                BorderBrush="Green"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Width="35"
+                Height="35"
+                Margin="25, 10"
+                Command="{Binding DataContext.SetUserPermissionsCommand, ElementName=usersPage}">
+            <materialDesign:PackIcon Kind="Plus"
+                             Width="25"
+                             Height="25"
+                             Foreground="White"/>
+        </Button>
     </Grid>
 </Page>

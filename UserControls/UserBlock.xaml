@@ -59,7 +59,7 @@
                         Margin="0,0,10,0"
                         Background="Red"
                         BorderBrush="Red"
-                        Command="{Binding DeletePermissionCommand, ElementName=userBlock}"
+                        Command="{Binding DeleteAllPermissionCommand, ElementName=userBlock}"
                         CommandParameter="{Binding User, ElementName=userBlock}"
                         Content="Удалить все права"/>
                 

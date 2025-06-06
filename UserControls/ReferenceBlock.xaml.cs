@@ -19,6 +19,14 @@ namespace TemplateEngine_v3.UserControls
                     new PropertyMetadata(null, OnSetReferenceObject)
                 );
 
+        public static DependencyProperty CurrentPermissionProperty =
+            DependencyProperty.Register(
+                    "CurrentPermission",
+                    typeof(object),
+                    typeof(ReferenceBlock),
+                    new PropertyMetadata(null, OnSetCurrentPermission)
+                );
+
         public static readonly DependencyProperty NewIndicateProperty =
             DependencyProperty.Register(
                 "NewIndicate",
@@ -61,6 +69,27 @@ namespace TemplateEngine_v3.UserControls
                 typeof(ReferenceBlock),
                 new PropertyMetadata(false));
 
+        public static readonly DependencyProperty CanCopyProperty =
+            DependencyProperty.Register(
+                "CanCopy",
+                typeof(bool),
+                typeof(ReferenceBlock),
+                new PropertyMetadata(false));
+
+        public static readonly DependencyProperty CanEditProperty =
+            DependencyProperty.Register(
+                "CanEdit",
+                typeof(bool),
+                typeof(ReferenceBlock),
+                new PropertyMetadata(false));
+
+        public static readonly DependencyProperty CanRemoveProperty =
+            DependencyProperty.Register(
+                "CanRemove",
+                typeof(bool),
+                typeof(ReferenceBlock),
+                new PropertyMetadata(false));
+
         public static readonly DependencyProperty ButtonTextProperty =
             DependencyProperty.Register(
                 "ButtonText",
@@ -72,6 +101,12 @@ namespace TemplateEngine_v3.UserControls
         {
             get => (ReferenceModelInfo)GetValue(CurrentReferenceModelProperty);
             set => SetValue(CurrentReferenceModelProperty, value);
+        }
+
+        public object CurrentPermission
+        {
+            get => (object)GetValue(CurrentPermissionProperty);
+            set => SetValue(CurrentPermissionProperty, value);
         }
 
         public Visibility NewIndicate
@@ -102,6 +137,24 @@ namespace TemplateEngine_v3.UserControls
         {
             get => (ICommand)GetValue(EditCommandProperty);
             set => SetValue(EditCommandProperty, value);
+        }
+
+        public bool CanCopy
+        {
+            get => (bool)GetValue(CanCopyProperty);
+            set => SetValue(CanCopyProperty, value);
+        }
+
+        public bool CanEdit
+        {
+            get => (bool)GetValue(CanEditProperty);
+            set => SetValue(CanEditProperty, value);
+        }
+
+        public bool CanRemove
+        {
+            get => (bool)GetValue(CanRemoveProperty);
+            set => SetValue(CanRemoveProperty, value);
         }
 
         public bool IsLocked
@@ -135,9 +188,37 @@ namespace TemplateEngine_v3.UserControls
 
                     if (reference.Type.Name.Equals("Корзина"))
                         control.ButtonText = "Восстановить";
+
+                    control.IsLocked = reference.IsLocked;
                 }
                 else
                     control.NewIndicate = Visibility.Collapsed;
+            }
+        }
+
+        private static void OnSetCurrentPermission(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (ReferenceBlock)d;
+            if (control != null)
+            {
+                if (e.NewValue is TemplatePermissions templatePermission)
+                {
+                    control.CanCopy = (templatePermission.HasFlag(TemplatePermissions.All) || templatePermission.HasFlag(TemplatePermissions.Copy)) && !control.IsLocked;
+                    control.CanEdit = (templatePermission == TemplatePermissions.All || templatePermission.HasFlag(TemplatePermissions.Edit)) && !control.IsLocked;
+                    control.CanRemove = (templatePermission == TemplatePermissions.All || templatePermission.HasFlag(TemplatePermissions.Delete)) && !control.IsLocked;
+                }
+                if (e.NewValue is BranchPermissions branchPermissions)
+                {
+                    control.CanCopy = (branchPermissions == BranchPermissions.All || branchPermissions.HasFlag(BranchPermissions.Copy)) && !control.IsLocked;
+                    control.CanEdit = (branchPermissions == BranchPermissions.All || branchPermissions.HasFlag(BranchPermissions.Edit)) && !control.IsLocked;
+                    control.CanRemove = (branchPermissions == BranchPermissions.All || branchPermissions.HasFlag(BranchPermissions.Delete)) && !control.IsLocked;
+                }
+                if (e.NewValue is TechnologiesPermissions technologiesPermissions)
+                {
+                    control.CanCopy = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Copy)) && !control.IsLocked;
+                    control.CanEdit = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Edit)) && !control.IsLocked;
+                    control.CanRemove = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Delete)) && !control.IsLocked;
+                }
             }
         }
     }

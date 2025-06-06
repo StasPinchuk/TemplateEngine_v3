@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using TemplateEngine_v3.Mappers;
 using TemplateEngine_v3.Models;
 using TFlex.DOCs.Model;
@@ -16,6 +17,11 @@ namespace TemplateEngine_v3.Services.UsersServices
         private readonly AllUsersManager _allUsersManager;
         private readonly AllowedUsersManager _allowedUsersManager;
         private UserModel _currentUser;
+        public UserModel CurrentUser
+        {
+            get => _currentUser;
+            set => _currentUser = value;
+        }
 
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="UserManager"/>.
@@ -38,8 +44,8 @@ namespace TemplateEngine_v3.Services.UsersServices
         private void Initialize(ServerConnection currentConnection)
         {
             User currentUser = currentConnection.ClientView.GetUser();
-            _currentUser = UserMapper.FromTFlexUser(currentUser);
-            ReferenceMapper.UserFio = _currentUser.FullName;
+
+            CurrentUser = GetAlloweUsers().FirstOrDefault(user => user.FullName.Equals(currentUser.ToString()));
 
             currentUser = null;
         }
@@ -74,6 +80,15 @@ namespace TemplateEngine_v3.Services.UsersServices
         /// <param name="allowedUser">Пользователь, которого нужно добавить в список разрешенных.</param>
         /// <returns><c>true</c>, если пользователь был успешно добавлен; иначе <c>false</c>.</returns>
         public bool AddAllowedUser(UserModel allowedUser) => _allowedUsersManager.AddAllowedUser(allowedUser);
+
+        public bool EditAllowedUser(UserModel allowedUser)
+        {
+            bool isEdit = _allowedUsersManager.EditAllowedUser(allowedUser);
+            if (isEdit && CurrentUser.FullName.Equals(allowedUser.FullName))
+                CurrentUser = allowedUser;
+
+            return isEdit;
+        }
 
         /// <summary>
         /// Удаляет пользователя из списка разрешенных.

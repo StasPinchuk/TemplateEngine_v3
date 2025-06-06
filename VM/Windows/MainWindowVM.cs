@@ -6,13 +6,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
-using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
 using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.FileServices;
-using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.Services.UsersServices;
 using TemplateEngine_v3.UserControls;
 using TemplateEngine_v3.Views.Pages;
@@ -26,7 +24,6 @@ namespace TemplateEngine_v3.VM.Windows
         private readonly IBranchManager _branchManager;
         private readonly ITechnologiesManager _technologiesManager;
         private readonly UserManager _userManager;
-        private readonly OperationNamesManager _operationNamesManager;
         private readonly ColumnDefinition _sideBar;
         private readonly Frame _mainFrame;
 
@@ -56,7 +53,7 @@ namespace TemplateEngine_v3.VM.Windows
                     PageType = typeof(ReferencePage),
                     IsSelected = true,
                     GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _templateManager, _technologiesManager, _branchManager, TemplateClass.Ready, sideBar }
+                    ConstructorParameters = new object[] { _templateManager, _technologiesManager, _branchManager, _userManager, TemplateClass.Ready, sideBar }
                 },
                 new PageModel
                 {
@@ -64,7 +61,7 @@ namespace TemplateEngine_v3.VM.Windows
                     Icon = PackIconKind.Draft,
                     PageType = typeof(ReferencePage),
                     GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _templateManager, _technologiesManager, _branchManager, TemplateClass.Draft, sideBar }
+                    ConstructorParameters = new object[] { _templateManager, _technologiesManager, _branchManager, _userManager, TemplateClass.Draft, sideBar }
                 },
                 new PageModel
                 {
@@ -72,7 +69,7 @@ namespace TemplateEngine_v3.VM.Windows
                     Icon = PackIconKind.TrashCan,
                     PageType = typeof(ReferencePage),
                     GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _templateManager, _branchManager, TemplateClass.TrashCan, sideBar }
+                    ConstructorParameters = new object[] { _templateManager, _branchManager, _userManager, TemplateClass.TrashCan, sideBar }
                 },
                 new PageModel
                 {
@@ -80,7 +77,7 @@ namespace TemplateEngine_v3.VM.Windows
                     Icon = PackIconKind.Wrench,
                     PageType = typeof(ReferencePage),
                     GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _technologiesManager, sideBar }
+                    ConstructorParameters = new object[] { _technologiesManager, _userManager, sideBar }
                 },
                 new PageModel
                 {
@@ -88,7 +85,7 @@ namespace TemplateEngine_v3.VM.Windows
                     Icon = PackIconKind.SourceBranch,
                     PageType = typeof(ReferencePage),
                     GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _branchManager, sideBar }
+                    ConstructorParameters = new object[] { _branchManager, _userManager, sideBar }
                 },
                 new PageModel
                 {

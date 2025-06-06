@@ -29,7 +29,7 @@ namespace TemplateEngine_v3.VM.Pages
         public BranchMainPageVM(IBranchManager branchManager, Branch branch = null)
         {
             _branchManager = branchManager;
-            if (branch != null)
+            if (!branch.Name.Equals("Новый филиал"))
             {
                 CurrentBranch = branch;
                 ModifyCommand = new RelayCommand(Edit);

@@ -7,14 +7,12 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Xml.Linq;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.Views.Pages;
-using static TFlex.DOCs.Model.References.Materials.MaterialReferenceObject;
 
 namespace TemplateEngine_v3.VM.Pages
 {
@@ -97,7 +95,8 @@ namespace TemplateEngine_v3.VM.Pages
                 Details.Clear();
                 Details = _relations.Nodes;
                 OnPropertyChanged(nameof(Details));
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
 
             }
@@ -380,7 +379,7 @@ namespace TemplateEngine_v3.VM.Pages
             {
                 if (materials.ContainsKey(name))
                 {
-                    if(!string.IsNullOrEmpty(weight))
+                    if (!string.IsNullOrEmpty(weight))
                         materials[name] += double.Parse(weight.Replace('.', ','));
                 }
                 else

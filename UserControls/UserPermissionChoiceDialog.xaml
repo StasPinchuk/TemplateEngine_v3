@@ -7,7 +7,6 @@
              xmlns:local="clr-namespace:TemplateEngine_v3.UserControls"
              mc:Ignorable="d" 
              Width="500"
-             Height="260"
              x:Name="userPermissionChoiceDialog">
     <Grid
         Margin="20">
@@ -16,6 +15,7 @@
             <RowDefinition Height="60"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="180"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" LastChildFill="True">
@@ -23,7 +23,7 @@
             <Button Style="{StaticResource MaterialDesignIconButton}"
                     DockPanel.Dock="Right"
                     Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
-                    CommandParameter="cancel">
+                    CommandParameter="closed">
                 <materialDesign:PackIcon Kind="Close"
                                          Foreground="Red"/>
             </Button>
@@ -86,5 +86,12 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+
+        <Button Content="{Binding UserButtonText, ElementName=userPermissionChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                Style="{StaticResource MaterialDesignRaisedButton}"
+                Background="Green"
+                BorderBrush="Green"
+                Command="{Binding AddOrEditAllowedUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                Grid.Row="3"/>
     </Grid>
 </UserControl>

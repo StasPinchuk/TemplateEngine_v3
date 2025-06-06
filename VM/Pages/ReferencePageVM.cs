@@ -1,6 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Security.Cryptography.Xml;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,7 +8,7 @@ using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
 using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.FileServices;
-using TemplateEngine_v3.Services.ReferenceServices;
+using TemplateEngine_v3.Services.UsersServices;
 using TemplateEngine_v3.Views.Pages;
 
 namespace TemplateEngine_v3.VM.Pages
@@ -31,28 +29,41 @@ namespace TemplateEngine_v3.VM.Pages
         private readonly TemplateClass _templateClass;
         private readonly ColumnDefinition _sideBar;
 
+        private object _permission = null;
+        public object Permission
+        {
+            get => _permission;
+            set => SetValue(ref _permission, value, nameof(Permission));
+        }
+
         public ICommand RemoveCommand { get; set; }
         public ICommand CloneCommand { get; set; }
         public ICommand EditCommand { get; set; }
         public ICommand CreateCommand { get; set; }
 
-        public ReferencePageVM(ITemplateManager templateManager, IBranchManager branchManager, TemplateClass templateClass, ColumnDefinition sideBar)
+        public ReferencePageVM(ITemplateManager templateManager, IBranchManager branchManager, UserManager userManager, TemplateClass templateClass, ColumnDefinition sideBar)
         {
             _templateManager = templateManager;
             _templateClass = templateClass;
             _branchManager = branchManager;
             _sideBar = sideBar;
+
+            Permission = userManager.CurrentUser.TemplatePermission;
+
             SetReferenceList();
             InitializeTemplateCommand();
         }
 
-        public ReferencePageVM(ITemplateManager templateManager, ITechnologiesManager technologiesManager, IBranchManager branchManager, TemplateClass templateClass, ColumnDefinition sideBar)
+        public ReferencePageVM(ITemplateManager templateManager, ITechnologiesManager technologiesManager, IBranchManager branchManager, UserManager userManager, TemplateClass templateClass, ColumnDefinition sideBar)
         {
             _templateManager = templateManager;
             _technologiesManager = technologiesManager;
             _templateClass = templateClass;
             _branchManager = branchManager;
             _sideBar = sideBar;
+
+            Permission = userManager.CurrentUser.TemplatePermission;
+
             SetReferenceList();
             InitializeTemplateCommand();
         }
@@ -65,11 +76,13 @@ namespace TemplateEngine_v3.VM.Pages
             CreateCommand = new RelayCommand(CreateTemplate);
         }
 
-        public ReferencePageVM(IBranchManager branchManager, ColumnDefinition sideBar)
+        public ReferencePageVM(IBranchManager branchManager, UserManager userManager, ColumnDefinition sideBar)
         {
             _branchManager = branchManager;
             _sideBar = sideBar;
             InitializeBranchCommand();
+
+            Permission = userManager.CurrentUser.BranchPermission;
 
             SetBranchesList();
         }
@@ -79,14 +92,16 @@ namespace TemplateEngine_v3.VM.Pages
             RemoveCommand = new RelayCommand(RemoveBranch);
             CloneCommand = new RelayCommand(CloneBranch);
             EditCommand = new RelayCommand(EditBranch);
-            CreateCommand = new RelayCommand(EditBranch);
+            CreateCommand = new RelayCommand(CreateBranch);
         }
 
-        public ReferencePageVM(ITechnologiesManager technologiesManager, ColumnDefinition sideBar)
+        public ReferencePageVM(ITechnologiesManager technologiesManager, UserManager userManager, ColumnDefinition sideBar)
         {
             _technologiesManager = technologiesManager;
             _sideBar = sideBar;
             InitializeTechnologiesCommand();
+
+            Permission = userManager.CurrentUser.TechnologiesPermission;
 
             SetTechnologiesList();
         }
@@ -214,7 +229,7 @@ namespace TemplateEngine_v3.VM.Pages
 
         private async void CloneTemplate(object parameter)
         {
-            if(parameter is ReferenceModelInfo referenceModel)
+            if (parameter is ReferenceModelInfo referenceModel)
             {
                 ReferencesList.Remove(referenceModel);
                 bool isClone = await _templateManager.CopyTemplateAsync(referenceModel);
@@ -227,7 +242,7 @@ namespace TemplateEngine_v3.VM.Pages
 
         private async void CloneBranch(object parameter)
         {
-            if(parameter is ReferenceModelInfo referenceModel)
+            if (parameter is ReferenceModelInfo referenceModel)
             {
                 ReferencesList.Remove(referenceModel);
                 bool isClone = await _branchManager.CloneBranch(referenceModel);
@@ -240,7 +255,7 @@ namespace TemplateEngine_v3.VM.Pages
 
         private async void CloneTechnologies(object parameter)
         {
-            if(parameter is ReferenceModelInfo referenceModel)
+            if (parameter is ReferenceModelInfo referenceModel)
             {
                 ReferencesList.Remove(referenceModel);
                 bool isClone = await _technologiesManager.CloneTechnologies(referenceModel);
@@ -253,7 +268,7 @@ namespace TemplateEngine_v3.VM.Pages
 
         private async void EditTemplate(object parameter)
         {
-            if(parameter is ReferenceModelInfo referenceModel)
+            if (parameter is ReferenceModelInfo referenceModel)
             {
                 if (referenceModel.Type.Name.Equals("Корзина"))
                 {
@@ -271,7 +286,7 @@ namespace TemplateEngine_v3.VM.Pages
                     return;
                 }
 
-                var templateEditPage = new PageModel(referenceModel.Name, typeof(TemplateEditPage), new object[]{ _technologiesManager, _templateManager, _branchManager});
+                var templateEditPage = new PageModel(referenceModel.Name, typeof(TemplateEditPage), new object[] { _technologiesManager, _templateManager, _branchManager });
 
                 MenuHistory.NextPage(templateEditPage, true);
                 _sideBar.Width = new GridLength(80);
@@ -280,11 +295,11 @@ namespace TemplateEngine_v3.VM.Pages
 
         private void EditTechnologies(object parameter)
         {
-            if(parameter is ReferenceModelInfo referenceModel)
+            if (parameter is ReferenceModelInfo referenceModel)
             {
                 _technologiesManager.CurrentTechnologies = new JsonSerializer().Deserialize<Technologies>(referenceModel.ObjectStruct);
 
-                var technologiesEditPage = new PageModel(referenceModel.Name, typeof(TechnologiesPage), new object[]{ _technologiesManager});
+                var technologiesEditPage = new PageModel(referenceModel.Name, typeof(TechnologiesPage), new object[] { _technologiesManager });
 
                 MenuHistory.NextPage(technologiesEditPage, true);
                 _sideBar.Width = new GridLength(80);
@@ -293,11 +308,11 @@ namespace TemplateEngine_v3.VM.Pages
 
         private void EditBranch(object parameter)
         {
-            if(parameter is ReferenceModelInfo referenceModel)
+            if (parameter is ReferenceModelInfo referenceModel)
             {
                 Branch branch = new JsonSerializer().Deserialize<Branch>(referenceModel.ObjectStruct);
 
-                var branchEditPage = new PageModel(referenceModel.Name, typeof(BranchMainPage), new object[]{ _branchManager, branch });
+                var branchEditPage = new PageModel(referenceModel.Name, typeof(BranchMainPage), new object[] { _branchManager, branch });
 
                 MenuHistory.NextPage(branchEditPage, true);
                 _sideBar.Width = new GridLength(80);
@@ -323,6 +338,19 @@ namespace TemplateEngine_v3.VM.Pages
             var technologiesEditPage = new PageModel(_technologiesManager.CurrentTechnologies.Name, typeof(TechnologiesPage), new object[] { _technologiesManager });
 
             MenuHistory.NextPage(technologiesEditPage, true);
+            _sideBar.Width = new GridLength(80);
+        }
+
+        private void CreateBranch(object parameter)
+        {
+            var newBranch = new Branch()
+            {
+                Name = "Новый филиал"
+            };
+
+            var branchCreatePage = new PageModel(newBranch.Name, typeof(BranchMainPage), new object[] { _branchManager, newBranch });
+
+            MenuHistory.NextPage(branchCreatePage, true);
             _sideBar.Width = new GridLength(80);
         }
     }

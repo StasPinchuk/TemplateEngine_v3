@@ -85,7 +85,7 @@
                          Rows="1">
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
                         Background="Red"
-                        IsEnabled="{Binding IsLocked, UpdateSourceTrigger=PropertyChanged}"
+                        IsEnabled="{Binding CanRemove, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                         BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
                         Command="{Binding RemoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}"
@@ -93,6 +93,7 @@
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
                         BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
                         Background="#1C212E"
+                        IsEnabled="{Binding CanCopy, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                         Command="{Binding CloneCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         Content="Копировать"
@@ -100,7 +101,7 @@
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
                         Background="Green"
                         BorderBrush="Green"
-                        IsEnabled="{Binding IsLocked, UpdateSourceTrigger=PropertyChanged}"
+                        IsEnabled="{Binding CanEdit, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                         Command="{Binding EditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         Content="{Binding ButtonText, RelativeSource={RelativeSource AncestorType=UserControl}}"/>

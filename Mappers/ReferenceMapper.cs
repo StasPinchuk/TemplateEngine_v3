@@ -64,7 +64,7 @@ namespace TemplateEngine_v3.Mappers
                 LastEditDate = Convert.ToDateTime(reference[_lastEditParameterGuid].ToString()),
                 CreateDate = Convert.ToDateTime(reference[_createDateParameterGuid].ToString()),
                 ObjectStruct = reference[_structObjectParameterGuid].ToString(),
-                IsLocked = !string.IsNullOrEmpty(reference[_lockedParameterGuid].ToString()) ? reference[_lockedParameterGuid].ToString().Contains(UserFio) : true
+                IsLocked = !string.IsNullOrEmpty(reference[_lockedParameterGuid].ToString()) ? reference[_lockedParameterGuid].ToString().Contains(UserFio) : false
             };
         }
 
