@@ -159,10 +159,16 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <returns>Коллекция всех филиалов.</returns>
         public ObservableCollection<ReferenceModelInfo> GetAllBranches()
         {
-            return new ObservableCollection<ReferenceModelInfo>(
-                _referenceLoader.LoadReference(_branchInfo)
-                .Where(branch => branch.Type.Equals(_branchClass))
-            );
+            try
+            {
+                return new ObservableCollection<ReferenceModelInfo>(
+                    _referenceLoader.LoadReference(_branchInfo)
+                    .Where(branch => branch.Type.Equals(_branchClass))
+                );
+            }catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         /// <summary>

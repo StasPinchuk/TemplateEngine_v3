@@ -25,16 +25,27 @@
             <Border Background="#181F2C"
                     Grid.Column="0"
                     Padding="10, 20">
-                <StackPanel Orientation="Vertical">
+                <Grid>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
                     <control:SideNavigation MenuList="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}"
                                             CurrentFrame="{Binding ElementName=MainFrame}"
                                             SideBar="{Binding ElementName=SideBar}"
-                                            OpenPageCommand="{Binding OpenPageCommand}"/>
-                    <Separator/>
+                                            OpenPageCommand="{Binding OpenPageCommand}"
+                                            Grid.Row="0"/>
                     <Button Style="{StaticResource MaterialDesignFlatButton}"
                             HorizontalContentAlignment="Left"
                             Command="{Binding SaveToJsonCommand}"
-                            Foreground="#FFF">
+                            Foreground="#FFF"
+                            Grid.Row="1">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Width="24"
                                                      Height="24"
@@ -51,7 +62,8 @@
                     <Button Style="{StaticResource MaterialDesignFlatButton}"
                             HorizontalContentAlignment="Left"
                             Command="{Binding ReplaceValueInTemplateCommand}"
-                            Foreground="#FFF">
+                            Foreground="#FFF"
+                            Grid.Row="2">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Width="24"
                                                      Height="24"
@@ -68,7 +80,8 @@
                     <Button Style="{StaticResource MaterialDesignFlatButton}"
                             HorizontalContentAlignment="Left"
                             Command="{Binding DetailTypeListCommand}"
-                            Foreground="#FFF">
+                            Foreground="#FFF"
+                            Grid.Row="3">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Width="24"
                                                      Height="24"
@@ -84,7 +97,8 @@
                     </Button>
                     <Button Style="{StaticResource MaterialDesignFlatButton}"
                             HorizontalContentAlignment="Left"
-                            Foreground="#FFF">
+                            Foreground="#FFF"
+                            Grid.Row="4">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Width="24"
                                                      Height="24"
@@ -98,23 +112,26 @@
                                        Margin="8,0,0,0" />
                         </StackPanel>
                     </Button>
-                    <!--<Button Style="{StaticResource MaterialDesignFlatButton}"
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"
                             HorizontalContentAlignment="Left"
-                            Foreground="#FFF">
+                            Foreground="#FFF"
+                            VerticalAlignment="Bottom"
+                            Command="{Binding OpenSettingsCommand}"
+                            Grid.Row="5">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Width="24"
                                                      Height="24"
-                                                     Kind="Info"
+                                                     Kind="Settings"
                                                      Foreground="#FFF"
                                                      VerticalAlignment="Center" />
 
-                            <TextBlock Text="Открыть логи"
+                            <TextBlock Text="Настройки"
                                        TextWrapping="Wrap"
                                        VerticalAlignment="Center"
                                        Margin="8,0,0,0" />
                         </StackPanel>
-                    </Button>-->
-                </StackPanel>
+                    </Button>
+                </Grid>
             </Border>
 
             <GridSplitter Width="2"

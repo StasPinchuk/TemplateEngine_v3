@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using TemplateEngine_v3.Models;
 using TFlex.DOCs.Model;
@@ -53,19 +54,27 @@ namespace TemplateEngine_v3.Mappers
         /// <returns>Модель <see cref="ReferenceModelInfo"/> или <c>null</c>, если входной объект равен <c>null</c>.</returns>
         public static ReferenceModelInfo FromTFlexReferenceObject(ReferenceObject reference)
         {
-            if (reference == null)
-                return null;
-
-            return new ReferenceModelInfo
+            try
             {
-                Id = reference.Guid,
-                Name = reference[_titleParameterGuid].ToString(),
-                Type = reference.Class,
-                LastEditDate = Convert.ToDateTime(reference[_lastEditParameterGuid].ToString()),
-                CreateDate = Convert.ToDateTime(reference[_createDateParameterGuid].ToString()),
-                ObjectStruct = reference[_structObjectParameterGuid].ToString(),
-                IsLocked = !string.IsNullOrEmpty(reference[_lockedParameterGuid].ToString()) ? reference[_lockedParameterGuid].ToString().Contains(UserFio) : false
-            };
+                if (reference == null)
+                    return null;
+
+                return new ReferenceModelInfo
+                {
+                    Id = reference.Guid,
+                    Name = reference[_titleParameterGuid].ToString(),
+                    Type = reference.Class,
+                    LastEditDate = Convert.ToDateTime(reference[_lastEditParameterGuid].ToString()),
+                    CreateDate = Convert.ToDateTime(reference[_createDateParameterGuid].ToString()),
+                    ObjectStruct = reference[_structObjectParameterGuid].ToString(),
+                    IsLocked = !string.IsNullOrEmpty(reference[_lockedParameterGuid].ToString()) ? reference[_lockedParameterGuid].ToString().Contains(UserFio) : false
+                };
+
+            }catch(Exception ex)
+            {
+                Debug.WriteLine($"Ошибка конвертации: {ex.Message}");
+                return null;
+            }
         }
 
         /// <summary>
@@ -77,7 +86,11 @@ namespace TemplateEngine_v3.Mappers
         {
             if (referenceObjects == null) return null;
 
-            return new ObservableCollection<ReferenceModelInfo>(referenceObjects.Select(reference => FromTFlexReferenceObject(reference)));
+            return new ObservableCollection<ReferenceModelInfo>(
+                referenceObjects
+                    .Select(reference => FromTFlexReferenceObject(reference))
+                    .Where(model => model != null)
+            );
         }
     }
 }

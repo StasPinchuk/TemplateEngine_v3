@@ -199,6 +199,9 @@
     <Compile Include="UserControls\SaveChoiceDialog.xaml.cs">
       <DependentUpon>SaveChoiceDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\SettingsChoiceDialog.xaml.cs">
+      <DependentUpon>SettingsChoiceDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\SideNavigation.xaml.cs">
       <DependentUpon>SideNavigation.xaml</DependentUpon>
     </Compile>
@@ -301,6 +304,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\SaveChoiceDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SettingsChoiceDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

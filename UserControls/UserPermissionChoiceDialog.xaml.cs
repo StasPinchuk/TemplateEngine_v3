@@ -77,7 +77,7 @@ namespace TemplateEngine_v3.UserControls
             DependencyProperty.Register(
                 "UserButtonText",
                 typeof(string),
-                typeof(ReferenceBlock),
+                typeof(UserPermissionChoiceDialog),
                 new PropertyMetadata("Изменить"));
 
         public ObservableCollection<UserModel> AllUsers

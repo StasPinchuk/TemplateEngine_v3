@@ -33,6 +33,7 @@ namespace TemplateEngine_v3.VM.Windows
         public ICommand SaveToJsonCommand { get; set; }
         public ICommand ReplaceValueInTemplateCommand { get; set; }
         public ICommand DetailTypeListCommand { get; set; }
+        public ICommand OpenSettingsCommand { get; set; }
 
         public MainWindowVM(ReferenceManager referenceManager, UserManager userManager, Frame mainFrame, ColumnDefinition sideBar)
         {
@@ -113,6 +114,7 @@ namespace TemplateEngine_v3.VM.Windows
             SaveToJsonCommand = new RelayCommand(SaveToJson);
             ReplaceValueInTemplateCommand = new RelayCommand(ReplaceValueInTemplate);
             DetailTypeListCommand = new RelayCommand(DetailTypeList);
+            OpenSettingsCommand = new RelayCommand(OpenSettings);
         }
 
         private void OnPageOpen(object parameter)
@@ -156,6 +158,12 @@ namespace TemplateEngine_v3.VM.Windows
         private async void DetailTypeList(object parameter)
         {
             var dialog = new DeteilTypeChoiceDialog();
+            await DialogHost.Show(dialog, "MainDialog");
+        }
+
+        private async void OpenSettings(object parameter)
+        {
+            var dialog = new SettingsChoiceDialog();
             await DialogHost.Show(dialog, "MainDialog");
         }
     }

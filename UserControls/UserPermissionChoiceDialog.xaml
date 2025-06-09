@@ -23,6 +23,7 @@
             <Button Style="{StaticResource MaterialDesignIconButton}"
                     Width="30"
                     Height="30"
+                    Margin="10,0,0,0"
                     DockPanel.Dock="Right"
                     Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
                     CommandParameter="closed">
@@ -97,7 +98,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <Button Content="{Binding UserButtonText, ElementName=userPermissionChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+        <Button Content="{Binding UserButtonText, Mode=TwoWay, ElementName=userPermissionChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
                 Style="{StaticResource MaterialDesignRaisedButton}"
                 Background="Green"
                 BorderBrush="Green"

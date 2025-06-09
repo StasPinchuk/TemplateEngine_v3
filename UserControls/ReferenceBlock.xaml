@@ -83,6 +83,7 @@
 
             <UniformGrid Grid.Row="5"
                          Rows="1">
+                
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
                         Background="Red"
                         IsEnabled="{Binding CanRemove, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
@@ -90,6 +91,7 @@
                         Command="{Binding RemoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         Content="Удалить"/>
+                
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
                         BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
                         Background="#1C212E"
@@ -98,6 +100,7 @@
                         CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         Content="Копировать"
                         Margin="10,0"/>
+                
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
                         Background="Green"
                         BorderBrush="Green"
@@ -105,6 +108,7 @@
                         Command="{Binding EditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         Content="{Binding ButtonText, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                
             </UniformGrid>
         </Grid>
         

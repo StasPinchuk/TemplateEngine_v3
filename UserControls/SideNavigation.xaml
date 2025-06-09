@@ -19,6 +19,7 @@
             <DataTemplate>
                 <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
                              MinWidth="60"
+                             Height="35"
                              Foreground="White"
                              IsChecked="{Binding IsSelected}"
                              GroupName="{Binding GroupName}"
