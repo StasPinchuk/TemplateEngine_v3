@@ -280,7 +280,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             if (findTemplate == null)
                 return false;
 
-            if(findTemplate.LockState != ReferenceObjectLockState.None && findTemplate.LockState != ReferenceObjectLockState.LockedByCurrentUser)
+            if (findTemplate.LockState != ReferenceObjectLockState.None && findTemplate.LockState != ReferenceObjectLockState.LockedByCurrentUser)
             {
                 MessageBox.Show("Данный шаблон взят на редактирование другим пользователем", "Ошибка");
                 return false;
@@ -388,7 +388,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 bool isRestore = await AddTemplateAsync(SelectedTemplate, _readyTemplateType);
                 return isRestore;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Ошибка");
                 return false;

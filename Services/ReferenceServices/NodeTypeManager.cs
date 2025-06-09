@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using TFlex.DOCs.Model;
@@ -68,7 +67,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -146,7 +145,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                     NodeTypes.Clear();
                     return false;
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return false;
             }

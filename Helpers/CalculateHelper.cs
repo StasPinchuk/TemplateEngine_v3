@@ -589,7 +589,7 @@ namespace TemplateEngine_v3.Helpers
                 if (Guid.TryParse(args.Parameters[1].Evaluate()?.ToString(), out Guid widthId))
                 {
                     var findCondition = FormulasAndTerms.FirstOrDefault(cond => cond.Id.Equals(widthId.ToString()));
-                    if(findCondition != null)
+                    if (findCondition != null)
                     {
                         findCondition.Value = GetEvaluatorForId(widthId.ToString());
                         width = findCondition.Value;
@@ -599,7 +599,7 @@ namespace TemplateEngine_v3.Helpers
                 {
                     width = args.Parameters[1].Evaluate()?.ToString();
                 }
-                    string heigth = string.Empty;
+                string heigth = string.Empty;
                 if (Guid.TryParse(args.Parameters[2].Evaluate()?.ToString(), out Guid heigthId))
                 {
                     var findCondition = FormulasAndTerms.FirstOrDefault(cond => cond.Id.Equals(heigthId.ToString()));
@@ -616,7 +616,7 @@ namespace TemplateEngine_v3.Helpers
 
                 List<string> parameters = [];
 
-                for(int i = 3; i< args.Parameters.Length-1; i++)
+                for (int i = 3; i < args.Parameters.Length - 1; i++)
                 {
                     parameters.Add(args.Parameters[i].Evaluate()?.ToString());
                 }

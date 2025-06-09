@@ -3,7 +3,6 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
-using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
@@ -25,7 +24,7 @@ namespace TemplateEngine_v3.VM.Pages
             set
             {
                 SetValue(ref _currentTemplate, value, nameof(CurrentTemplate));
-                if(_currentTemplate != null)
+                if (_currentTemplate != null)
                     CurrentRelation = _currentTemplate.TemplateRelations.FirstOrDefault();
             }
         }
@@ -52,8 +51,8 @@ namespace TemplateEngine_v3.VM.Pages
         {
             _technologiesManager = technologiesManager;
             _templateManager = templateManager;
-            _nodeManager = new NodeManager() 
-            { 
+            _nodeManager = new NodeManager()
+            {
                 MenuHelper = _templateManager.MenuHelper,
                 TableManager = templateManager.TableService
             };
@@ -124,9 +123,9 @@ namespace TemplateEngine_v3.VM.Pages
 
         private void RemoveDesignation(object parameters)
         {
-            if(parameters is TemplateRelations relations)
+            if (parameters is TemplateRelations relations)
                 CurrentTemplate.TemplateRelations.Remove(relations);
-            if(CurrentTemplate.TemplateRelations.Count == 0)
+            if (CurrentTemplate.TemplateRelations.Count == 0)
                 CurrentRelation = null;
             else
             {
@@ -141,7 +140,7 @@ namespace TemplateEngine_v3.VM.Pages
 
         private void RemoveExampleMarkings(object parameters)
         {
-            if(parameters is string exampleMarkings)
+            if (parameters is string exampleMarkings)
                 CurrentTemplate.ExampleMarkings.Remove(exampleMarkings);
         }
     }

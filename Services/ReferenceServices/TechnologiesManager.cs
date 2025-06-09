@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -63,7 +62,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
-        private ObservableCollection<ReferenceModelInfo> _branches;
+        private readonly ObservableCollection<ReferenceModelInfo> _branches;
 
         /// <summary>
         /// Коллекция всех филиалов.
@@ -129,6 +128,35 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 await newTechnologies.EndChangesAsync();
 
                 newTechnologies = null;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> EditTechnologies(Technologies editTechnologies)
+        {
+            try
+            {
+                var reference = await _technologiesInfo.CreateReferenceAsync();
+                await reference.Objects.ReloadAsync();
+
+                var selectedTechnologies = reference.Find(editTechnologies.Id);
+                if (selectedTechnologies != null)
+                {
+                    await selectedTechnologies.BeginChangesAsync();
+
+                    selectedTechnologies[_nameParameter.Guid].Value = editTechnologies.Name;
+                    selectedTechnologies[_objectStringParameter.Guid].Value = new JsonSerializer().Serialize(editTechnologies);
+
+                    await selectedTechnologies.EndChangesAsync();
+                }
+
+                selectedTechnologies = null;
+                reference = null;
 
                 return true;
             }

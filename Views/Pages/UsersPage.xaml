@@ -21,7 +21,7 @@
                                    Orientation="Horizontal"
                                    HorizontalAlignment="Center"
                                    Margin="8"
-                                   ItemWidth="340"/>
+                                   ItemWidth="320"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>

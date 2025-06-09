@@ -26,9 +26,7 @@
                    VerticalAlignment="Center"
                    FontWeight="SemiBold"
                    Grid.Row="1">
-            <Hyperlink Style="{StaticResource MaterialDesignHeadline6Hyperlink}">
-                Загрузка...
-            </Hyperlink>
+            Загрузка...
         </TextBlock>
     </Grid>
 </Window>

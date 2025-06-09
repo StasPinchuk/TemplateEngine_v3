@@ -52,6 +52,7 @@ namespace TemplateEngine_v3.Interfaces
         /// <param name="createTechnologies">Объект технологии для добавления.</param>
         /// <returns>Задача, результат которой указывает успешность операции.</returns>
         Task<bool> AddTechnologies(Technologies createTechnologies);
+        Task<bool> EditTechnologies(Technologies createTechnologies);
 
         /// <summary>
         /// Клонирует выбранную технологию.

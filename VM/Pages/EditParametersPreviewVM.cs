@@ -1,11 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Interfaces;
@@ -16,7 +12,7 @@ namespace TemplateEngine_v3.VM.Pages
     public class EditParametersPreviewVM : BaseNotifyPropertyChanged
     {
         private readonly IEvaluatorManager _evaluatorManager;
-        private ConditionEvaluator _editEvaluator;
+        private readonly ConditionEvaluator _editEvaluator;
 
         private ConditionEvaluator _currentEvaluator = new();
         public ConditionEvaluator CurrentEvaluator
@@ -64,20 +60,20 @@ namespace TemplateEngine_v3.VM.Pages
         public ICommand ModifyEvalutorCommand { get; set; }
         public ICommand SetCurrentEvaluatorCommand { get; set; }
 
-        public EditParametersPreviewVM(ConditionEvaluator editEvaluator, IEvaluatorManager evaluatorManager, DrawerHost drawerHost) 
+        public EditParametersPreviewVM(ConditionEvaluator editEvaluator, IEvaluatorManager evaluatorManager, DrawerHost drawerHost)
         {
             _evaluatorManager = evaluatorManager;
-            foreach(var eval in _evaluatorManager.AllTemplateParameters)
+            foreach (var eval in _evaluatorManager.AllTemplateParameters)
             {
-                if(eval.Id.Equals(editEvaluator.Id))
+                if (eval.Id.Equals(editEvaluator.Id))
                     _editEvaluator = eval;
             }
-            foreach(var eval in _evaluatorManager.AllTemplateParameters)
+            foreach (var eval in _evaluatorManager.AllTemplateParameters)
             {
-                if(eval.Id.Equals(editEvaluator.Id))
+                if (eval.Id.Equals(editEvaluator.Id))
                     _editEvaluator = eval;
             }
-            if(_editEvaluator != null)
+            if (_editEvaluator != null)
                 CurrentEvaluator = _editEvaluator.Copy();
 
             NodeEvaluators = _evaluatorManager.NodeEvaluators;

@@ -1,15 +1,11 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Xml.Linq;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
-using TemplateEngine_v3.Services;
 using TemplateEngine_v3.UserControls;
 
 namespace TemplateEngine_v3.VM.Pages
@@ -198,7 +194,7 @@ namespace TemplateEngine_v3.VM.Pages
             OnPropertyChanged(nameof(NodeEvaluators));
             SetEvaluator();
         }
-        
+
         private void OnNodeChanged()
         {
             _evaluatorManager.SetNodeEvaluators(CurrentNode);

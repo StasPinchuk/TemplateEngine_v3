@@ -14,7 +14,7 @@
                     materialDesign:TextFieldAssist.TextBoxViewMargin="0">
             <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      materialDesign:HintAssist.Hint="Название детали"
-                     Text="{Binding CurrentNode.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                     Text="{Binding CurrentNode.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
 
             <ComboBox ItemsSource="{Binding NodeTypes}"
                       IsEditable="True"
@@ -36,8 +36,7 @@
 
             <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      materialDesign:HintAssist.Hint="Комментарий"
-                     Text="{Binding CurrentNode.NodeComment, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                     />
+                     Text="{Binding CurrentNode.NodeComment, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
 
             <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      materialDesign:HintAssist.Hint="Условие использования детали" 

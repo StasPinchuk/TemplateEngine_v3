@@ -1,12 +1,9 @@
 ﻿using Aspose.Cells;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
-using TFlex.DOCs.Common;
 using TFlex.DOCs.Model;
 using TFlex.DOCs.Model.References.Files;
 
@@ -41,7 +38,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
             _tableFolder.Children.Reload();
 
-            foreach(var file in _tableFolder.Children)
+            foreach (var file in _tableFolder.Children)
             {
                 TableNames.Add(file.Name);
             }
@@ -54,7 +51,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             string tablePath = await GetSelectedTable(tableName);
             _workbook = new Workbook(tablePath);
 
-            foreach(var worksheet in _workbook.Worksheets)
+            foreach (var worksheet in _workbook.Worksheets)
             {
                 worksheetNames.Add(worksheet.Name);
             }
@@ -103,7 +100,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         public void SetParameters(Dictionary<string, string> parameters)
         {
-            foreach(var key in parameters.Keys)
+            foreach (var key in parameters.Keys)
             {
                 _currentWorksheet.Cells[key].PutValue(parameters[key]);
             }
@@ -117,7 +114,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
             Dictionary<string, string> _parametersValueDict = [];
 
-            foreach(var value in _valueDict.Values)
+            foreach (var value in _valueDict.Values)
             {
                 _parametersValueDict.Add(value, string.Empty);
             }
@@ -138,9 +135,9 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
 
             string findValue = GetParameter(collumnNumber, rowNumber, collumnsCount, rowsCount, width, heigth);
-            
 
-            if(isRange)
+
+            if (isRange)
             {
                 _currentWorksheet.Cells[0, 1].PutValue(findValue);
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using TemplateEngine_v3.Models.PageCollection;
 using TFlex.DOCs.Model.Classes;
 
 namespace TemplateEngine_v3.Models

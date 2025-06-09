@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Models;
@@ -97,7 +95,7 @@ namespace TemplateEngine_v3.Helpers
                     var item = (MenuItem)s;
                     if ((bool)item.Tag!) return;
 
-                    item.Items.Clear(); 
+                    item.Items.Clear();
 
                     foreach (var node in templateRelation.Nodes)
                     {

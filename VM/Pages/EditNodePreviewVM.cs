@@ -9,7 +9,6 @@ using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.ReferenceServices;
-using TFlex.DOCs.Model.Macros;
 
 namespace TemplateEngine_v3.VM.Pages
 {
@@ -19,17 +18,13 @@ namespace TemplateEngine_v3.VM.Pages
         private readonly IEvaluatorManager _evaluatorManager;
         private readonly IBranchManager _branchManager;
         private readonly DrawerHost _drawer;
-        private ContextMenuHelper _contextMenuHelper;
+        private readonly ContextMenuHelper _contextMenuHelper;
 
-        private Node _editNode;
+        private readonly Node _editNode;
         private Node _currentNode;
         public Node CurrentNode
         {
-            get => _currentNode;
-            set
-            {
-                SetValue(ref _currentNode, value, nameof(CurrentNode));
-            }
+            get => _currentNode; set => SetValue(ref _currentNode, value, nameof(CurrentNode));
         }
 
         private string _nodeType = string.Empty;
@@ -56,7 +51,7 @@ namespace TemplateEngine_v3.VM.Pages
 
         public ICommand EditNodeCommand { get; set; }
 
-        public EditNodePreviewVM(Node node, IEvaluatorManager evaluatorManager, ContextMenuHelper contextMenuHelper, DrawerHost drawerHost) 
+        public EditNodePreviewVM(Node node, IEvaluatorManager evaluatorManager, ContextMenuHelper contextMenuHelper, DrawerHost drawerHost)
         {
             _editNode = node;
             CurrentNode = node.Copy();

@@ -14,13 +14,15 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
             <RowDefinition Height="40"/>
-            <RowDefinition Height="180"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="130"/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" LastChildFill="True">
             
             <Button Style="{StaticResource MaterialDesignIconButton}"
+                    Width="30"
+                    Height="30"
                     DockPanel.Dock="Right"
                     Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
                     CommandParameter="closed">
@@ -31,7 +33,6 @@
             <CheckBox Content="Администратор"
                       IsChecked="{Binding SelectedUser.IsAdmin, ElementName=userPermissionChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
                       DockPanel.Dock="Right"/>
-
 
             <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}"
                       materialDesign:HintAssist.Hint="Пользователи без доступов"
@@ -48,13 +49,18 @@
                       BorderBrush="Gray"
                       BorderThickness="0,0,0,1"
                       Grid.Row="1">
+            
             <ItemsControl.ItemsPanel>
+                
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="{Binding PermissionCollection.Count, ElementName=userPermissionChoiceDialog, UpdateSourceTrigger=PropertyChanged}"/>
                 </ItemsPanelTemplate>
+                
             </ItemsControl.ItemsPanel>
+            
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
+                    
                     <RadioButton HorizontalAlignment="Stretch"
                                  Style="{StaticResource MaterialDesignTabRadioButton}"
                                  IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -69,8 +75,10 @@
                                        HorizontalAlignment="Center"/>
                         </StackPanel>
                     </RadioButton>
+                    
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
+            
         </ItemsControl>
 
         <ItemsControl ItemsSource="{Binding UserPermissionsList, ElementName=userPermissionChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
@@ -78,11 +86,13 @@
                       Margin="0,10,0,0">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
+                    
                     <CheckBox Content="{Binding Key}"
                               Margin="0,0,0,10"
                               IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               Command="{Binding SetPermissionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                               CommandParameter="{Binding}"/>
+                    
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
@@ -93,5 +103,6 @@
                 BorderBrush="Green"
                 Command="{Binding AddOrEditAllowedUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                 Grid.Row="3"/>
+        
     </Grid>
 </UserControl>

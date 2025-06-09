@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Xml;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
@@ -54,10 +51,7 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
-        public ContextMenu MaterialsNameMenu
-        {
-            get => _technologiesManager.MenuHelper?.GetContextMenu();
-        }
+        public ContextMenu MaterialsNameMenu => _technologiesManager.MenuHelper?.GetContextMenu();
 
         public ObservableCollection<string> OperationNames { get; private set; } = new();
         public ObservableCollection<ReferenceModelInfo> Technologies { get; private set; } = new();
@@ -68,6 +62,7 @@ namespace TemplateEngine_v3.VM.Pages
         public ICommand SetBranchCommand { get; private set; }
         public ICommand RemoveBranchCommand { get; private set; }
         public ICommand SetCurrentTechnologiesCommand { get; private set; }
+        public ICommand SaveOrEditCurrentTechnologiesCommand { get; private set; }
 
         public TechnologiesPageVM(ITechnologiesManager technologiesManager)
         {
@@ -90,6 +85,7 @@ namespace TemplateEngine_v3.VM.Pages
             SetBranchCommand = new RelayCommand(SetBranch);
             RemoveBranchCommand = new RelayCommand(RemoveBranch);
             SetCurrentTechnologiesCommand = new RelayCommand(SetCurrentTechnologies);
+            SaveOrEditCurrentTechnologiesCommand = new RelayCommand(SaveOrEditCurrentTechnologies);
         }
 
         private void OnCurrentTechnologiesChanged(Technologies technologies)
@@ -101,7 +97,7 @@ namespace TemplateEngine_v3.VM.Pages
         private void SetBranchesList()
         {
             Branches.Clear();
-            if(CurrentOperation != null)
+            if (CurrentOperation != null)
                 foreach (var branch in _technologiesManager.Branches)
                 {
                     if (!_currentOperation.BranchDivisionDetails.Any(branchDivision =>
@@ -110,7 +106,6 @@ namespace TemplateEngine_v3.VM.Pages
                     {
                         Branches.Add(branch);
                     }
-
                 }
         }
 
@@ -145,13 +140,13 @@ namespace TemplateEngine_v3.VM.Pages
 
         private void SetBranch(object parameter)
         {
-            if(parameter is ReferenceModelInfo referenceModelInfo)
+            if (parameter is ReferenceModelInfo referenceModelInfo)
             {
                 var newBranchDivision = new BranchDivisionDetails()
                 {
                     Branch = new JsonSerializer().Deserialize<Branch>(referenceModelInfo.ObjectStruct)
                 };
-                
+
                 CurrentOperation.BranchDivisionDetails.Add(newBranchDivision);
 
                 newBranchDivision = null;
@@ -194,6 +189,20 @@ namespace TemplateEngine_v3.VM.Pages
                     CurrentTechnologies.SetValue(technologies);
                     technologies = null;
                 }
+            }
+        }
+
+        private void SaveOrEditCurrentTechnologies()
+        {
+            var selectedTech = Technologies.FirstOrDefault(tech => tech.Id.Equals(CurrentTechnologies.Id));
+
+            if (selectedTech != null)
+            {
+                _technologiesManager.EditTechnologies(CurrentTechnologies);
+            }
+            else
+            {
+                _technologiesManager.AddTechnologies(CurrentTechnologies);
             }
         }
 

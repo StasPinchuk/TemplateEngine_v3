@@ -2,14 +2,12 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
-using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.VM.Pages
 {
@@ -23,11 +21,7 @@ namespace TemplateEngine_v3.VM.Pages
 
         public BranchDivisionDetails CurrentBranchDivision
         {
-            get => _currentBranchDivision;
-            set
-            {
-                SetValue(ref _currentBranchDivision, value, nameof(CurrentBranchDivision));
-            }
+            get => _currentBranchDivision; set => SetValue(ref _currentBranchDivision, value, nameof(CurrentBranchDivision));
         }
 
         private ObservableCollection<TreeEvaluator> _parts = new ObservableCollection<TreeEvaluator>();
@@ -37,7 +31,7 @@ namespace TemplateEngine_v3.VM.Pages
             set => SetValue(ref _parts, value, nameof(Parts));
         }
 
-        private ContextMenuHelper _contextMenuHelper;
+        private readonly ContextMenuHelper _contextMenuHelper;
 
         public ContextMenu TextBoxContextMenu => _contextMenuHelper.GetContextMenu();
 

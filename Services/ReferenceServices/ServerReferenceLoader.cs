@@ -40,7 +40,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <param name="referenceInfo">Информация о справочнике.</param>
         /// <returns>Коллекция моделей справочных объектов.</returns>
         public ObservableCollection<ReferenceModelInfo> LoadReference(ReferenceInfo referenceInfo)
-        {   
+        {
             ReferenceMapper.SetParameters(referenceInfo);
             ReferenceMapper.Reference.Objects.Reload();
             List<ReferenceObject> referenceObjects = ReferenceMapper.Reference.Objects

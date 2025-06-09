@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
-using static TFlex.DOCs.Model.References.Materials.MaterialReferenceObject;
 
 namespace TemplateEngine_v3.Services.ReferenceServices
 {
@@ -38,8 +36,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// Все вычислители, найденные в шаблоне (рекурсивно в узлах).
         /// </summary>
         public ObservableCollection<ConditionEvaluator> AllTemplateEvaluator { get; set; } = [];
-        public ObservableCollection<ConditionEvaluator> AllTemplateParameters{ get; set; } = [];
-        public ObservableCollection<string> TemplateMarkings{ get; set; } = [];
+        public ObservableCollection<ConditionEvaluator> AllTemplateParameters { get; set; } = [];
+        public ObservableCollection<string> TemplateMarkings { get; set; } = [];
 
         /// <summary>
         /// Вычислители, принадлежащие конкретному узлу.

@@ -64,7 +64,8 @@ namespace TemplateEngine_v3.Helpers
                     editor.TextChanged += Editor_TextChanged;
                 }
 
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
 
             }
