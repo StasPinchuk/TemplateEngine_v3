@@ -39,12 +39,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             try
             {
-                // Загружаем объекты из справочника
                 _reference.Objects.Load();
 
                 OperationNameList.Clear();
 
-                // Проходим по всем объектам справочника и получаем значение параметра "Наименование"
                 foreach (var obj in _reference.Objects)
                 {
                     var nameValue = obj[_nameParameter.Guid]?.ToString();
@@ -59,7 +57,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
             catch (Exception ex)
             {
-                // Отображаем сообщение об ошибке
                 MessageBox.Show($"Ошибка при загрузке названий операций: {ex.Message}", "Ошибка");
             }
         }

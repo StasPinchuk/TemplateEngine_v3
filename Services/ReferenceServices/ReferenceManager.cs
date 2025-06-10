@@ -30,13 +30,10 @@ public class ReferenceManager
     /// </summary>
     public void InitializeReferences(ServerConnection connection)
     {
-        // Загружаем из json, если не найдено - создаём пустой словарь
         ReferenceMappings = _referenceLoader.LoadReferences($"references.json") ?? new();
 
-        // Проверяем на null и заполняем отсутствующие ссылки из сервера
         FillMissingReferences(connection);
 
-        // Создаём необходимые менеджеры по загруженным ReferenceInfo
         CreateManagers(connection);
     }
 
@@ -45,7 +42,6 @@ public class ReferenceManager
     /// </summary>
     private void FillMissingReferences(ServerConnection connection)
     {
-        // Чтобы избежать изменения коллекции во время итерации - копируем ключи
         foreach (var key in ReferenceMappings.Keys.ToList())
         {
             if (ReferenceMappings[key] == null)

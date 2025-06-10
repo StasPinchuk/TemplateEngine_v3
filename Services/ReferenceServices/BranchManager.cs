@@ -38,12 +38,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             _branchInfo = branchInfo;
             _reference = branchInfo.CreateReference();
 
-            // Получаем класс филиалов и параметры "Наименование" и "Структура файла"
             _branchClass = _branchInfo.Classes.Find("Филиалы");
             _nameParameter = _reference.ParameterGroup.Parameters.FindByName("Наименование");
             _objectStringParameter = _reference.ParameterGroup.Parameters.FindByName("Структура файла");
 
-            // Если что-то не найдено — это критическая ошибка, выбрасываем исключение
             if (_nameParameter == null || _objectStringParameter == null || _branchClass == null)
                 throw new InvalidOperationException("Не найдены необходимые параметры или класс филиалов в Reference");
         }

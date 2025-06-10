@@ -51,9 +51,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 if (_currentNode != value)
                 {
                     _currentNode = value;
-                    // Обновляем вычислители для нового текущего узла
                     EvaluatorManager?.SetNodeEvaluators(_currentNode);
-                    // Уведомляем подписчиков, что текущий узел изменился
                     CurrentNodeChanged?.Invoke(_currentNode);
                 }
             }

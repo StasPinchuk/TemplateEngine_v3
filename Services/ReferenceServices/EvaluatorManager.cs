@@ -68,17 +68,13 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <returns>Список всех вычислителей из переданных узлов и их потомков.</returns>
         public List<ConditionEvaluator> GetNodeEvaluators(ObservableCollection<Node> nodes)
         {
-            // Создаём пустой список
             List<ConditionEvaluator> conditionEvaluators = new();
 
-            // Обходим все узлы
             foreach (var currentNode in nodes)
             {
-                // Добавляем вычислители из формул и термов текущего узла
                 conditionEvaluators.AddRange(currentNode.ExpressionRepository.Formulas);
                 conditionEvaluators.AddRange(currentNode.ExpressionRepository.Terms);
 
-                // Рекурсивно получаем вычислители из дочерних узлов
                 var newEvaluatorsList = GetNodeEvaluators(currentNode.Nodes);
                 conditionEvaluators.AddRange(newEvaluatorsList);
             }
@@ -88,16 +84,12 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         public List<ConditionEvaluator> GetNodeParameters(ObservableCollection<Node> nodes)
         {
-            // Создаём пустой список
             List<ConditionEvaluator> conditionEvaluators = new();
 
-            // Обходим все узлы
             foreach (var currentNode in nodes)
             {
-                // Добавляем вычислители из формул и термов текущего узла
                 conditionEvaluators.AddRange(currentNode.Parameters);
 
-                // Рекурсивно получаем вычислители из дочерних узлов
                 var newEvaluatorsList = GetNodeParameters(currentNode.Nodes);
                 conditionEvaluators.AddRange(newEvaluatorsList);
             }

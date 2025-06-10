@@ -29,15 +29,12 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             {
                 var reference = NodeTypeInfo.CreateReference();
 
-                // Перезагружаем объекты, чтобы актуализировать данные
                 reference.Objects.Reload();
 
-                // Заполняем список названиями объектов
                 NodeTypes = new(reference.Objects.Select(obj => obj.ToString()));
             }
             else
             {
-                // Если NodeTypeInfo не установлен, очищаем список
                 NodeTypes.Clear();
             }
         }
