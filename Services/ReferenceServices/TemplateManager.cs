@@ -348,8 +348,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             if (SelectedTemplate == null)
                 return;
             var findTemplate = await _reference.FindAsync(SelectedTemplate.Id);
-            if (findTemplate != null) 
-                findTemplate.EndChanges();
+            if (findTemplate != null && findTemplate.CanUnlock)
+            {
+                findTemplate.Unlock();
+            }
             SelectedTemplate = null;
         }
 

@@ -39,9 +39,9 @@ namespace TemplateEngine_v3.VM.Pages
             _nodeManager = nodeManager;
             _updatePage = updatePage;
             _updateNodeGroup = updateNodeGroup;
+            _nodeManager.CurrentNodeChanged += OnCurrentNodeChanged;
             if (CurrentNode != null)
                 NodeType = CurrentNode?.Type;
-            _nodeManager.CurrentNodeChanged += OnCurrentNodeChanged;
         }
 
         private void OnCurrentNodeChanged(Node node)

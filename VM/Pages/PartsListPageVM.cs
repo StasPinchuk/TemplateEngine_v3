@@ -214,12 +214,12 @@ namespace TemplateEngine_v3.VM.Pages
 
                 if (SelectedNode != null)
                 {
-                    nodeManager.CurrentNode = SelectedNode;
+                    nodeManager.CurrentNode = SelectedNode.Nodes.Count > 0 ? SelectedNode.Nodes.First() : SelectedNode;
                     nodeManager.Nodes = SelectedNode.Nodes;
                 }
-                UpdatePage(Title: "Основная информация", required: true, typeofPage: typeof(MainNodePage), PackIconKind.NoteText, new object[] { nodeManager, SetPageCollection, SetNodeGroup });
-                UpdatePage(Title: "Формулы и условия", required: true, typeofPage: typeof(FormulasAndTermsPage), PackIconKind.Function, new object[] { nodeManager });
-                UpdatePage(Title: "Параметры", required: needParamsAndTech, typeofPage: typeof(ParametersPage), PackIconKind.Tune, new object[] { nodeManager });
+                UpdatePage(Title: "Основная информация", required: true, typeofPage: typeof(MainNodePage), PackIconKind.NoteText, new object[] { _nodeManager, SetPageCollection, SetNodeGroup });
+                UpdatePage(Title: "Формулы и условия", required: true, typeofPage: typeof(FormulasAndTermsPage), PackIconKind.Function, new object[] { _nodeManager });
+                UpdatePage(Title: "Параметры", required: needParamsAndTech, typeofPage: typeof(ParametersPage), PackIconKind.Tune, new object[] { _nodeManager });
                 UpdatePage(Title: "Тех. процесс", required: needParamsAndTech, typeofPage: typeof(TechnologiesPage), PackIconKind.Cogs, new object[] { _technologiesManager });
                 UpdatePage(Title: "Детали", required: isAssembly, typeofPage: typeof(PartsListPage), PackIconKind.Cube, new object[] { _technologiesManager, nodeManager, _templateManager });
             }
@@ -245,17 +245,17 @@ namespace TemplateEngine_v3.VM.Pages
 
             if(SelectedNode != null)
             {
-                nodeManager.CurrentNode = SelectedNode;
+                nodeManager.CurrentNode = SelectedNode.Nodes.Count > 0 ? SelectedNode.Nodes.First() : SelectedNode;
                 nodeManager.Nodes = SelectedNode.Nodes;
             }
             PageCollection.Clear();
 
-            PageCollection.Add(new PageModel("Основная информация", typeof(MainNodePage), true, PackIconKind.NoteText, new object[] { nodeManager, SetPageCollection, SetNodeGroup }));
-            PageCollection.Add(new PageModel("Формулы и условия", typeof(FormulasAndTermsPage), PackIconKind.Function, new object[] { nodeManager }));
+            PageCollection.Add(new PageModel("Основная информация", typeof(MainNodePage), true, PackIconKind.NoteText, new object[] { _nodeManager, SetPageCollection, SetNodeGroup }));
+            PageCollection.Add(new PageModel("Формулы и условия", typeof(FormulasAndTermsPage), PackIconKind.Function, new object[] { _nodeManager }));
 
             if (needParamsAndTech)
             {
-                PageCollection.Add(new PageModel("Параметры", typeof(ParametersPage), PackIconKind.Tune, new object[] { nodeManager }));
+                PageCollection.Add(new PageModel("Параметры", typeof(ParametersPage), PackIconKind.Tune, new object[] { _nodeManager }));
                 PageCollection.Add(new PageModel("Тех. процесс", typeof(TechnologiesPage), PackIconKind.Cogs, new object[] { _technologiesManager }));
             }
 

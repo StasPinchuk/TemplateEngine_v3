@@ -120,6 +120,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <param name="node">Узел, вычислители которого нужно установить.</param>
         public void SetNodeEvaluators(Node node)
         {
+            if (node == null)
+                return;
             List<ConditionEvaluator> evaluators = new();
             evaluators.AddRange(node.ExpressionRepository.Formulas);
             evaluators.AddRange(node.ExpressionRepository.Terms);
