@@ -304,6 +304,13 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <param name="template">Объект шаблона.</param>
         public async Task<bool> SetTemplateAsync(Template template)
         {
+            if (template.Name.Equals("Новый шаблон"))
+            {
+                SelectedTemplate = template;
+                MenuHelper = new ContextMenuHelper(template, MaterialManager);
+            }
+
+
             var findTemplate = await _reference.FindAsync(template.Id);
 
             if (findTemplate == null)
@@ -340,7 +347,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             if (SelectedTemplate == null)
                 return;
             var findTemplate = await _reference.FindAsync(SelectedTemplate.Id);
-            findTemplate.EndChanges();
+            if (findTemplate != null) 
+                findTemplate.EndChanges();
             SelectedTemplate = null;
         }
 

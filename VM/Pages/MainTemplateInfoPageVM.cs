@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
@@ -36,7 +37,7 @@ namespace TemplateEngine_v3.VM.Pages
             set => SetValue(ref _currentRelation, value, nameof(CurrentRelation));
         }
 
-        public ContextMenu TextBoxMenu => _nodeManager.MenuHelper.GetContextMenu();
+        public ContextMenu TextBoxMenu => _nodeManager.MenuHelper.GetContextMenu() ?? new ContextMenu();
 
         public ObservableCollection<PageModel> PagesCollection { get; private set; } = new();
 
@@ -80,9 +81,9 @@ namespace TemplateEngine_v3.VM.Pages
             NextPageCommand = new RelayCommand(NextPage, CanNextPage);
             SetRelationsCommand = new RelayCommand(SetRelations);
             AddDesignationCommand = new RelayCommand(AddDesignation);
-            RemoveDesignationCommand = new RelayCommand(RemoveDesignation);
-            AddExampleMarkingsCommand = new RelayCommand(AddExampleMarkings);
-            RemoveExampleMarkingsCommand = new RelayCommand(RemoveExampleMarkings);
+            RemoveDesignationCommand = new RelayCommand(RemoveDesignationAsync);
+            AddExampleMarkingsCommand = new RelayCommand(AddExampleMarkingsAsync);
+            RemoveExampleMarkingsCommand = new RelayCommand(RemoveExampleMarkingsAsync);
         }
 
         private bool CanNextPage(object parameters)
@@ -119,9 +120,10 @@ namespace TemplateEngine_v3.VM.Pages
         private void AddDesignation(object parameters)
         {
             CurrentTemplate.TemplateRelations.Add(new());
+            UpdateContextMenu();
         }
 
-        private void RemoveDesignation(object parameters)
+        private void RemoveDesignationAsync(object parameters)
         {
             if (parameters is TemplateRelations relations)
                 CurrentTemplate.TemplateRelations.Remove(relations);
@@ -131,17 +133,26 @@ namespace TemplateEngine_v3.VM.Pages
             {
                 CurrentRelation = CurrentTemplate.TemplateRelations.LastOrDefault();
             }
+            UpdateContextMenu();
         }
 
-        private void AddExampleMarkings(object parameters)
+        private void AddExampleMarkingsAsync(object parameters)
         {
             CurrentTemplate.ExampleMarkings.Add(string.Empty);
+            UpdateContextMenu();
         }
 
-        private void RemoveExampleMarkings(object parameters)
+        private void RemoveExampleMarkingsAsync(object parameters)
         {
             if (parameters is string exampleMarkings)
                 CurrentTemplate.ExampleMarkings.Remove(exampleMarkings);
+            UpdateContextMenu();
+        }
+
+        public async void UpdateContextMenu()
+        {
+            await _nodeManager.MenuHelper.UpdateContextMenuAsync();
+
         }
     }
 }
