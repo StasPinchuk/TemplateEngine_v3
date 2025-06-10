@@ -73,8 +73,6 @@ namespace TemplateEngine_v3.Helpers
             return attributeMenuItem;
         }
 
-
-
         private List<MenuItem> CreateTemplateRelationsItems(IEnumerable<TemplateRelations> templateRelations)
         {
             var templateRelationsList = new List<MenuItem>();
@@ -112,15 +110,12 @@ namespace TemplateEngine_v3.Helpers
             }
 
             return templateRelationsList;
-        }
-
-
+        } 
 
         public async Task<List<TemplateRelations>> GetTemplateRelationsAsync()
         {
             return await Task.FromResult(_template.TemplateRelations.ToList());
         }
-
 
         private MenuItem CreateMaterialsMenu()
         {
@@ -209,7 +204,6 @@ namespace TemplateEngine_v3.Helpers
             return menuItem;
         }
 
-
         private List<MenuItem> CreateEvaluatorItems(ExpressionRepository expression)
         {
             var items = new List<MenuItem>();
@@ -267,7 +261,6 @@ namespace TemplateEngine_v3.Helpers
                 CommandParameter = source.CommandParameter,
                 IsEnabled = source.IsEnabled,
                 Icon = source.Icon,
-                // и другие свойства по необходимости
             };
 
             foreach (var item in source.Items)
@@ -275,7 +268,7 @@ namespace TemplateEngine_v3.Helpers
                 if (item is MenuItem subMenuItem)
                     clone.Items.Add(CloneMenuItem(subMenuItem));
                 else
-                    clone.Items.Add(item); // или обработать иначе, если не MenuItem
+                    clone.Items.Add(item); 
             }
 
             return clone;
@@ -332,7 +325,6 @@ namespace TemplateEngine_v3.Helpers
             object? result = TryResolvePath(bindingExpr.DataItem, pathParts);
             if (result != null) return result;
 
-            // Если не получилось — попробовать с DataContext
             return TryResolvePath(DataContext, pathParts);
         }
 

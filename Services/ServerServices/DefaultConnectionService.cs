@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TFlex.DOCs.Model;
@@ -12,7 +11,7 @@ namespace TemplateEngine_v3.Services.ServerServices
 {
     public class DefaultConnectionService : IConnectionService
     {
-        List<Guid> configurationIds = new()
+        readonly List<Guid> configurationIds = new()
         {
             new Guid("00000000-0000-0000-0000-000000000000"),
             new Guid("f92b4541-65c5-4331-8ce2-99a68ae3eae9"),
@@ -39,7 +38,11 @@ namespace TemplateEngine_v3.Services.ServerServices
             try
             {
                 AssemblyResolver.Instance.AddDirectory(credentials.ApiPath);
-                return await ServerConnection.OpenAsync(credentials.Login, credentials.Password, credentials.ServerIp, configurationIds.First());
+
+                return await ServerConnection.OpenAsync(credentials.Login,
+                                                        credentials.Password,
+                                                        credentials.ServerIp,
+                                                        configurationIds.First());
             }
             catch (Exception ex)
             {

@@ -219,8 +219,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                     return false;
 
                 await editReference.BeginChangesAsync();
+
                 editReference[_nameParameter.Guid].Value = editTemplate.Name;
                 editReference[_objectStringParameter.Guid].Value = new JsonSerializer().Serialize(editTemplate);
+
                 await editReference.EndChangesAsync();
                 await editReference.BeginChangesAsync();
 
@@ -309,7 +311,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 SelectedTemplate = template;
                 MenuHelper = new ContextMenuHelper(template, MaterialManager);
             }
-
 
             var findTemplate = await _reference.FindAsync(template.Id);
 
