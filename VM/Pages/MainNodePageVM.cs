@@ -46,7 +46,7 @@ namespace TemplateEngine_v3.VM.Pages
 
         private void OnCurrentNodeChanged(Node node)
         {
-            OnPropertyChanged(nameof(CurrentNode)); // <- важно!
+            OnPropertyChanged(nameof(CurrentNode));
             NodeType = node.Type;
         }
     }

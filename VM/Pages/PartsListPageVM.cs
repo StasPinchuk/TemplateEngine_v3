@@ -73,7 +73,7 @@ namespace TemplateEngine_v3.VM.Pages
         {
             _nodeManager = nodeManager;
             _technologiesManager = technologiesManager;
-            _templateManager = templateManager; 
+            _templateManager = templateManager;
             _technologiesManager.MenuHelper = _nodeManager.MenuHelper;
             Nodes = _nodeManager.Nodes;
             _nodePage = nodePage;
@@ -98,7 +98,6 @@ namespace TemplateEngine_v3.VM.Pages
 
         private void SetNodeGroup()
         {
-            // Сохраняем, какие группы были развёрнуты
             _expandedGroups = new HashSet<string>(
                 NodeGroups.Where(g => g.IsExpanded).Select(g => g.Key));
 
@@ -108,7 +107,7 @@ namespace TemplateEngine_v3.VM.Pages
                 {
                     Key = g.Key,
                     Nodes = new ObservableCollection<Node>(g.ToList()),
-                    IsExpanded = _expandedGroups.Contains(g.Key) // восстанавливаем состояние
+                    IsExpanded = _expandedGroups.Contains(g.Key) 
                 })
                 .ToList();
 
@@ -236,14 +235,14 @@ namespace TemplateEngine_v3.VM.Pages
 
         private void InitializePages(bool isAssembly, bool needParamsAndTech)
         {
-            INodeManager nodeManager = new NodeManager() 
+            INodeManager nodeManager = new NodeManager()
             {
                 MenuHelper = _nodeManager.MenuHelper,
                 TableManager = _nodeManager.TableManager,
                 EvaluatorManager = _nodeManager.EvaluatorManager,
             };
 
-            if(SelectedNode != null)
+            if (SelectedNode != null)
             {
                 nodeManager.CurrentNode = SelectedNode.Nodes.Count > 0 ? SelectedNode.Nodes.First() : SelectedNode;
                 nodeManager.Nodes = SelectedNode.Nodes;
@@ -269,7 +268,7 @@ namespace TemplateEngine_v3.VM.Pages
         {
             var existingPage = PageCollection.FirstOrDefault(p => p.Title == Title);
 
-            if(existingPage != null && existingPage.ConstructorParameters.Any(param => param is INodeManager))
+            if (existingPage != null && existingPage.ConstructorParameters.Any(param => param is INodeManager))
             {
                 var nodeManager = existingPage.ConstructorParameters.FirstOrDefault(param => param is INodeManager) as INodeManager;
                 nodeManager.CurrentNode = SelectedNode;

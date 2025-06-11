@@ -114,7 +114,7 @@ namespace TemplateEngine_v3.Services.FileServices
             foreach (var file in files)
             {
                 try
-                {
+                {   
                     string content = File.ReadAllText(file);
                     var template = JsonConvert.DeserializeObject<Template>(content);
                     if (template != null)

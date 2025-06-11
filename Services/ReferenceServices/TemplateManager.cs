@@ -288,7 +288,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 return false;
             }
 
-            findTemplate.BeginChanges();
+            await findTemplate.BeginChangesAsync();
 
             Template template = new JsonSerializer().Deserialize<Template>(referenceModel.ObjectStruct);
 
