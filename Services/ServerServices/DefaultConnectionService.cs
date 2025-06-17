@@ -9,8 +9,12 @@ using TFlex.PdmFramework.Resolve;
 
 namespace TemplateEngine_v3.Services.ServerServices
 {
+    /// <summary>
+    /// Сервис для подключения к серверу T-Flex PDM с использованием списка конфигураций.
+    /// </summary>
     public class DefaultConnectionService : IConnectionService
     {
+        // Список возможных конфигураций для подключения (GUID'ы конфигураций)
         readonly List<Guid> configurationIds = new()
         {
             new Guid("00000000-0000-0000-0000-000000000000"),
@@ -33,23 +37,39 @@ namespace TemplateEngine_v3.Services.ServerServices
             new Guid("069a8aa6-27fd-4cae-b54d-221259b25c7d")
         };
 
+        /// <summary>
+        /// Асинхронное подключение к серверу T-Flex с использованием заданных учетных данных.
+        /// </summary>
+        /// <param name="credentials">Данные пользователя для подключения (логин, пароль, IP, путь к API).</param>
+        /// <returns>Объект подключения к серверу или null, если подключение не удалось.</returns>
         public async Task<ServerConnection> ConnectAsync(UserCredentials credentials)
         {
             try
             {
+                // Добавляем путь к API в резолвер сборок,
+                // чтобы загрузить необходимые библиотеки T-Flex динамически
                 AssemblyResolver.Instance.AddDirectory(credentials.ApiPath);
 
-                return await ServerConnection.OpenAsync(credentials.Login,
-                                                        credentials.Password,
-                                                        credentials.ServerIp,
-                                                        configurationIds.First());
+                // Пытаемся открыть соединение к серверу
+                // с использованием первого GUID из списка конфигураций
+                return await ServerConnection.OpenAsync(
+                    credentials.Login,
+                    credentials.Password,
+                    credentials.ServerIp,
+                    configurationIds.First());
             }
             catch (Exception ex)
             {
+                // В случае ошибки подключения удаляем первую конфигурацию
+                // из списка (вероятно, чтобы попытаться с другой конфигурацией)
                 configurationIds.RemoveAt(0);
+
+                // Можно логировать ошибку, например:
+                // Debug.WriteLine($"Ошибка подключения: {ex.Message}");
+
+                // Возвращаем null, так как подключение не удалось
                 return null;
             }
         }
-
     }
 }

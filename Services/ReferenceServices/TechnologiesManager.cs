@@ -36,7 +36,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         private ContextMenuHelper _contextMenuHelper;
 
         /// <summary>
-        /// Получить или установить помощника для контекстного меню.
+        /// Помощник для контекстного меню.
         /// </summary>
         public ContextMenuHelper MenuHelper
         {
@@ -48,6 +48,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         /// <summary>
         /// Текущие выбранные технологии.
+        /// При изменении вызывает событие <see cref="CurrentTechnologiesChanged"/>.
         /// </summary>
         public Technologies CurrentTechnologies
         {
@@ -92,7 +93,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <summary>
         /// Получить копию контекстного меню.
         /// </summary>
-        /// <returns>Контекстное меню или null.</returns>
+        /// <returns>Контекстное меню или null, если помощник не установлен.</returns>
         public ContextMenu GetContextMenu()
         {
             return _contextMenuHelper?.GetContextMenu();
@@ -108,7 +109,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         }
 
         /// <summary>
-        /// Добавляет новую технологию в справочник.
+        /// Асинхронно добавляет новую технологию в справочник.
         /// </summary>
         /// <param name="createTechnologies">Создаваемые технологии.</param>
         /// <returns>True, если успешно добавлено; иначе false.</returns>
@@ -131,12 +132,17 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
         }
 
+        /// <summary>
+        /// Асинхронно редактирует существующую технологию.
+        /// </summary>
+        /// <param name="editTechnologies">Технологии для редактирования.</param>
+        /// <returns>True, если успешно отредактировано; иначе false.</returns>
         public async Task<bool> EditTechnologies(Technologies editTechnologies)
         {
             try
@@ -160,14 +166,14 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
         }
 
         /// <summary>
-        /// Клонирует существующую технологию.
+        /// Асинхронно клонирует существующую технологию, создавая копию с новым именем.
         /// </summary>
         /// <param name="selectedTechnologies">Клонируемая технология.</param>
         /// <returns>True, если успешно клонирована; иначе false.</returns>
@@ -214,7 +220,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         }
 
         /// <summary>
-        /// Удаляет технологию из справочника.
+        /// Асинхронно удаляет технологию из справочника.
         /// </summary>
         /// <param name="removeTechnologies">Технология для удаления.</param>
         /// <returns>True, если успешно удалена; иначе false.</returns>

@@ -36,41 +36,47 @@ namespace TemplateEngine_v3.Interfaces
         /// <summary>
         /// Получает коллекцию всех технологий.
         /// </summary>
-        /// <returns>Коллекция технологий.</returns>
+        /// <returns>Коллекция объектов <see cref="ReferenceModelInfo"/> представляющих технологии.</returns>
         ObservableCollection<ReferenceModelInfo> GetAllTechnologies();
 
         /// <summary>
         /// Удаляет указанную технологию.
         /// </summary>
-        /// <param name="removeTechnologies">Объект технологии для удаления.</param>
-        /// <returns>Задача, результат которой указывает успешность операции.</returns>
+        /// <param name="removeTechnologies">Объект технологии, которую необходимо удалить.</param>
+        /// <returns>Задача, результат которой указывает успешность операции удаления.</returns>
         Task<bool> RemoveTechnologies(ReferenceModelInfo removeTechnologies);
 
         /// <summary>
         /// Добавляет новую технологию.
         /// </summary>
         /// <param name="createTechnologies">Объект технологии для добавления.</param>
-        /// <returns>Задача, результат которой указывает успешность операции.</returns>
+        /// <returns>Задача, результат которой указывает успешность операции добавления.</returns>
         Task<bool> AddTechnologies(Technologies createTechnologies);
+
+        /// <summary>
+        /// Редактирует существующую технологию.
+        /// </summary>
+        /// <param name="createTechnologies">Объект технологии с обновленными данными.</param>
+        /// <returns>Задача, результат которой указывает успешность операции редактирования.</returns>
         Task<bool> EditTechnologies(Technologies createTechnologies);
 
         /// <summary>
         /// Клонирует выбранную технологию.
         /// </summary>
         /// <param name="selectedTechnologies">Объект технологии для клонирования.</param>
-        /// <returns>Задача, результат которой указывает успешность операции.</returns>
+        /// <returns>Задача, результат которой указывает успешность операции клонирования.</returns>
         Task<bool> CloneTechnologies(ReferenceModelInfo selectedTechnologies);
 
         /// <summary>
-        /// Получает менеджер имен операций.
+        /// Получает менеджер имен операций, связанных с технологиями.
         /// </summary>
-        /// <returns>Менеджер имен операций.</returns>
+        /// <returns>Экземпляр <see cref="OperationNamesManager"/> для управления именами операций.</returns>
         OperationNamesManager GetOperationNamesManager();
 
         /// <summary>
         /// Получает контекстное меню, связанное с технологиями.
         /// </summary>
-        /// <returns>Контекстное меню.</returns>
+        /// <returns>Экземпляр <see cref="ContextMenu"/> для отображения контекстного меню.</returns>
         ContextMenu GetContextMenu();
     }
 }

@@ -35,27 +35,41 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <summary>
         /// Все вычислители, найденные в шаблоне (рекурсивно в узлах).
         /// </summary>
-        public ObservableCollection<ConditionEvaluator> AllTemplateEvaluator { get; set; } = [];
-        public ObservableCollection<ConditionEvaluator> AllTemplateParameters { get; set; } = [];
-        public ObservableCollection<string> TemplateMarkings { get; set; } = [];
+        public ObservableCollection<ConditionEvaluator> AllTemplateEvaluator { get; set; } = new();
+
+        /// <summary>
+        /// Все параметры, найденные в шаблоне (рекурсивно в узлах).
+        /// </summary>
+        public ObservableCollection<ConditionEvaluator> AllTemplateParameters { get; set; } = new();
+
+        /// <summary>
+        /// Коллекция маркировок из шаблона.
+        /// </summary>
+        public ObservableCollection<string> TemplateMarkings { get; set; } = new();
 
         /// <summary>
         /// Вычислители, принадлежащие конкретному узлу.
         /// </summary>
-        public ObservableCollection<ConditionEvaluator> NodeEvaluators { get; set; }
+        public ObservableCollection<ConditionEvaluator> NodeEvaluators { get; set; } = new();
 
         /// <summary>
         /// Конструктор, инициализирует менеджер, собирая все вычислители из переданных связей шаблона.
         /// </summary>
-        /// <param name="relations">Объект с отношениями шаблона (узлы, связи и т.д.).</param>
+        /// <param name="relations">Отношения шаблона (узлы, связи и т.д.).</param>
         public EvaluatorManager(TemplateRelations relations)
         {
             SetAllTemplateEvaluator(ref relations);
             SetAllTemplateParameters(ref relations);
         }
+
+        /// <summary>
+        /// Конструктор с передачей шаблона и его отношений.
+        /// </summary>
+        /// <param name="template">Шаблон с маркировками.</param>
+        /// <param name="relations">Отношения шаблона.</param>
         public EvaluatorManager(Template template, TemplateRelations relations)
         {
-            TemplateMarkings = new(template.ProductMarkingAttributes);
+            TemplateMarkings = new ObservableCollection<string>(template.ProductMarkingAttributes);
             SetAllTemplateEvaluator(ref relations);
             SetAllTemplateParameters(ref relations);
         }
@@ -82,6 +96,11 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             return conditionEvaluators;
         }
 
+        /// <summary>
+        /// Рекурсивно собирает все параметры из списка узлов.
+        /// </summary>
+        /// <param name="nodes">Коллекция узлов для поиска параметров.</param>
+        /// <returns>Список всех параметров из переданных узлов и их потомков.</returns>
         public List<ConditionEvaluator> GetNodeParameters(ObservableCollection<Node> nodes)
         {
             List<ConditionEvaluator> conditionEvaluators = new();
@@ -100,13 +119,17 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <summary>
         /// Инициализирует поле AllTemplateEvaluator — собирает все вычислители из переданных отношений шаблона.
         /// </summary>
-        /// <param name="relations">Отношения шаблона, которые нужно проанализировать.</param>
+        /// <param name="relations">Отношения шаблона для анализа.</param>
         public void SetAllTemplateEvaluator(ref TemplateRelations relations)
         {
             _relations = relations;
             AllTemplateEvaluator = new ObservableCollection<ConditionEvaluator>(GetNodeEvaluators(relations.Nodes));
         }
 
+        /// <summary>
+        /// Инициализирует поле AllTemplateParameters — собирает все параметры из переданных отношений шаблона.
+        /// </summary>
+        /// <param name="relations">Отношения шаблона для анализа.</param>
         public void SetAllTemplateParameters(ref TemplateRelations relations)
         {
             _relations = relations;
@@ -122,9 +145,11 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             if (node == null)
                 return;
+
             List<ConditionEvaluator> evaluators = new();
             evaluators.AddRange(node.ExpressionRepository.Formulas);
             evaluators.AddRange(node.ExpressionRepository.Terms);
+
             NodeEvaluators = new ObservableCollection<ConditionEvaluator>(evaluators);
         }
 

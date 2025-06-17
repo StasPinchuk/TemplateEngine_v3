@@ -2,9 +2,16 @@
 
 namespace TemplateEngine_v3.Models
 {
+    /// <summary>
+    /// Представляет модель прав доступа к определённой странице.
+    /// </summary>
     public class PermissionModel : BaseNotifyPropertyChanged
     {
         private string _permissionPageName = string.Empty;
+
+        /// <summary>
+        /// Название страницы, для которой назначены права.
+        /// </summary>
         public string PermissionPageName
         {
             get => _permissionPageName;
@@ -12,6 +19,10 @@ namespace TemplateEngine_v3.Models
         }
 
         private List<UserPermission> _permissionList = new();
+
+        /// <summary>
+        /// Список прав пользователей, связанных с этой страницей.
+        /// </summary>
         public List<UserPermission> PermissionList
         {
             get => _permissionList;
@@ -19,6 +30,10 @@ namespace TemplateEngine_v3.Models
         }
 
         private bool _isSelected = false;
+
+        /// <summary>
+        /// Флаг, указывающий, выбрана ли данная модель (например, для отображения или редактирования).
+        /// </summary>
         public bool IsSelected
         {
             get => _isSelected;

@@ -13,8 +13,16 @@ namespace TemplateEngine_v3.Interfaces
     /// </summary>
     public interface ITemplateManager
     {
+        /// <summary>
+        /// Сервис для работы с таблицами.
+        /// </summary>
         TableService TableService { get; set; }
+
+        /// <summary>
+        /// Менеджер материалов.
+        /// </summary>
         MaterialManager MaterialManager { get; set; }
+
         /// <summary>
         /// Помощник для работы с контекстным меню.
         /// </summary>
@@ -78,12 +86,14 @@ namespace TemplateEngine_v3.Interfaces
         /// Устанавливает текущий шаблон по информации о шаблоне.
         /// </summary>
         /// <param name="referenceModel">Объект информации о шаблоне.</param>
+        /// <returns>Задача, возвращающая результат успешности операции.</returns>
         Task<bool> SetTemplateAsync(ReferenceModelInfo referenceModel);
 
         /// <summary>
         /// Устанавливает текущий шаблон напрямую.
         /// </summary>
         /// <param name="template">Объект шаблона.</param>
+        /// <returns>Задача, возвращающая результат успешности операции.</returns>
         Task<bool> SetTemplateAsync(Template template);
 
         /// <summary>
@@ -92,6 +102,12 @@ namespace TemplateEngine_v3.Interfaces
         /// <param name="type">Тип шаблона для сохранения.</param>
         /// <returns>Задача, возвращающая результат успешности операции.</returns>
         Task<bool> SaveTemplate(string type);
+
+        /// <summary>
+        /// Асинхронно восстанавливает шаблон из корзины.
+        /// </summary>
+        /// <param name="reference">Объект информации о шаблоне для восстановления.</param>
+        /// <returns>Задача, возвращающая результат успешности операции.</returns>
         Task<bool> RestoreTemplateAsync(ReferenceModelInfo reference);
 
         /// <summary>

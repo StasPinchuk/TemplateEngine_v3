@@ -13,10 +13,21 @@ namespace TemplateEngine_v3.Services.UsersServices
     /// </summary>
     public class UserManager
     {
+        // Подключение к серверу T-FLEX DOCs
         private readonly ServerConnection _connection;
+
+        // Менеджер всех пользователей
         private readonly AllUsersManager _allUsersManager;
+
+        // Менеджер разрешённых пользователей
         private readonly AllowedUsersManager _allowedUsersManager;
+
+        // Текущий пользователь системы
         private UserModel _currentUser;
+
+        /// <summary>
+        /// Текущий пользователь (модель)
+        /// </summary>
         public UserModel CurrentUser
         {
             get => _currentUser;
@@ -28,62 +39,74 @@ namespace TemplateEngine_v3.Services.UsersServices
         /// </summary>
         /// <param name="currentConnection">Объект подключения к серверу.</param>
         /// <param name="allUsersManager">Менеджер всех пользователей.</param>
-        /// <param name="allowedUsersManager">Менеджер разрешенных пользователей.</param>
+        /// <param name="allowedUsersManager">Менеджер разрешённых пользователей.</param>
         public UserManager(ServerConnection currentConnection, AllUsersManager allUsersManager, AllowedUsersManager allowedUsersManager)
         {
             _connection = currentConnection;
             _allUsersManager = allUsersManager;
             _allowedUsersManager = allowedUsersManager;
+
+            // Инициализация текущего пользователя
             Initialize(currentConnection);
         }
 
         /// <summary>
-        /// Инициализирует текущего пользователя.
+        /// Инициализирует текущего пользователя на основе активного подключения.
         /// </summary>
-        /// <param name="currentConnection">Объект подключения к серверу.</param>
+        /// <param name="currentConnection">Подключение к серверу.</param>
         private void Initialize(ServerConnection currentConnection)
         {
+            // Получение текущего пользователя через клиентское представление
             User currentUser = currentConnection.ClientView.GetUser();
 
+            // Поиск текущего пользователя в списке разрешённых пользователей
             CurrentUser = GetAlloweUsers().FirstOrDefault(user => user.FullName.Equals(currentUser.ToString()));
 
+            // Обнуление ссылки на оригинальный объект User (опционально, освобождение памяти)
             currentUser = null;
         }
 
         /// <summary>
-        /// Получает список всех пользователей.
+        /// Возвращает список всех пользователей.
         /// </summary>
-        /// <returns>Список всех пользователей.</returns>
-        public List<UserModel> GetAllUsers() => _allUsersManager.GetAllUsers();
+        public List<UserModel> GetAllUsers() =>
+            _allUsersManager.GetAllUsers();
 
         /// <summary>
-        /// Получает отфильтрованный список всех пользователей, исключая текущего пользователя и разрешенных пользователей.
+        /// Возвращает отфильтрованный список всех пользователей, исключая текущего и разрешённых.
         /// </summary>
-        /// <returns>Отфильтрованный список пользователей.</returns>
-        public ObservableCollection<UserModel> GetFilteredAllUsersList() => _allUsersManager.GetFilteredUsersList(_currentUser, new()/*GetAlloweUsers()*/);
+        public ObservableCollection<UserModel> GetFilteredAllUsersList() =>
+            _allUsersManager.GetFilteredUsersList(_currentUser, new() /* можно заменить на GetAlloweUsers() */);
 
         /// <summary>
-        /// Получает список разрешенных пользователей.
+        /// Возвращает список разрешённых пользователей.
         /// </summary>
-        /// <returns>Коллекция разрешенных пользователей.</returns>
-        public ObservableCollection<UserModel> GetAlloweUsers() => _allowedUsersManager.GetAllowedUsers();
+        public ObservableCollection<UserModel> GetAlloweUsers() =>
+            _allowedUsersManager.GetAllowedUsers();
 
         /// <summary>
-        /// Проверяет, является ли текущий пользователь в списке разрешенных.
+        /// Проверяет, входит ли текущий пользователь в список разрешённых.
         /// </summary>
-        /// <returns><c>true</c>, если текущий пользователь в списке разрешенных; иначе <c>false</c>.</returns>
-        public bool IsUserInAllowedList() => _allowedUsersManager.IsUserInList(_currentUser);
+        public bool IsUserInAllowedList() =>
+            _allowedUsersManager.IsUserInList(_currentUser);
 
         /// <summary>
-        /// Добавляет пользователя в список разрешенных.
+        /// Добавляет пользователя в список разрешённых.
         /// </summary>
-        /// <param name="allowedUser">Пользователь, которого нужно добавить в список разрешенных.</param>
-        /// <returns><c>true</c>, если пользователь был успешно добавлен; иначе <c>false</c>.</returns>
-        public bool AddAllowedUser(UserModel allowedUser) => _allowedUsersManager.AddAllowedUser(allowedUser);
+        /// <param name="allowedUser">Добавляемый пользователь.</param>
+        public bool AddAllowedUser(UserModel allowedUser) =>
+            _allowedUsersManager.AddAllowedUser(allowedUser);
 
+        /// <summary>
+        /// Изменяет данные разрешённого пользователя.
+        /// </summary>
+        /// <param name="allowedUser">Пользователь с новыми данными.</param>
         public bool EditAllowedUser(UserModel allowedUser)
         {
+            // Изменение пользователя в списке
             bool isEdit = _allowedUsersManager.EditAllowedUser(allowedUser);
+
+            // Обновление текущего пользователя, если он редактировался
             if (isEdit && CurrentUser.FullName.Equals(allowedUser.FullName))
                 CurrentUser = allowedUser;
 
@@ -91,17 +114,15 @@ namespace TemplateEngine_v3.Services.UsersServices
         }
 
         /// <summary>
-        /// Удаляет пользователя из списка разрешенных.
+        /// Удаляет пользователя из списка разрешённых.
         /// </summary>
-        /// <param name="allowedUser">Пользователь, которого нужно удалить из списка разрешенных.</param>
-        /// <returns><c>true</c>, если пользователь был удален; иначе <c>false</c>.</returns>
-        public bool RemoveAllosedUser(UserModel allowedUser) => _allowedUsersManager.RemoveAllowedUser(allowedUser);
+        public bool RemoveAllosedUser(UserModel allowedUser) =>
+            _allowedUsersManager.RemoveAllowedUser(allowedUser);
 
         /// <summary>
-        /// Удаляет пользователя из списка всех пользователей.
+        /// Удаляет пользователя из общего списка пользователей.
         /// </summary>
-        /// <param name="selectedUser">Пользователь, которого нужно удалить.</param>
-        /// <returns><c>true</c>, если пользователь был удален; иначе <c>false</c>.</returns>
-        public bool RemoveUser(User selectedUser) => _allUsersManager.RemoveUser(selectedUser);
+        public bool RemoveUser(User selectedUser) =>
+            _allUsersManager.RemoveUser(selectedUser);
     }
 }

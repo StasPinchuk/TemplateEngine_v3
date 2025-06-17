@@ -14,8 +14,8 @@ using TFlex.DOCs.Model.Structure;
 namespace TemplateEngine_v3.Services.ReferenceServices
 {
     /// <summary>
-    /// Менеджер для работы с филиалами (Branches) через Reference объекты.
-    /// Позволяет добавлять, клонировать, получать список и удалять филиалы.
+    /// Менеджер для работы с филиалами (Branches) через объекты Reference.
+    /// Предоставляет методы для добавления, редактирования, клонирования, получения списка и удаления филиалов.
     /// </summary>
     public class BranchManager : IBranchManager
     {
@@ -27,8 +27,9 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         private readonly ClassObject _branchClass;
 
         /// <summary>
-        /// Конструктор инициализирует все необходимые зависимости и параметры.
-        /// Выбрасывает исключение, если не удаётся найти обязательные параметры или класс.
+        /// Инициализация менеджера: устанавливает загрузчик Reference, 
+        /// получает класс филиалов и ключевые параметры.
+        /// Выбрасывает исключение, если нужные параметры или класс не найдены.
         /// </summary>
         /// <param name="referenceLoader">Загрузчик Reference объектов.</param>
         /// <param name="branchInfo">Информация о Reference, описывающем филиалы.</param>
@@ -51,7 +52,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// Создаёт ReferenceObject, заполняет параметры и сохраняет изменения.
         /// </summary>
         /// <param name="createBranch">Модель филиала для добавления.</param>
-        /// <returns>True, если успешно добавлено, иначе false.</returns>
+        /// <returns>True — если добавление прошло успешно, иначе false.</returns>
         public Task<bool> AddBranch(Branch createBranch)
         {
             if (_nameParameter == null || _objectStringParameter == null)
@@ -65,8 +66,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 {
                     var newBranch = _reference.CreateReferenceObject(_branchClass);
 
+                    // Присваиваем Id для модели филиала
                     createBranch.Id = newBranch.Guid;
 
+                    // Заполняем параметры ReferenceObject
                     newBranch[_nameParameter.Guid].Value = createBranch.Name;
                     newBranch[_objectStringParameter.Guid].Value = new JsonSerializer().Serialize(createBranch);
 
@@ -76,10 +79,18 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine($"Ошибка при добавлении филиала: {ex.Message}");
                     return false;
                 }
             }
         }
+
+        /// <summary>
+        /// Асинхронно редактирует существующий филиал.
+        /// Обновляет параметры ReferenceObject по Id.
+        /// </summary>
+        /// <param name="editBranchObj">Объект филиала с обновлёнными данными.</param>
+        /// <returns>True — если редактирование прошло успешно, иначе false.</returns>
         public Task<bool> EditBranch(Branch editBranchObj)
         {
             if (_nameParameter == null || _objectStringParameter == null)
@@ -93,8 +104,9 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 {
                     _reference.Objects.Reload();
 
-                    var editBranch = _reference.Objects.FirstOrDefault(branch => branch.ToString().Equals(editBranchObj.Name) );
-                    if(editBranch != null)
+                    // Находим ReferenceObject по имени (желательно изменить на поиск по Id)
+                    var editBranch = _reference.Objects.FirstOrDefault(branch => branch.ToString().Equals(editBranchObj.Name));
+                    if (editBranch != null)
                     {
                         await editBranch.BeginChangesAsync();
 
@@ -108,6 +120,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine($"Ошибка при редактировании филиала: {ex.Message}");
                     return false;
                 }
             }
@@ -117,8 +130,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// Клонирует существующий филиал.
         /// Создаёт копию с новым Guid и именем с суффиксом " - копия".
         /// </summary>
-        /// <param name="selectedBranch">Филиал для клонирования.</param>
-        /// <returns>True, если успешно, иначе false.</returns>
+        /// <param name="selectedBranch">Филиал, который нужно клонировать.</param>
+        /// <returns>True — если клонирование прошло успешно, иначе false.</returns>
         public async Task<bool> CloneBranch(ReferenceModelInfo selectedBranch)
         {
             try
@@ -152,9 +165,9 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         /// <summary>
         /// Получает все филиалы из ReferenceLoader.
-        /// Фильтрует по классу "Филиалы" и возвращает коллекцию для биндинга.
+        /// Фильтрует объекты по классу "Филиалы" и возвращает коллекцию для биндинга.
         /// </summary>
-        /// <returns>Коллекция всех филиалов.</returns>
+        /// <returns>Коллекция филиалов.</returns>
         public ObservableCollection<ReferenceModelInfo> GetAllBranches()
         {
             try
@@ -163,8 +176,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                     _referenceLoader.LoadReference(_branchInfo)
                     .Where(branch => branch.Type.Equals(_branchClass))
                 );
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
+                Debug.WriteLine($"Ошибка при загрузке филиалов: {ex.Message}");
                 return null;
             }
         }
@@ -173,7 +188,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// Асинхронно удаляет филиал из Reference.
         /// </summary>
         /// <param name="branch">Филиал для удаления.</param>
-        /// <returns>True, если успешно удалено, иначе false.</returns>
+        /// <returns>True — если удаление прошло успешно, иначе false.</returns>
         public async Task<bool> RemoveBranch(ReferenceModelInfo branch)
         {
             try

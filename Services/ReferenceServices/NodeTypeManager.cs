@@ -25,17 +25,35 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// </summary>
         public static void SetNodeTypesList()
         {
-            if (NodeTypeInfo != null)
-            {
-                var reference = NodeTypeInfo.CreateReference();
-
-                reference.Objects.Reload();
-
-                NodeTypes = new(reference.Objects.Select(obj => obj.ToString()));
-            }
-            else
+            if (NodeTypeInfo == null)
             {
                 NodeTypes.Clear();
+                return;
+            }
+
+            var reference = NodeTypeInfo.CreateReference();
+            reference.Objects.Reload();
+
+            var newItems = reference.Objects.Select(obj => obj.ToString()).ToList();
+
+            // Обновляем коллекцию без пересоздания
+            UpdateObservableCollection(NodeTypes, newItems);
+        }
+
+        private static void UpdateObservableCollection(ObservableCollection<string> collection, System.Collections.Generic.List<string> newItems)
+        {
+            // Удаляем лишние элементы
+            for (int i = collection.Count - 1; i >= 0; i--)
+            {
+                if (!newItems.Contains(collection[i]))
+                    collection.RemoveAt(i);
+            }
+
+            // Добавляем новые элементы
+            foreach (var item in newItems)
+            {
+                if (!collection.Contains(item))
+                    collection.Add(item);
             }
         }
 
@@ -43,70 +61,66 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             try
             {
-                if (NodeTypeInfo != null)
-                {
-                    var reference = NodeTypeInfo.CreateReference();
-
-                    var nameGuid = reference.ParameterGroup.Parameters.FindByName("Наименование").Guid;
-
-                    var newType = reference.CreateReferenceObject();
-                    newType[nameGuid].Value = typeName;
-                    newType.EndChanges();
-                    NodeTypes.Add(typeName);
-
-                    SetNodeTypesList();
-
-                    return true;
-                }
-                else
+                if (NodeTypeInfo == null)
                 {
                     NodeTypes.Clear();
                     return false;
                 }
+
+                var reference = NodeTypeInfo.CreateReference();
+
+                var nameGuid = reference.ParameterGroup.Parameters.FindByName("Наименование")?.Guid;
+
+                if (nameGuid == null)
+                    return false;
+
+                var newType = reference.CreateReferenceObject();
+                newType[nameGuid.Value].Value = typeName;
+                newType.EndChanges();
+
+                SetNodeTypesList();
+
+                return true;
             }
             catch (Exception ex)
             {
+                // TODO: логировать ex
                 return false;
             }
         }
 
-        public static bool EditNodeType(string typeName)
+        public static bool EditNodeType(string oldTypeName, string newTypeName)
         {
             try
             {
-                if (NodeTypeInfo != null)
-                {
-                    var reference = NodeTypeInfo.CreateReference();
-
-                    reference.Objects.Reload();
-
-                    var editNodeType = reference.Objects.FirstOrDefault(type => type.ToString().Equals(typeName));
-
-                    if (editNodeType != null)
-                    {
-                        var nameGuid = reference.ParameterGroup.Parameters.FindByName("Наименование").Guid;
-                        editNodeType.BeginChanges();
-                        editNodeType[nameGuid].Value = typeName;
-                        editNodeType.EndChanges();
-
-                        SetNodeTypesList();
-
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                }
-                else
+                if (NodeTypeInfo == null)
                 {
                     NodeTypes.Clear();
                     return false;
                 }
+
+                var reference = NodeTypeInfo.CreateReference();
+                reference.Objects.Reload();
+
+                var editNodeType = reference.Objects.FirstOrDefault(type => type.ToString().Equals(oldTypeName, StringComparison.OrdinalIgnoreCase));
+                if (editNodeType == null)
+                    return false;
+
+                var nameGuid = reference.ParameterGroup.Parameters.FindByName("Наименование")?.Guid;
+                if (nameGuid == null)
+                    return false;
+
+                editNodeType.BeginChanges();
+                editNodeType[nameGuid.Value].Value = newTypeName;
+                editNodeType.EndChanges();
+
+                SetNodeTypesList();
+
+                return true;
             }
             catch (Exception ex)
             {
+                // TODO: логировать ex
                 return false;
             }
         }
@@ -115,36 +129,28 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             try
             {
-                if (NodeTypeInfo != null)
-                {
-                    var reference = NodeTypeInfo.CreateReference();
-
-                    reference.Objects.Reload();
-
-                    var removeNodeType = reference.Objects.FirstOrDefault(type => type.ToString().Equals(typeName));
-
-                    if (removeNodeType != null)
-                    {
-                        removeNodeType.Delete();
-
-                        SetNodeTypesList();
-
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                }
-                else
+                if (NodeTypeInfo == null)
                 {
                     NodeTypes.Clear();
                     return false;
                 }
+
+                var reference = NodeTypeInfo.CreateReference();
+                reference.Objects.Reload();
+
+                var removeNodeType = reference.Objects.FirstOrDefault(type => type.ToString().Equals(typeName, StringComparison.OrdinalIgnoreCase));
+                if (removeNodeType == null)
+                    return false;
+
+                removeNodeType.Delete();
+
+                SetNodeTypesList();
+
+                return true;
             }
             catch (Exception ex)
             {
+                // TODO: логировать ex
                 return false;
             }
         }

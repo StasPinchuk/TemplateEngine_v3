@@ -10,17 +10,33 @@ using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Helpers
 {
+    /// <summary>
+    /// Помощник для создания и управления контекстным меню с динамическими элементами,
+    /// такими как параметры шаблона, материалы и связи шаблонов.
+    /// </summary>
     public class ContextMenuHelper
     {
         private ContextMenu _currentContext;
         private readonly Template _template;
         private readonly MaterialManager _materialManager;
 
+        /// <summary>
+        /// Текущий выбранный условный вычислитель.
+        /// </summary>
         public ConditionEvaluator CurrentEvaluator { get; set; }
+
+        /// <summary>
+        /// Внешний контекст данных, используемый для разрешения биндингов.
+        /// </summary>
         public object DataContext { get; set; }
 
         private ICommand SetEvaluatorTextBoxCommand { get; set; }
 
+        /// <summary>
+        /// Создает новый экземпляр помощника для контекстного меню.
+        /// </summary>
+        /// <param name="template">Шаблон, на основе которого создаются параметры меню.</param>
+        /// <param name="materialManager">Менеджер материалов для загрузки списка материалов.</param>
         public ContextMenuHelper(Template template, MaterialManager materialManager)
         {
             _template = template;
@@ -29,6 +45,9 @@ namespace TemplateEngine_v3.Helpers
             SetEvaluatorTextBoxCommand = new RelayCommand(SetEvaluatorTextBox);
         }
 
+        /// <summary>
+        /// Асинхронно создает новое контекстное меню с элементами.
+        /// </summary>
         public async Task CreateContextMenuAsync()
         {
             var contextMenu = new ContextMenu { Cursor = Cursors.Hand };
@@ -44,13 +63,19 @@ namespace TemplateEngine_v3.Helpers
             _currentContext = contextMenu;
         }
 
+        /// <summary>
+        /// Создает пункт меню с параметрами шаблона, подгружаемыми при открытии.
+        /// </summary>
+        /// <returns>Элемент меню с параметрами шаблона.</returns>
         private MenuItem CreateAttributeItems()
         {
             var attributeMenuItem = new MenuItem { Header = "Параметры шаблона" };
             bool isLoaded = false;
 
+            // Добавляем заглушку "Загрузка..."
             attributeMenuItem.Items.Add(new MenuItem { Header = "Загрузка..." });
 
+            // При открытии меню загружаем параметры, если они еще не загружены
             attributeMenuItem.SubmenuOpened += (s, e) =>
             {
                 if (isLoaded) return; // Уже загрузили, ничего не делать
@@ -73,6 +98,11 @@ namespace TemplateEngine_v3.Helpers
             return attributeMenuItem;
         }
 
+        /// <summary>
+        /// Создает пункты меню для связей шаблонов.
+        /// </summary>
+        /// <param name="templateRelations">Список связей шаблонов.</param>
+        /// <returns>Список элементов меню с отношениями шаблонов.</returns>
         private List<MenuItem> CreateTemplateRelationsItems(IEnumerable<TemplateRelations> templateRelations)
         {
             var templateRelationsList = new List<MenuItem>();
@@ -82,16 +112,17 @@ namespace TemplateEngine_v3.Helpers
                 var menuItem = new MenuItem
                 {
                     Header = templateRelation.Designation,
-                    Tag = false // флаг загрузки
+                    Tag = false // флаг загрузки подменю
                 };
 
                 // Заглушка, чтобы стрелка появилась
                 menuItem.Items.Add(new MenuItem { Header = "Загрузка...", IsEnabled = false });
 
+                // При открытии подменю загружаем дочерние узлы
                 menuItem.SubmenuOpened += (s, e) =>
                 {
                     var item = (MenuItem)s;
-                    if ((bool)item.Tag!) return;
+                    if ((bool)item.Tag!) return; // Уже загружено
 
                     item.Items.Clear();
 
@@ -100,7 +131,6 @@ namespace TemplateEngine_v3.Helpers
                         var childItem = CreateLazyNodeMenuItem(node);
                         if (childItem != null)
                             menuItem.Items.Add(childItem);
-
                     }
 
                     item.Tag = true;
@@ -110,20 +140,30 @@ namespace TemplateEngine_v3.Helpers
             }
 
             return templateRelationsList;
-        } 
+        }
 
+        /// <summary>
+        /// Асинхронно получает список связей шаблонов из текущего шаблона.
+        /// </summary>
+        /// <returns>Список связей шаблонов.</returns>
         public async Task<List<TemplateRelations>> GetTemplateRelationsAsync()
         {
             return await Task.FromResult(_template.TemplateRelations.ToList());
         }
 
+        /// <summary>
+        /// Создает пункт меню с материалами, сгруппированными по типу, подгружаемыми при открытии.
+        /// </summary>
+        /// <returns>Элемент меню с материалами.</returns>
         private MenuItem CreateMaterialsMenu()
         {
             var materialsMenuItem = new MenuItem { Header = "Материалы" };
             bool isLoaded = false;
 
+            // Заглушка для отображения
             materialsMenuItem.Items.Add(new MenuItem { Header = "Загрузка..." });
 
+            // При открытии подменю загружаем материалы
             materialsMenuItem.SubmenuOpened += async (s, e) =>
             {
                 if (isLoaded) return; // Чтобы не загружать повторно
@@ -135,6 +175,7 @@ namespace TemplateEngine_v3.Helpers
 
                 foreach (string material in materialList)
                 {
+                    // Определяем тип материала по первой части строки
                     string type = material.Split(new[] { " ", "-" }, StringSplitOptions.RemoveEmptyEntries)[0];
 
                     if (!materials.ContainsKey(type))
@@ -143,6 +184,7 @@ namespace TemplateEngine_v3.Helpers
                     materials[type].Add(material);
                 }
 
+                // Создаем группы и добавляем материалы
                 foreach (var group in materials)
                 {
                     var groupItem = new MenuItem { Header = group.Key };
@@ -166,9 +208,15 @@ namespace TemplateEngine_v3.Helpers
             return materialsMenuItem;
         }
 
+        /// <summary>
+        /// Рекурсивно создает пункты меню для узлов с выражениями и подузлами.
+        /// Возвращает null, если узел и подузлы не содержат формул и условий.
+        /// </summary>
+        /// <param name="node">Узел, для которого создается пункт меню.</param>
+        /// <returns>Пункт меню или null.</returns>
         private MenuItem? CreateLazyNodeMenuItem(Node node)
         {
-            // Рекурсивно проверим, есть ли у подузлов хоть что-то содержательное
+            // Вспомогательная функция для проверки наличия валидных подузлов
             bool HasValidSubNode(Node n)
             {
                 return n.ExpressionRepository.Formulas.Any()
@@ -176,7 +224,7 @@ namespace TemplateEngine_v3.Helpers
                     || n.Nodes.Any(HasValidSubNode);
             }
 
-            // Проверяем, стоит ли вообще создавать пункт меню
+            // Проверяем, есть ли формулы или условия у узла или его подузлов
             bool hasFormulasOrTerms = node.ExpressionRepository.Formulas.Any() || node.ExpressionRepository.Terms.Any();
             bool hasValidSubNodes = node.Nodes.Any(HasValidSubNode);
 
@@ -189,11 +237,11 @@ namespace TemplateEngine_v3.Helpers
                 ToolTip = !string.IsNullOrEmpty(node.NodeComment) ? node.NodeComment : null
             };
 
-            // Добавляем выражения
+            // Добавляем пункты меню для формул и условий узла
             foreach (var item in CreateEvaluatorItems(node.ExpressionRepository))
                 menuItem.Items.Add(item);
 
-            // Добавляем только валидные подузлы
+            // Рекурсивно добавляем валидные подузлы
             foreach (var subNode in node.Nodes)
             {
                 var childItem = CreateLazyNodeMenuItem(subNode);
@@ -204,6 +252,11 @@ namespace TemplateEngine_v3.Helpers
             return menuItem;
         }
 
+        /// <summary>
+        /// Создает пункты меню для формул и условий из репозитория выражений.
+        /// </summary>
+        /// <param name="expression">Репозиторий выражений.</param>
+        /// <returns>Список пунктов меню для формул и условий.</returns>
         private List<MenuItem> CreateEvaluatorItems(ExpressionRepository expression)
         {
             var items = new List<MenuItem>();
@@ -247,11 +300,19 @@ namespace TemplateEngine_v3.Helpers
             return items;
         }
 
+        /// <summary>
+        /// Асинхронно обновляет текущее контекстное меню, пересоздавая его.
+        /// </summary>
         public async Task UpdateContextMenuAsync()
         {
             await CreateContextMenuAsync();
         }
 
+        /// <summary>
+        /// Клонирует пункт меню вместе со всеми вложенными элементами.
+        /// </summary>
+        /// <param name="source">Исходный пункт меню для клонирования.</param>
+        /// <returns>Новый клон пункта меню.</returns>
         private MenuItem CloneMenuItem(MenuItem source)
         {
             var clone = new MenuItem
@@ -268,22 +329,34 @@ namespace TemplateEngine_v3.Helpers
                 if (item is MenuItem subMenuItem)
                     clone.Items.Add(CloneMenuItem(subMenuItem));
                 else
-                    clone.Items.Add(item); 
+                    clone.Items.Add(item);
             }
 
             return clone;
         }
 
+        /// <summary>
+        /// Получает текущее контекстное меню.
+        /// </summary>
+        /// <returns>Текущее контекстное меню.</returns>
         public ContextMenu GetContextMenu()
         {
             return _currentContext;
         }
 
+        /// <summary>
+        /// Очищает текущее контекстное меню, устанавливая его в null.
+        /// </summary>
         public void ClearContextMenu()
         {
             _currentContext = null;
         }
 
+        /// <summary>
+        /// Вставляет выбранный элемент (формулу, условие или материал) в текстовое поле,
+        /// связанное с контекстным меню.
+        /// </summary>
+        /// <param name="parameter">Объект, выбранный в меню (формула, условие или материал).</param>
         private void SetEvaluatorTextBox(object parameter)
         {
             if (_currentContext != null && _currentContext.PlacementTarget is TextBox textBox)
@@ -296,7 +369,6 @@ namespace TemplateEngine_v3.Helpers
                         textBox.Text += $"[{evaluator.Name}]";
                         condition.Parts.Add(evaluator.Id);
                     }
-
                 }
 
                 if (parameter is string material)
@@ -309,44 +381,50 @@ namespace TemplateEngine_v3.Helpers
             }
         }
 
+        /// <summary>
+        /// Получает объект, к которому привязано свойство Text у TextBox, используя биндинг.
+        /// Если getParent == true, возвращает объект, являющийся родителем для свойства Text.
+        /// </summary>
+        /// <param name="textBox">Текстовое поле с биндингом.</param>
+        /// <param name="getParent">Если true, получает родительский объект по пути биндинга.</param>
+        /// <returns>Объект, к которому привязано свойство, или null.</returns>
         public object? GetBoundPropertyObject(TextBox textBox, bool getParent = false)
         {
-            var bindingExpr = textBox.GetBindingExpression(TextBox.TextProperty);
-            if (bindingExpr == null) return null;
+            var bindingExpression = textBox.GetBindingExpression(TextBox.TextProperty);
 
-            var bindingPath = bindingExpr.ParentBinding.Path?.Path;
-            if (string.IsNullOrWhiteSpace(bindingPath)) return null;
-
-            var pathParts = bindingPath.Split('.');
-            if (getParent && pathParts.Length > 1)
-                pathParts = pathParts.Take(pathParts.Length - 1).ToArray();
-
-            // Попробовать сначала с DataItem
-            object? result = TryResolvePath(bindingExpr.DataItem, pathParts);
-            if (result != null) return result;
-
-            return TryResolvePath(DataContext, pathParts);
-        }
-
-        private object? TryResolvePath(object? root, string[] pathParts)
-        {
-            object? current = root;
-
-            foreach (var part in pathParts)
+            if (bindingExpression != null)
             {
-                if (current == null) return null;
+                var path = bindingExpression.ParentBinding.Path.Path;
 
-                var propInfo = current.GetType().GetProperty(part);
-                if (propInfo == null) return null;
+                if (DataContext != null)
+                {
+                    var parts = path.Split('.');
+                    if (getParent)
+                        parts = parts.Take(parts.Length - 1).ToArray();
 
-                current = propInfo.GetValue(current);
+                    return TryResolvePath(DataContext, parts);
+                }
             }
 
-            return current;
+            return null;
         }
 
+        /// <summary>
+        /// Рекурсивно пытается получить значение свойства из объекта по цепочке имен свойств.
+        /// </summary>
+        /// <param name="root">Объект, с которого начинается поиск.</param>
+        /// <param name="pathParts">Части пути свойства.</param>
+        /// <returns>Значение свойства или null.</returns>
+        private object? TryResolvePath(object? root, string[] pathParts)
+        {
+            if (root == null) return null;
+            if (pathParts.Length == 0) return root;
 
+            var property = root.GetType().GetProperty(pathParts[0]);
+            if (property == null) return null;
 
+            var value = property.GetValue(root);
+            return TryResolvePath(value, pathParts.Skip(1).ToArray());
+        }
     }
 }
-

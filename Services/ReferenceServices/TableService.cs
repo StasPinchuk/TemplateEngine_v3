@@ -1,4 +1,5 @@
 ﻿using Aspose.Cells;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,6 +10,10 @@ using TFlex.DOCs.Model.References.Files;
 
 namespace TemplateEngine_v3.Services.ReferenceServices
 {
+    /// <summary>
+    /// Сервис для работы с таблицами Excel из папки "Генератор шаблонов\Таблицы" через TFlex и Aspose.Cells.
+    /// Позволяет получать список таблиц, листов, параметры листов и работать с их значениями.
+    /// </summary>
     public class TableService
     {
         private readonly ServerConnection _connection;
@@ -17,14 +22,26 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         private Workbook _workbook;
         private Worksheet _currentWorksheet;
 
-        public ObservableCollection<string> TableNames { get; set; } = [];
+        /// <summary>
+        /// Коллекция имён таблиц (файлов) в целевой папке.
+        /// </summary>
+        public ObservableCollection<string> TableNames { get; set; } = new ObservableCollection<string>();
 
+        /// <summary>
+        /// Создаёт экземпляр TableService с указанным соединением.
+        /// Инициализирует список таблиц.
+        /// </summary>
+        /// <param name="connection">Соединение с сервером TFlex.</param>
         public TableService(ServerConnection connection)
         {
             _connection = connection;
             GetTableList();
         }
 
+        /// <summary>
+        /// Загружает список файлов-таблиц из папки "Генератор шаблонов\Таблицы" и обновляет TableNames.
+        /// Если папка не найдена — показывает сообщение об ошибке.
+        /// </summary>
         private void GetTableList()
         {
             _fileReference = new FileReference(_connection);
@@ -38,17 +55,26 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
             _tableFolder.Children.Reload();
 
+            TableNames.Clear();
             foreach (var file in _tableFolder.Children)
             {
                 TableNames.Add(file.Name);
             }
         }
 
+        /// <summary>
+        /// Асинхронно получает список листов указанной таблицы.
+        /// </summary>
+        /// <param name="tableName">Имя таблицы (файла).</param>
+        /// <returns>Коллекция имён листов Excel в таблице.</returns>
         public async Task<ObservableCollection<string>> GetWorksheets(string tableName)
         {
-            ObservableCollection<string> worksheetNames = [];
+            var worksheetNames = new ObservableCollection<string>();
 
             string tablePath = await GetSelectedTable(tableName);
+            if (string.IsNullOrEmpty(tablePath))
+                return worksheetNames;
+
             _workbook = new Workbook(tablePath);
 
             foreach (var worksheet in _workbook.Worksheets)
@@ -59,21 +85,37 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             return worksheetNames;
         }
 
+        /// <summary>
+        /// Асинхронно получает локальный путь к файлу таблицы по её имени.
+        /// </summary>
+        /// <param name="tableName">Имя таблицы (файла).</param>
+        /// <returns>Локальный путь к файлу таблицы либо пустая строка, если файл не найден.</returns>
         private async Task<string> GetSelectedTable(string tableName)
         {
             var file = await _fileReference.FindByRelativePathAsync(@$"Генератор шаблонов\Таблицы\{tableName}") as FileObject;
 
-            if (file is null)
+            if (file == null)
                 return string.Empty;
+
             await FileReference.GetHeadRevisionAsync(new[] { file });
 
             return file.LocalPath;
         }
 
+        /// <summary>
+        /// Получает параметры текущего листа, анализируя его первый и второй столбцы.
+        /// Параметры определяются по ячейкам первого столбца с жирным шрифтом.
+        /// </summary>
+        /// <param name="worksheetName">Имя листа Excel.</param>
+        /// <returns>Словарь параметров: имя параметра => адрес ячейки со значением.</returns>
         public Dictionary<string, string> GetWorksheetParameters(string worksheetName)
         {
-            Dictionary<string, string> parameterDictionary = [];
-            _currentWorksheet = _workbook.Worksheets.FirstOrDefault(sheet => sheet.Name.Equals(worksheetName));
+            var parameterDictionary = new Dictionary<string, string>();
+            _currentWorksheet = _workbook.Worksheets.FirstOrDefault(sheet => sheet.Name.Equals(worksheetName, StringComparison.OrdinalIgnoreCase));
+
+            if (_currentWorksheet == null)
+                return parameterDictionary;
+
             int maxRow = _currentWorksheet.Cells.MaxDataRow;
 
             for (int rowIndex = 0; rowIndex <= maxRow; rowIndex++)
@@ -89,61 +131,73 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                     string parameterName = leftCell.StringValue;
 
                     Cell rightCell = _currentWorksheet.Cells[rowIndex, 1];
+                    if (rightCell == null)
+                        continue;
+
                     string parameterAddress = rightCell.Name;
 
-                    parameterDictionary.Add(parameterName, parameterAddress);
+                    parameterDictionary[parameterName] = parameterAddress;
                 }
             }
 
             return parameterDictionary;
         }
 
+        /// <summary>
+        /// Записывает значения параметров в ячейки текущего листа.
+        /// </summary>
+        /// <param name="parameters">Словарь параметров: адрес ячейки => значение.</param>
         public void SetParameters(Dictionary<string, string> parameters)
         {
-            foreach (var key in parameters.Keys)
+            if (_currentWorksheet == null)
+                return;
+
+            foreach (var kvp in parameters)
             {
-                _currentWorksheet.Cells[key].PutValue(parameters[key]);
+                _currentWorksheet.Cells[kvp.Key].PutValue(kvp.Value);
             }
 
             _workbook.CalculateFormula();
         }
 
+        /// <summary>
+        /// Выполняет поиск параметра в таблице по заданным размерам и параметрам.
+        /// </summary>
+        /// <param name="tableName">Имя таблицы.</param>
+        /// <param name="width">Ширина для поиска.</param>
+        /// <param name="heigth">Высота для поиска.</param>
+        /// <param name="parameterValue">Массив значений параметров для подстановки.</param>
+        /// <param name="isRange">Флаг, указывающий, возвращать ли диапазон значений.</param>
+        /// <returns>Найденное значение или пустая строка.</returns>
         public string GetFindParameter(string tableName, string width, string heigth, string[] parameterValue = null, bool isRange = false)
         {
-            var _valueDict = GetWorksheetParameters(_currentWorksheet.Name);
+            var valueDict = GetWorksheetParameters(_currentWorksheet?.Name ?? string.Empty);
 
-            Dictionary<string, string> _parametersValueDict = [];
+            Dictionary<string, string> parametersValueDict = valueDict.Values.ToDictionary(value => value, value => string.Empty);
 
-            foreach (var value in _valueDict.Values)
+            if (parameterValue != null)
             {
-                _parametersValueDict.Add(value, string.Empty);
+                var keys = parametersValueDict.Keys.ToList();
+                for (int i = 0; i < parameterValue.Length && i < keys.Count; i++)
+                {
+                    parametersValueDict[keys[i]] = parameterValue[i];
+                }
             }
 
-            var keys = _parametersValueDict.Keys.ToList();
+            SetParameters(parametersValueDict);
 
-            for (int i = 0; i < parameterValue.Count(); i++)
-            {
-                _parametersValueDict[keys[i]] = parameterValue[i];
-            }
-            SetParameters(_parametersValueDict);
-
-            int collumnNumber = 3;
-
+            int columnNumber = 3;
             int rowNumber = 4;
-            int collumnsCount = _currentWorksheet.Cells.MaxDataColumn;
+            int columnsCount = _currentWorksheet.Cells.MaxDataColumn;
             int rowsCount = _currentWorksheet.Cells.MaxDataRow;
 
-
-            string findValue = GetParameter(collumnNumber, rowNumber, collumnsCount, rowsCount, width, heigth);
-
+            string findValue = GetParameter(columnNumber, rowNumber, columnsCount, rowsCount, width, heigth);
 
             if (isRange)
             {
                 _currentWorksheet.Cells[0, 1].PutValue(findValue);
-
                 _workbook.CalculateFormula();
-
-                return _currentWorksheet.Cells[1, 1].Value.ToString();
+                return _currentWorksheet.Cells[1, 1].Value?.ToString() ?? string.Empty;
             }
             else
             {
@@ -151,17 +205,27 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
-        private string GetParameter(int collumnNumber, int rowNumber, int collumnsCount, int rowsCount, string width, string heigth)
+        /// <summary>
+        /// Вспомогательный метод для поиска параметра внутри таблицы по заданным координатам.
+        /// </summary>
+        /// <param name="columnNumber">Стартовый номер столбца.</param>
+        /// <param name="rowNumber">Стартовый номер строки.</param>
+        /// <param name="columnsCount">Общее количество столбцов.</param>
+        /// <param name="rowsCount">Общее количество строк.</param>
+        /// <param name="width">Значение ширины для поиска.</param>
+        /// <param name="heigth">Значение высоты для поиска.</param>
+        /// <returns>Найденное значение или пустая строка.</returns>
+        private string GetParameter(int columnNumber, int rowNumber, int columnsCount, int rowsCount, string width, string heigth)
         {
-            for (int i = collumnNumber; i < collumnsCount; i++)
+            for (int i = columnNumber; i < columnsCount; i++)
             {
-                if (int.Parse(_currentWorksheet.Cells[0, i].Value.ToString()) >= int.Parse(width))
+                if (int.TryParse(_currentWorksheet.Cells[0, i].Value?.ToString(), out int colVal) && colVal >= int.Parse(width))
                 {
                     for (int j = rowNumber; j < rowsCount; j++)
                     {
-                        if (int.Parse(_currentWorksheet.Cells[j, 2].Value.ToString()) >= int.Parse(heigth))
+                        if (int.TryParse(_currentWorksheet.Cells[j, 2].Value?.ToString(), out int rowVal) && rowVal >= int.Parse(heigth))
                         {
-                            return _currentWorksheet.Cells[j, i].Value.ToString();
+                            return _currentWorksheet.Cells[j, i].Value?.ToString() ?? string.Empty;
                         }
                     }
                 }
@@ -170,10 +234,26 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             return string.Empty;
         }
 
+        /// <summary>
+        /// Формирует строку формулы для вызова функции ReadTable с параметрами таблицы и листа.
+        /// </summary>
+        /// <param name="tableName">Имя таблицы.</param>
+        /// <param name="sheetName">Имя листа.</param>
+        /// <param name="width">Ширина.</param>
+        /// <param name="heigth">Высота.</param>
+        /// <param name="parameterValue">Значения дополнительных параметров.</param>
+        /// <param name="isRange">Флаг диапазона.</param>
+        /// <returns>Строка формулы для вставки.</returns>
         public string SetFormula(string tableName, string sheetName, string width, string heigth, string[] parameterValue = null, bool isRange = false)
         {
-            string parameterString = parameterValue.Where(param => !string.IsNullOrEmpty(param))?.Count() > 0 ? string.Join(",", parameterValue) : string.Empty;
-            string formulaString = parameterValue == null || string.IsNullOrEmpty(parameterString) ? $"'{tableName}', {sheetName}, {width}, {heigth}, '{isRange}'" : $"'{tableName}', {sheetName}, {width}, {heigth}, {parameterString} '{isRange}'";
+            string parameterString = parameterValue != null && parameterValue.Any()
+                ? string.Join(",", parameterValue)
+                : string.Empty;
+
+            string formulaString = string.IsNullOrEmpty(parameterString)
+                ? $"'{tableName}', '{sheetName}', {width}, {heigth}, '{isRange}'"
+                : $"'{tableName}', '{sheetName}', {width}, {heigth}, {parameterString}, '{isRange}'";
+
             return $"ReadTable({formulaString})";
         }
     }

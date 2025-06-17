@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -70,7 +69,8 @@ namespace TemplateEngine_v3.Mappers
                     IsLocked = !string.IsNullOrEmpty(reference[_lockedParameterGuid].ToString()) ? reference[_lockedParameterGuid].ToString().Contains(UserFio) : false
                 };
 
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Debug.WriteLine($"Ошибка конвертации: {ex.Message}");
                 return null;

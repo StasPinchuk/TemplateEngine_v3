@@ -24,6 +24,17 @@ namespace TemplateEngine_v3.Helpers
         private static string BranchName = string.Empty;
         private static string materialName = string.Empty;
 
+        /// <summary>
+        /// Выполняет вычисление и построение шаблона на основе текущего выбранного шаблона из менеджера,
+        /// строки заказа и названия ветки (branch).
+        /// </summary>
+        /// <param name="templateManager">Менеджер шаблонов, предоставляющий доступ к текущему шаблону и вспомогательным сервисам.</param>
+        /// <param name="orderString">Строка заказа, используемая для обработки маркировок и подбора материалов.</param>
+        /// <param name="branchString">Название ветки (branch), используемое для фильтрации шаблона по веткам.</param>
+        /// <returns>
+        /// Возвращает вычисленный шаблон <see cref="Template"/>, в котором отфильтрованы и обработаны отношения и узлы.
+        /// Если шаблон не содержит указанной ветки, возвращается <c>null</c>.
+        /// </returns>
         public Template CalculateTemplate(ITemplateManager templateManager, string orderString, string branchString)
         {
             Clear();
@@ -106,6 +117,10 @@ namespace TemplateEngine_v3.Helpers
             return currentTemplate;
         }
 
+        /// <summary>
+        /// Очищает все статические коллекции и словари, используемые для хранения маркировок,
+        /// узлов, формул, материалов и параметров.
+        /// </summary>
         private static void Clear()
         {
             MarkDictionary = new();
@@ -115,6 +130,17 @@ namespace TemplateEngine_v3.Helpers
             Parameters = new();
         }
 
+        /// <summary>
+        /// Выполняет вычисление выражения, предварительно заменяя параметры маркировок и функции.
+        /// Возвращает вычисленное значение, округлённое до 3 знаков после запятой, если результат числовой.
+        /// Если вычисление невозможно, возвращается исходная строка после замен.
+        /// </summary>
+        /// <param name="value">Выражение или строка для вычисления.</param>
+        /// <returns>
+        /// Результат вычисления как объект.
+        /// Если вычисление прошло успешно, возвращается строковое представление результата с округлением,
+        /// иначе возвращается исходное значение с применёнными заменами.
+        /// </returns>
         public static object Calculate(string value)
         {
             value = ReplaceMarkingParameter(value);
@@ -146,12 +172,22 @@ namespace TemplateEngine_v3.Helpers
                     }
                     return value;
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                    // Игнорируем ошибки вычисления и возвращаем исходное значение
+                }
             }
 
             return value;
         }
 
+
+        /// <summary>
+        /// Рекурсивно получает список всех узлов, включая вложенные дочерние узлы.
+        /// Также обновляет связанные списки формул, параметров и материалов для каждого узла.
+        /// </summary>
+        /// <param name="nodes">Список узлов для обхода.</param>
+        /// <returns>Плоский список всех узлов из дерева.</returns>
         private static List<Node> GetAllNode(List<Node> nodes)
         {
             return nodes.SelectMany(node =>
@@ -161,6 +197,11 @@ namespace TemplateEngine_v3.Helpers
             }).ToList();
         }
 
+        /// <summary>
+        /// Рекурсивно удаляет из коллекции узлы, у которых условие использования (UsageCondition) равно false.
+        /// Если условие не может быть распознано как булево, узел считается используемым.
+        /// </summary>
+        /// <param name="nodes">Коллекция узлов для очистки.</param>
         private static void RemoveNodeIsNotUsage(ObservableCollection<Node> nodes)
         {
             List<Node> removeNodes = new();
@@ -182,6 +223,10 @@ namespace TemplateEngine_v3.Helpers
             }
         }
 
+        /// <summary>
+        /// Обновляет внутренние списки формул, параметров и материалов для указанного узла.
+        /// </summary>
+        /// <param name="node">Узел, для которого обновляются списки.</param>
         private static void SetLists(Node node)
         {
             AddFormulasAndTerms(node);
@@ -189,6 +234,10 @@ namespace TemplateEngine_v3.Helpers
             AddMaterials(node.Technologies);
         }
 
+        /// <summary>
+        /// Добавляет формулы, термы и количество из ExpressionRepository узла в глобальный список FormulasAndTerms.
+        /// </summary>
+        /// <param name="node">Узел, из которого извлекаются формулы и термы.</param>
         private static void AddFormulasAndTerms(Node node)
         {
             FormulasAndTerms.AddRange(node.ExpressionRepository.Formulas);
@@ -197,12 +246,21 @@ namespace TemplateEngine_v3.Helpers
                 FormulasAndTerms.Add(node.Amount);
         }
 
+        /// <summary>
+        /// Добавляет параметры из узла в глобальный список Parameters, если они существуют.
+        /// </summary>
+        /// <param name="node">Узел, из которого извлекаются параметры.</param>
         private static void AddParameters(Node node)
         {
             if (node.Parameters != null)
                 Parameters.AddRange(node.Parameters);
         }
 
+        /// <summary>
+        /// Добавляет материалы из операций технологий, соответствующих текущему названию ветки (BranchName).
+        /// Включает в список Materials материалы, имеющие непустые части и вычисляет условие использования.
+        /// </summary>
+        /// <param name="technologies">Объект технологий, содержащий операции.</param>
         private static void AddMaterials(Technologies technologies)
         {
             var operations = technologies.Operations;
@@ -226,6 +284,10 @@ namespace TemplateEngine_v3.Helpers
             }
         }
 
+        /// <summary>
+        /// Выполняет расчет значений для всех формул и условий (FormulasAndTerms),
+        /// обновляя их значение и учитывая специфику для покрытия и маркировок.
+        /// </summary>
         private static void CalculateEvaluator()
         {
             foreach (var evaluator in FormulasAndTerms)
@@ -246,21 +308,26 @@ namespace TemplateEngine_v3.Helpers
             }
         }
 
+        /// <summary>
+        /// Рекурсивно вычисляет значение ConditionEvaluator по его Id, подставляя значения из дочерних частей.
+        /// </summary>
+        /// <param name="id">Идентификатор ConditionEvaluator.</param>
+        /// <returns>Вычисленное значение в виде строки.</returns>
         private static string GetEvaluatorForId(string id)
         {
             ConditionEvaluator evaluator = FormulasAndTerms.FirstOrDefault(evaluator => evaluator.Id.Equals(id));
             if (evaluator == null)
                 return string.Empty;
+
             if (evaluator.Parts.Count > 0)
             {
                 foreach (var part in evaluator.Parts)
                 {
-
                     var resultPart = GetEvaluatorForId(part.ToString());
-
                     var cond = FormulasAndTerms.FirstOrDefault(evaluator => evaluator.Id.Equals(part));
                     if (cond == null)
                         continue;
+
                     if (decimal.TryParse(resultPart.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out _))
                     {
                         evaluator.Value = evaluator.Value.Replace($"[{cond.Name}]", resultPart.Replace(",", "."));
@@ -270,13 +337,10 @@ namespace TemplateEngine_v3.Helpers
                         if (evaluator.Value.Contains($"[{cond.Name}]"))
                         {
                             string pattern = @"(?<=['-])\[[^\]]+\](?=')";
-
-                            // Определим, перед и после ли есть кавычки
                             var match = Regex.Match(evaluator.Value, pattern);
 
                             if (match.Success && match.Value.Equals($"[{cond.Name}]"))
                             {
-                                // Если перед и после [{cond.Name}] есть одинарные кавычки, и resultPart пустой, то удаляем
                                 if (resultPart == "''")
                                 {
                                     evaluator.Value = Regex.Replace(evaluator.Value, $@"\[{cond.Name}\]", "");
@@ -284,21 +348,19 @@ namespace TemplateEngine_v3.Helpers
                                 else
                                 {
                                     evaluator.Value = evaluator.Value.Replace($"[{cond.Name}]",
-                                                                (resultPart.StartsWith("'") && resultPart.EndsWith("'"))
-                                                                ? $"{resultPart.Replace("'", "")}"
-                                                                : $"'{resultPart.Replace(",", ".")}'");
+                                        (resultPart.StartsWith("'") && resultPart.EndsWith("'"))
+                                            ? $"{resultPart.Replace("'", "")}"
+                                            : $"'{resultPart.Replace(",", ".")}'");
                                 }
                             }
                             else
                             {
-                                // Иначе подставляем resultPart в нужном формате
                                 evaluator.Value = evaluator.Value.Replace($"[{cond.Name}]",
                                     (resultPart.StartsWith("'") && resultPart.EndsWith("'"))
-                                    ? $"{resultPart}"
-                                    : $"'{resultPart.Replace(",", ".")}'");
+                                        ? $"{resultPart}"
+                                        : $"'{resultPart.Replace(",", ".")}'");
                             }
                         }
-
                     }
                 }
 
@@ -312,11 +374,15 @@ namespace TemplateEngine_v3.Helpers
             }
         }
 
+        /// <summary>
+        /// Заменяет значения параметров или материалов внутри списка ConditionEvaluator,
+        /// обновляя UsageCondition, значения и части с учетом маркировок и вычислений.
+        /// </summary>
+        /// <param name="evaluators">Список ConditionEvaluator для обработки.</param>
         private static void ReplaceParametersOrMaterialValue(List<ConditionEvaluator> evaluators)
         {
             foreach (var evaluator in evaluators)
             {
-                // Замена в UsageCondition
                 if (!string.IsNullOrEmpty(evaluator.UsageCondition))
                 {
                     evaluator.UsageCondition = ReplaceValues(evaluator.UsageCondition);
@@ -324,7 +390,6 @@ namespace TemplateEngine_v3.Helpers
                     evaluator.UsageCondition = Calculate(evaluator.UsageCondition)?.ToString();
                 }
 
-                // Обработка Parts
                 if (evaluator.Parts.Count > 0)
                 {
                     var parts = new ObservableCollection<string>(evaluator.Parts);
@@ -335,40 +400,39 @@ namespace TemplateEngine_v3.Helpers
                 }
                 else
                 {
-                    // Словарь для отслеживания количества обработок каждого Id
                     var idProcessingCount = new Dictionary<string, int>();
 
                     while (true)
                     {
-                        // Найти первый совпадающий элемент
                         var replaceEvaluator = FormulasAndTerms.FirstOrDefault(eval => evaluator.Value.Contains(eval.Name));
                         if (replaceEvaluator == null) break;
 
-                        // Проверить количество обработок для текущего Id
                         if (idProcessingCount.TryGetValue(replaceEvaluator.Id, out var count))
                         {
                             if (count >= 500)
                             {
                                 break;
                             }
-                            idProcessingCount[replaceEvaluator.Id] = count + 1; // Увеличить счётчик обработок
+                            idProcessingCount[replaceEvaluator.Id] = count + 1;
                         }
                         else
                         {
-                            idProcessingCount[replaceEvaluator.Id] = 1; // Инициализация для нового Id
+                            idProcessingCount[replaceEvaluator.Id] = 1;
                         }
 
-                        // Выполнить замену значения
                         ReplaceEvaluatorValue(evaluator, replaceEvaluator.Id);
                     }
-
                 }
 
-                // Финальная замена в Value
                 evaluator.Value = ReplaceMarkingParameter(evaluator.Value.Replace("'", ""));
             }
         }
 
+        /// <summary>
+        /// Заменяет в значении <paramref name="evaluator"/> вхождение с именем из <paramref name="part"/> на его фактическое значение.
+        /// </summary>
+        /// <param name="evaluator">Объект ConditionEvaluator, в котором происходит замена.</param>
+        /// <param name="part">Идентификатор (Id) подстановочного элемента для замены.</param>
         private static void ReplaceEvaluatorValue(ConditionEvaluator evaluator, string part)
         {
             var replaceEvaluator = FormulasAndTerms.FirstOrDefault(eval => eval.Id.Equals(part));
@@ -381,17 +445,21 @@ namespace TemplateEngine_v3.Helpers
             evaluator.Value = evaluator.Value.Replace($"[{replaceEvaluator.Name}]", replacement);
         }
 
+        /// <summary>
+        /// Выполняет замену параметров и формул в строке <paramref name="value"/> на их значения из словаря маркировок и списка формул.
+        /// Удаляет из строки подстроки вида -[...].
+        /// </summary>
+        /// <param name="value">Исходная строка с параметрами и формулами для замены.</param>
+        /// <returns>Строка с замененными значениями.</returns>
         private static string ReplaceDesignation(string value)
         {
             if (string.IsNullOrEmpty(value))
                 return value;
 
-            // Создаем карту замен из MarkDictionary
             var parameters = MarkDictionary
                 .Where(mark => value.Contains(mark.Key))
                 .ToDictionary(mark => mark.Key, mark => mark.Value);
 
-            // Замена значений из MarkDictionary
             foreach (var mark in parameters)
             {
                 value = mark.Value.All(char.IsDigit)
@@ -399,7 +467,6 @@ namespace TemplateEngine_v3.Helpers
                     : value.Replace($"[{mark.Key}]", $"{mark.Value}");
             }
 
-            // Замена значений из FormulasAndTerms
             int count = 0;
             string id = string.Empty;
             while (true)
@@ -421,19 +488,21 @@ namespace TemplateEngine_v3.Helpers
             }
 
             string pattern = @"-\[[^\]]+\]";
-
-            // Определим, перед и после ли есть кавычки
             value = Regex.Replace(value, pattern, "");
 
             return value;
         }
 
+        /// <summary>
+        /// Выполняет замену параметров и формул в строке <paramref name="value"/> на их значения из списка формул.
+        /// </summary>
+        /// <param name="value">Исходная строка с параметрами и формулами для замены.</param>
+        /// <returns>Строка с замененными значениями.</returns>
         private static string ReplaceValues(string value)
         {
             if (string.IsNullOrEmpty(value))
                 return value;
 
-            // Замена значений из FormulasAndTerms
             int count = 0;
             string id = string.Empty;
             while (true)
@@ -457,17 +526,21 @@ namespace TemplateEngine_v3.Helpers
             return value;
         }
 
+        /// <summary>
+        /// Выполняет замену параметров маркировки в строке <paramref name="value"/> на их значения из словаря маркировок.
+        /// После замены, все оставшиеся подстроки в квадратных скобках заменяются на "0".
+        /// </summary>
+        /// <param name="value">Исходная строка с параметрами маркировки.</param>
+        /// <returns>Строка с произведёнными заменами.</returns>
         private static string ReplaceMarkingParameter(string value)
         {
             if (string.IsNullOrEmpty(value))
                 return value;
 
-            // Получаем список параметров, которые нужно заменить
             var parameters = MarkDictionary
                 .Where(mark => value.Contains(mark.Key))
                 .ToDictionary(mark => mark.Key, mark => mark.Value);
 
-            // Выполняем замену
             foreach (var mark in parameters)
             {
                 if (mark.Value.All(char.IsDigit))
@@ -480,12 +553,17 @@ namespace TemplateEngine_v3.Helpers
                 }
             }
 
-            // Заменяем текст в квадратных скобках на 0
             value = Regex.Replace(value, @"\[[^\]]*\]", "0");
 
             return value;
         }
 
+        /// <summary>
+        /// Заменяет в строке функции и логические операторы на соответствующие ключевые слова или операторы для вычислителя.
+        /// Например, заменяет "ОКРУГЛВНИЗ" на "Floor", "тогда" на "?" и т.д.
+        /// </summary>
+        /// <param name="value">Исходная строка с функциями на русском языке.</param>
+        /// <returns>Строка с заменёнными функциями и операторами.</returns>
         private static string ReplaceFunction(string value)
         {
             value = value.Replace("ОКРУГЛВНИЗ", "Floor")
@@ -506,22 +584,34 @@ namespace TemplateEngine_v3.Helpers
             return value;
         }
 
+        /// <summary>
+        /// Проверяет, содержит ли входная строка операторы или скобки для определения,
+        /// является ли выражение потенциально вычислимым.
+        /// </summary>
+        /// <param name="input">Входная строка с выражением.</param>
+        /// <returns>True, если строка не содержит операторов; иначе false.</returns>
         public static bool HasNoOperators(string input)
         {
-            // Список символов, которые нужно проверить
+            // Список символов операторов для проверки
             char[] operators = { '(', ')', '?', '=', '<', '>', '+', '*', '/', '-' };
 
-            // Проверяем, содержит ли строка хотя бы один из символов
+            // Возвращает true, если ни один из операторов не найден в строке
             return !input.Any(c => operators.Contains(c));
         }
 
+        /// <summary>
+        /// Вычисляет математическое или логическое выражение, используя класс Expression.
+        /// Поддерживает подключаемые функции через словарь FunctionHandlers.
+        /// </summary>
+        /// <param name="expression">Строка с выражением для вычисления.</param>
+        /// <returns>Результат вычисления выражения, либо null при ошибке.</returns>
         public static object? EvaluateExpression(string expression)
         {
             try
             {
                 var expr = new Expression(expression);
 
-                // Подключаем обработку функций
+                // Подписка на обработчик функций
                 expr.EvaluateFunction += (name, args) =>
                 {
                     if (FunctionHandlers.TryGetValue(name, out var handler))
@@ -534,57 +624,85 @@ namespace TemplateEngine_v3.Helpers
                     }
                 };
 
-                // Вычисляем выражение
+                // Вычисление выражения
                 return expr.Evaluate();
             }
             catch (Exception ex)
             {
-                // Логируем ошибку (например, в файл)
+                // Логирование ошибки, например, в консоль
                 Console.WriteLine($"Ошибка при вычислении выражения: {ex.Message}");
-                return null; // Или любое значение по умолчанию
+                return null;
             }
         }
 
+        /// <summary>
+        /// Словарь обработчиков пользовательских функций для NCalc, 
+        /// где ключ — название функции, используемой в выражениях,
+        /// а значение — делегат, реализующий логику функции.
+        /// </summary>
         private static readonly Dictionary<string, Func<NCalc.FunctionArgs, object>> FunctionHandlers = new()
         {
+            /// <summary>Округление вниз (пол).</summary>
             ["Floor"] = args => Math.Floor(Convert.ToDouble(args.Parameters[0].Evaluate())),
+
+            /// <summary>Минимальное значение из аргументов.</summary>
             ["Min"] = args => args.Parameters.Select(p => Convert.ToDouble(p.Evaluate())).Min(),
+
+            /// <summary>Максимальное значение из аргументов.</summary>
             ["Max"] = args => args.Parameters.Select(p => Convert.ToDouble(p.Evaluate())).Max(),
+
+            /// <summary>Среднее арифметическое из аргументов.</summary>
             ["Avg"] = args => args.Parameters.Select(p => Convert.ToDouble(p.Evaluate())).Average(),
+
+            /// <summary>Округление по математическим правилам.</summary>
             ["Round"] = args => Math.Round(Convert.ToDouble(args.Parameters[0].Evaluate())),
+
+            /// <summary>Округление вверх (потолок).</summary>
             ["Ceil"] = args => Math.Ceiling(Convert.ToDouble(args.Parameters[0].Evaluate())),
+
+            /// <summary>Модуль числа.</summary>
             ["Abs"] = args => Math.Abs(Convert.ToDouble(args.Parameters[0].Evaluate())),
+
+            /// <summary>Квадратный корень.</summary>
             ["Sqrt"] = args => Math.Sqrt(Convert.ToDouble(args.Parameters[0].Evaluate())),
+
+            /// <summary>Проверка, чётное ли число.</summary>
             ["IsEven"] = args => Convert.ToDouble(args.Parameters[0].Evaluate()) % 2 == 0,
+
+            /// <summary>Проверяет, содержит ли первая строка вторую.</summary>
             ["Contains"] = args =>
             {
                 var firstParameter = args.Parameters[0].Evaluate()?.ToString();
                 var secondParameter = args.Parameters[1].Evaluate()?.ToString();
 
                 if (firstParameter == null || secondParameter == null)
-                {
                     throw new ArgumentException("Both parameters for Contains must be strings.");
-                }
 
                 return firstParameter.Contains(secondParameter);
             },
+
+            /// <summary>Проверяет равенство двух строк (недоработано — сейчас работает как Contains, стоит поправить).</summary>
             ["Equals"] = args =>
             {
                 var firstParameter = args.Parameters[0].Evaluate()?.ToString();
                 var secondParameter = args.Parameters[1].Evaluate()?.ToString();
 
                 if (firstParameter == null || secondParameter == null)
-                {
-                    throw new ArgumentException("Both parameters for Contains must be strings.");
-                }
+                    throw new ArgumentException("Both parameters for Equals must be strings.");
 
-                return firstParameter.Contains(secondParameter);
+                // Здесь логика неверная: сейчас проверяется Contains, а нужно сравнение
+                return firstParameter == secondParameter;
             },
-            ["IsNumber"] = args => args.Parameters[0].Evaluate() is double or int || double.TryParse(args.Parameters[0].Evaluate()?.ToString(), out _), // Функция проверки числа
+
+            /// <summary>Проверяет, является ли параметр числом.</summary>
+            ["IsNumber"] = args => args.Parameters[0].Evaluate() is double or int || double.TryParse(args.Parameters[0].Evaluate()?.ToString(), out _),
+
+            /// <summary>Чтение значения из таблицы (обращение к _tableService).</summary>
             ["ReadTable"] = args =>
             {
                 var count = args.Parameters.Count();
                 var tableName = args.Parameters[0].Evaluate()?.ToString();
+
                 string width = string.Empty;
                 if (Guid.TryParse(args.Parameters[1].Evaluate()?.ToString(), out Guid widthId))
                 {
@@ -599,51 +717,56 @@ namespace TemplateEngine_v3.Helpers
                 {
                     width = args.Parameters[1].Evaluate()?.ToString();
                 }
-                string heigth = string.Empty;
-                if (Guid.TryParse(args.Parameters[2].Evaluate()?.ToString(), out Guid heigthId))
+
+                string height = string.Empty;
+                if (Guid.TryParse(args.Parameters[2].Evaluate()?.ToString(), out Guid heightId))
                 {
-                    var findCondition = FormulasAndTerms.FirstOrDefault(cond => cond.Id.Equals(heigthId.ToString()));
+                    var findCondition = FormulasAndTerms.FirstOrDefault(cond => cond.Id.Equals(heightId.ToString()));
                     if (findCondition != null)
                     {
-                        findCondition.Value = GetEvaluatorForId(heigthId.ToString());
-                        heigth = findCondition.Value;
+                        findCondition.Value = GetEvaluatorForId(heightId.ToString());
+                        height = findCondition.Value;
                     }
                 }
                 else
                 {
-                    heigth = args.Parameters[2].Evaluate()?.ToString();
+                    height = args.Parameters[2].Evaluate()?.ToString();
                 }
 
-                List<string> parameters = [];
+                List<string> parameters = new();
 
+                // Обратите внимание: корректно ли тут args.Parameters.Length - 1?
                 for (int i = 3; i < args.Parameters.Length - 1; i++)
                 {
                     parameters.Add(args.Parameters[i].Evaluate()?.ToString());
                 }
 
                 var isRange = bool.Parse(args.Parameters.Last().Evaluate()?.ToString());
-                if (tableName == null || width == null || heigth == null || parameters.Count == 0)
+
+                if (tableName == null || width == null || height == null || parameters.Count == 0)
                 {
-                    throw new ArgumentException("Both parameters for Contains must be strings.");
+                    throw new ArgumentException("Invalid parameters for ReadTable.");
                 }
 
-                return _tableService.GetFindParameter(tableName, width, heigth, parameters.ToArray(), isRange);
+                return _tableService.GetFindParameter(tableName, width, height, parameters.ToArray(), isRange);
             },
+
+            /// <summary>Проверяет, содержится ли последний параметр в остальных (InRange).</summary>
             ["InRange"] = args =>
             {
                 var parameters = args.Parameters.ToList();
                 var findValue = parameters.Last();
 
-                parameters.Remove(parameters.Last());
+                parameters.Remove(findValue);
 
                 if (parameters == null || findValue == null)
                 {
-                    throw new ArgumentException("Both parameters for Contains must be strings.");
+                    throw new ArgumentException("Invalid parameters for InRange.");
                 }
 
                 return parameters.Contains(findValue);
             },
-
         };
+
     }
 }
