@@ -80,6 +80,8 @@ public class ReferenceManager
         {
             TableService = new TableService(connection);
             TemplateManager = new TemplateManager(loader, mainInfo, MaterialManager, TableService);
+            LogManager.LogReferenceInfo = mainInfo;
+            LogManager.ReadLogs();
             BranchManager = new BranchManager(loader, mainInfo);
             TechnologiesManager = new TechnologiesManager(loader, mainInfo, BranchManager, _operationNamesManager);
         }

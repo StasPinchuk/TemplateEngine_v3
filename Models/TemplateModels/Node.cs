@@ -6,7 +6,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Windows.Documents;
+using TemplateEngine_v3.Models.LogModels;
 using TemplateEngine_v3.Services;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
 {
@@ -22,8 +24,6 @@ namespace TemplateEngine_v3.Models
             get => _updateMenuHandler;
             set => SetValue(ref _updateMenuHandler, value, nameof(UpdateMenuHandler));
         }
-        [JsonIgnore]
-        private bool _isInitialized = false;
 
         public event Action CurrentNodeChanged;
         /// <summary>
@@ -40,13 +40,11 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                if (!string.IsNullOrEmpty(_name) && !_name.Equals(value))
-                {
-                }
                 if(_name != value)
                 {
-                    _name = value;
-                    OnPropertyChanged(nameof(Name));
+                    if (_onDeserialized)
+                        LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия детали с '{_name}' на '{value}'");
+                    SetValue(ref _name, value, nameof(Name));
                     UpdateMenuHandler?.Invoke();
                 }
             }
@@ -60,9 +58,10 @@ namespace TemplateEngine_v3.Models
         {
             get => _designation;
             set
-            {     
-                _designation = value;
-                OnPropertyChanged(nameof(Designation));
+            {
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование КД детали с '{_designation}' на '{value}'");
+                SetValue(ref _designation, value, nameof(Designation));
             }
 
         }
@@ -81,9 +80,9 @@ namespace TemplateEngine_v3.Models
 
                 if (value.Equals("Прочее изделие"))
                     Parameters.Clear();
-
-                _type = value;
-                OnPropertyChanged(nameof(Type));
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование типа детали с '{_type}' на '{value}'");
+                SetValue(ref _type, value, nameof(Type));
                 UpdateMenuHandler?.Invoke();
             }
 
@@ -98,8 +97,7 @@ namespace TemplateEngine_v3.Models
             get => _amount;
             set
             {
-                _amount = value;
-                OnPropertyChanged(nameof(Amount));
+                SetValue(ref _amount, value, nameof(Amount));
             }
         }
 
@@ -112,8 +110,7 @@ namespace TemplateEngine_v3.Models
             get => _technologies;
             set
             {
-                _technologies = value;
-                OnPropertyChanged(nameof(Technologies));
+                SetValue(ref _technologies, value, nameof(Technologies));
             }
         }
 
@@ -126,7 +123,7 @@ namespace TemplateEngine_v3.Models
             get => _parameters;
             set
             {
-                _parameters = value;
+                SetValue(ref _parameters, value, nameof(Parameters));
             }
         }
 
@@ -145,8 +142,7 @@ namespace TemplateEngine_v3.Models
             get => _expressionRepository;
             set
             {
-                _expressionRepository = value;
-                OnPropertyChanged(nameof(ExpressionRepository));
+                SetValue(ref _expressionRepository, value, nameof(ExpressionRepository));
             }
         }
 
@@ -159,13 +155,11 @@ namespace TemplateEngine_v3.Models
             get => _usageCondition;
             set
             {
-                if (!string.IsNullOrEmpty(_usageCondition) && !_usageCondition.Equals(value))
-                {
-                }
                 if (_usageCondition != value)
                 {
-                    _usageCondition = value;
-                    OnPropertyChanged(nameof(UsageCondition));
+                    if (_onDeserialized)
+                        LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения детали с '{_usageCondition}' на '{value}'");
+                    SetValue(ref _usageCondition, value, nameof(UsageCondition));
                     UpdateMenuHandler?.Invoke();
                 }
             }
@@ -409,10 +403,13 @@ namespace TemplateEngine_v3.Models
             }
         }
 
+        [JsonIgnore]
+        private bool _onDeserialized = false;
+
         [OnDeserialized]
-        internal void OnDeserializedMethod(StreamingContext context)
+        private void OnDeserialized(StreamingContext context)
         {
-            _isInitialized = true;
+            _onDeserialized = true;
         }
 
     }

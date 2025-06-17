@@ -91,7 +91,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             EnsureTemplatesLoaded();
             return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates
-                .Where(template => template.Type.Equals(_readyTemplateType))
+                .Where(template => template.Type.Equals(_readyTemplateType)
+                                && template.Name != "LogsObject (Не удалять)")
                 .OrderBy(template => template.Name)
                 .Reverse());
         }
@@ -322,7 +323,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 MessageBox.Show("Данный шаблон взят на редактирование другим пользователем", "Ошибка");
                 return false;
             }
-            findTemplate.BeginChanges();
+            await findTemplate.BeginChangesAsync();
             template.ProductMarkingAttributes = SetMarkingAttributes(template.ExampleMarkings);
 
             MenuHelper = new ContextMenuHelper(template, MaterialManager);

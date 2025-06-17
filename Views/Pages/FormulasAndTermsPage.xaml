@@ -48,7 +48,7 @@
                 <ColumnDefinition Width="12"/>
                 <ColumnDefinition Width="*"
                                   MinWidth="300"
-                                  MaxWidth="{Binding RelativeSource={RelativeSource AncestorType={x:Type Page}}, Path=ActualWidth, Converter={StaticResource MaxWidthConverter}, ConverterParameter=60}"/>
+                                  MaxWidth="{Binding RelativeSource={RelativeSource AncestorType={x:Type Page}}, Path=ActualWidth, Converter={StaticResource MaxWidthConverter}, ConverterParameter=40}"/>
 
             </Grid.ColumnDefinitions>
 
@@ -239,7 +239,7 @@
                              HorizontalScrollBarVisibility="Disabled"
                              VerticalScrollBarVisibility="Auto"
                              TextWrapping="Wrap"
-                             Text="{Binding CurrentEvaluator.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                             Text="{Binding CurrentEvaluator.Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
 
 
                 </Grid>

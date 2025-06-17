@@ -8,6 +8,7 @@ using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
 using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.FileServices;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.Services.UsersServices;
 using TemplateEngine_v3.Views.Pages;
 
@@ -374,12 +375,15 @@ namespace TemplateEngine_v3.VM.Pages
 
                     return;
                 }
+                
+                LogManager.CreateLogObjectGroup(referenceModel.Name, "Шаблоны");
 
                 var isSetTemplate = await _templateManager.SetTemplateAsync(referenceModel);
                 if (!isSetTemplate)
                 {
                     return;
                 }
+
 
                 var templateEditPage = new PageModel(referenceModel.Name, typeof(TemplateEditPage), new object[] { _technologiesManager, _templateManager, _branchManager });
 
@@ -428,6 +432,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="parameter">Параметры команды (не используются).</param>
         private void CreateTemplate(object parameter)
         {
+            LogManager.CreateLogObjectGroup("Новый шаблон", "Шаблоны");
             var template = new Template() { Name = "Новый шаблон" };
 
             _templateManager.SetTemplateAsync(template);

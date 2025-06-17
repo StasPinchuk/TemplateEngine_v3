@@ -3,8 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Xml.Linq;
+using TemplateEngine_v3.Models.LogModels;
 using TemplateEngine_v3.Services;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
 {
@@ -24,11 +27,9 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                if (!string.IsNullOrEmpty(_name) && !_name.Equals(value))
-                {
-                }
-                _name = value;
-                OnPropertyChanged(nameof(Name));
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия ТП с '{_name}' на '{value}'");
+                SetValue(ref _name, value, nameof(Name));
             }
         }
 
@@ -41,7 +42,7 @@ namespace TemplateEngine_v3.Models
             get => _editName;
             set
             {
-                _editName = value;
+                SetValue(ref _editName, value, nameof(EditName));
             }
         }
 
@@ -54,11 +55,7 @@ namespace TemplateEngine_v3.Models
             get => _operations;
             set
             {
-                if (_operations.Count < value.Count)
-                {
-                }
-                _operations = value;
-                OnPropertyChanged(nameof(Operations));
+                SetValue(ref _operations, value, nameof(Operations));
             }
         }
 
@@ -71,8 +68,7 @@ namespace TemplateEngine_v3.Models
             get => _creationDate;
             set
             {
-                _creationDate = value;
-                OnPropertyChanged(nameof(CreationDate));
+                SetValue(ref _creationDate, value, nameof(CreationDate));
             }
         }
 
@@ -85,8 +81,7 @@ namespace TemplateEngine_v3.Models
             get => _lastModifiedDate;
             set
             {
-                _lastModifiedDate = value;
-                OnPropertyChanged(nameof(LastModifiedDate));
+                SetValue(ref _lastModifiedDate, value, nameof(LastModifiedDate));
             }
         }
 
@@ -117,6 +112,15 @@ namespace TemplateEngine_v3.Models
             }
             CreationDate = technologies.CreationDate;
             LastModifiedDate = technologies.LastModifiedDate;
+        }
+
+        [JsonIgnore]
+        private bool _onDeserialized = false;
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            _onDeserialized = true;
         }
     }
 }

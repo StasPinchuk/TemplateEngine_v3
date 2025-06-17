@@ -2,7 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
+using TemplateEngine_v3.Models.LogModels;
 using TemplateEngine_v3.Services;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
 {
@@ -16,11 +19,10 @@ namespace TemplateEngine_v3.Models
             get => _designation;
             set
             {
-                if (!string.IsNullOrEmpty(_designation))
-                {
-                }
                 if (_designation != value)
                 {
+                    if (_onDeserialized)
+                        LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия КД с '{_designation}' на '{value}'");
                     SetValue(ref _designation, value, nameof(Designation));
                 }
             }
@@ -36,8 +38,7 @@ namespace TemplateEngine_v3.Models
             get => _technologies;
             set
             {
-                _technologies = value;
-                OnPropertyChanged(nameof(Technologies));
+                SetValue(ref _technologies, value, nameof(Technologies));
             }
         }
 
@@ -52,11 +53,9 @@ namespace TemplateEngine_v3.Models
             get => _usageCondition;
             set
             {
-                if (!string.IsNullOrEmpty(_usageCondition))
-                {
-                }
-                _usageCondition = value;
-                OnPropertyChanged(nameof(UsageCondition));
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения КД с '{_usageCondition}' на '{value}'"); 
+                SetValue(ref _usageCondition, value, nameof(UsageCondition));
             }
         }
 
@@ -66,11 +65,9 @@ namespace TemplateEngine_v3.Models
             get => _designationComment;
             set
             {
-                if (!string.IsNullOrEmpty(_designationComment))
-                {
-                }
-                _designationComment = value;
-                OnPropertyChanged(nameof(DesignationComment));
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения КД с '{_designationComment}' на '{value}'");
+                SetValue(ref _designationComment, value, nameof(DesignationComment));
             }
         }
 
@@ -91,5 +88,13 @@ namespace TemplateEngine_v3.Models
             DesignationComment = source.DesignationComment;
         }
 
+        [JsonIgnore]
+        private bool _onDeserialized = false;
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            _onDeserialized = true;
+        }
     }
 }

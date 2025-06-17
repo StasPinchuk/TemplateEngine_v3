@@ -8,6 +8,7 @@
         xmlns:local="clr-namespace:TemplateEngine_v3"
         mc:Ignorable="d"
         MinWidth="850"
+        WindowStartupLocation="CenterScreen"
         Style="{StaticResource MaterialDesignWindow}"
         Title="Редактор шаблонов">
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using TFlex.DOCs.Common.PreprocessorArrays;
 using TFlex.DOCs.Model;
 
 namespace TemplateEngine_v3.Services.ReferenceServices
@@ -89,38 +90,43 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
-        public static bool EditNodeType(string oldTypeName, string newTypeName)
+        public static bool EditNodeType(string typeName)
         {
             try
             {
-                if (NodeTypeInfo == null)
+                if (NodeTypeInfo != null)
+                {
+                    var reference = NodeTypeInfo.CreateReference();
+
+                    reference.Objects.Reload();
+
+                    var editNodeType = reference.Objects.FirstOrDefault(type => type.ToString().Equals(typeName));
+
+                    if (editNodeType != null)
+                    {
+                        var nameGuid = reference.ParameterGroup.Parameters.FindByName("Наименование").Guid;
+                        editNodeType.BeginChanges();
+                        editNodeType[nameGuid].Value = typeName;
+                        editNodeType.EndChanges();
+
+                        SetNodeTypesList();
+
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+                else
                 {
                     NodeTypes.Clear();
                     return false;
                 }
-
-                var reference = NodeTypeInfo.CreateReference();
-                reference.Objects.Reload();
-
-                var editNodeType = reference.Objects.FirstOrDefault(type => type.ToString().Equals(oldTypeName, StringComparison.OrdinalIgnoreCase));
-                if (editNodeType == null)
-                    return false;
-
-                var nameGuid = reference.ParameterGroup.Parameters.FindByName("Наименование")?.Guid;
-                if (nameGuid == null)
-                    return false;
-
-                editNodeType.BeginChanges();
-                editNodeType[nameGuid.Value].Value = newTypeName;
-                editNodeType.EndChanges();
-
-                SetNodeTypesList();
-
-                return true;
             }
             catch (Exception ex)
             {
-                // TODO: логировать ex
                 return false;
             }
         }

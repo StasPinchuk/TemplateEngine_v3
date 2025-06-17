@@ -47,7 +47,10 @@ namespace TemplateEngine_v3
         private void AppClose()
         {
             if (_serverManager.IsConnected())
+            {
+                _serverManager.ReferenceManager.TemplateManager.ClearTemplate();
                 _serverManager.Disconnect();
+            }
         }
     }
 }

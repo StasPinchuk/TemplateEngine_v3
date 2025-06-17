@@ -108,10 +108,11 @@ namespace TemplateEngine_v3.VM.Pages
             _technologiesManager = technologiesManager;
             _templateManager = templateManager;
             _technologiesManager.MenuHelper = _nodeManager.MenuHelper;
-            Nodes = _nodeManager.Nodes;
+            Nodes = new(_nodeManager.Nodes);
             _nodePage = nodePage;
 
             SelectedNode = Nodes.FirstOrDefault();
+            _nodeManager.Nodes = new(Nodes);
             SetNodeGroup();
             SetNodePage(PageCollection.FirstOrDefault());
 
@@ -336,6 +337,7 @@ namespace TemplateEngine_v3.VM.Pages
             {
                 var nodeManager = existingPage.ConstructorParameters.FirstOrDefault(param => param is INodeManager) as INodeManager;
                 nodeManager.CurrentNode = SelectedNode;
+                nodeManager.Nodes = SelectedNode.Nodes;
             }
 
             if (required && existingPage == null)
@@ -375,9 +377,11 @@ namespace TemplateEngine_v3.VM.Pages
         private void FilterNode()
         {
             if (string.IsNullOrEmpty(FilterString))
-                Nodes = _nodeManager.Nodes;
+            {
+                Nodes = new(_nodeManager.Nodes);
+            }                
             else
-                Nodes = new(Nodes.Where(node => node.Name.Contains(FilterString)));
+                Nodes = new(_nodeManager.Nodes.Where(node => node.Name.Contains(FilterString)));
             OnPropertyChanged(nameof(Nodes));
             SetNodeGroup();
             OnPropertyChanged(nameof(NodeGroups));

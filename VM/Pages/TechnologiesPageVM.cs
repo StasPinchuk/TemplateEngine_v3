@@ -133,7 +133,7 @@ namespace TemplateEngine_v3.VM.Pages
             CurrentTechnologies = _technologiesManager.CurrentTechnologies;
             OperationNames = new ObservableCollection<string>(_operationNamesManager.OperationNameList);
             Technologies = _technologiesManager.GetAllTechnologies();
-
+            
             InitializeCommand();
         }
 

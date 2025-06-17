@@ -2,12 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 using TemplateEngine_v3.Converters;
+using TemplateEngine_v3.Models.LogModels;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
 {
     public class Template : BaseNotifyPropertyChanged, ITemplatedFile
     {
+        [JsonIgnore]
+        private bool _onDeserialized = false;
+
         /// <summary>
         /// Unique identifier of the template
         /// </summary>
@@ -22,9 +28,8 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                if (!string.IsNullOrEmpty(_name) && !_name.Equals(value))
-                {
-                }
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия шаблона с '{_name}' на '{value}'");
                 _name = value;
                 OnPropertyChanged(nameof(Name));
             }
@@ -120,6 +125,12 @@ namespace TemplateEngine_v3.Models
         public override string ToString()
         {
             return Name;
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            _onDeserialized = true;
         }
     }
 }

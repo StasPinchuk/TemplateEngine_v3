@@ -2,7 +2,11 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using TemplateEngine_v3.Models.LogModels;
 using TemplateEngine_v3.Services;
+using TemplateEngine_v3.Services.ReferenceServices;
+using TFlex.DOCs.Model.References.Units;
 
 namespace TemplateEngine_v3.Models
 {
@@ -18,11 +22,9 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                if (!_name.Equals(value))
-                {
-                    _name = value;
-                }
-                OnPropertyChanged(nameof(Name));
+                if (ShouldLogChange(_name, value))
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия переменной с '{_name}' на '{value}'");
+                SetValue(ref _name, value, nameof(Name));
             }
         }
 
@@ -49,11 +51,10 @@ namespace TemplateEngine_v3.Models
             get => _value;
             set
             {
-                if (!_value.Equals(value))
-                {
-                    SetValue(ref _value, value, nameof(Value));
-                }
-                if(string.IsNullOrEmpty(value))
+                if (ShouldLogChange(_value, value))
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование значения переменной с '{_value}' на '{value}'");
+                SetValue(ref _value, value, nameof(Value));
+                if (string.IsNullOrEmpty(value))
                 {
                     Parts.Clear();
                 }
@@ -66,11 +67,10 @@ namespace TemplateEngine_v3.Models
             get => _usageCondition;
             set
             {
-                if (!string.IsNullOrEmpty(_usageCondition) && !_usageCondition.Equals(value))
-                {
-                }
-                _usageCondition = value.Trim();
-                OnPropertyChanged(nameof(UsageCondition));
+
+                if (ShouldLogChange(_usageCondition, value))
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения переменной с '{_usageCondition}' на '{value}'");
+                SetValue(ref _usageCondition, value, nameof(UsageCondition));
             }
         }
 
@@ -82,6 +82,11 @@ namespace TemplateEngine_v3.Models
         {
             get => _parts ??= new ObservableCollection<string>();
             set => _parts = value;
+        }
+
+        public ConditionEvaluator()
+        {
+            _onDeserialized = true;
         }
 
         public ConditionEvaluator Copy()
@@ -98,6 +103,20 @@ namespace TemplateEngine_v3.Models
             EditName = evaluator.EditName;
             UsageCondition = evaluator.UsageCondition;
             Parts = evaluator.Parts;
+        }
+
+        private bool ShouldLogChange(string oldValue, string newValue)
+        {
+            return _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
+        }
+
+        [JsonIgnore]
+        private bool _onDeserialized = false;
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            _onDeserialized = true;
         }
     }
 }

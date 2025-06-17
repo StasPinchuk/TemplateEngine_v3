@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Runtime.Serialization;
+using TemplateEngine_v3.Models.LogModels;
 using TemplateEngine_v3.Services;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
 {
@@ -26,11 +29,9 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                if (!string.IsNullOrEmpty(_name) && !_name.Equals(value))
-                {
-                }
-                _name = value;
-                OnPropertyChanged(nameof(Name));
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия филиала с '{_name}' на '{value}'");
+                SetValue(ref _name, value, nameof(Name));
             }
         }
 
@@ -58,11 +59,9 @@ namespace TemplateEngine_v3.Models
             get => _designation;
             set
             {
-                if (!string.IsNullOrEmpty(_designation) && !_designation.Equals(value))
-                {
-                }
-                _designation = value;
-                OnPropertyChanged(nameof(Designation));
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование обозначения филиала с '{_designation}' на '{value}'");
+                SetValue(ref _designation, value, nameof(Designation));
             }
         }
 
@@ -131,6 +130,14 @@ namespace TemplateEngine_v3.Models
             LastModifiedDate = branch.LastModifiedDate;
         }
 
+        [JsonIgnore]
+        private bool _onDeserialized = false;
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            _onDeserialized = true;
+        }
         #endregion
     }
 }

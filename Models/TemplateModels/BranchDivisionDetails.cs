@@ -1,9 +1,13 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
+using TemplateEngine_v3.Models.LogModels;
 using TemplateEngine_v3.Services;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
 {
@@ -20,8 +24,9 @@ namespace TemplateEngine_v3.Models
             get => _branch;
             set
             {
-                _branch = value;
-                OnPropertyChanged(nameof(Branch));
+                if (_onDeserialized && value != null)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия филиала ТП с '{_branch.Name}' на '{value.Name}'");
+                SetValue(ref _branch, value, nameof(Branch));
             }
         }
 
@@ -34,11 +39,9 @@ namespace TemplateEngine_v3.Models
             get => _unitEquipment;
             set
             {
-                if (!string.IsNullOrEmpty(_unitEquipment) && !_unitEquipment.Equals(value))
-                {
-                }
-                _unitEquipment = value;
-                OnPropertyChanged(nameof(UnitEquipment));
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия оборудования с '{_unitEquipment}' на '{value}'");
+                SetValue(ref _unitEquipment, value, nameof(UnitEquipment));
             }
         }
 
@@ -51,11 +54,9 @@ namespace TemplateEngine_v3.Models
             get => _divisionCode;
             set
             {
-                if (!string.IsNullOrEmpty(_divisionCode) && !_divisionCode.Equals(value))
-                {
-                }
-                _divisionCode = value;
-                OnPropertyChanged(nameof(DivisionCode));
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование кода подразделения с '{_divisionCode}' на '{value}'");
+                SetValue(ref _divisionCode, value, nameof(DivisionCode));
             }
         }
 
@@ -82,11 +83,9 @@ namespace TemplateEngine_v3.Models
             get => _usageCondition;
             set
             {
-                if (!string.IsNullOrEmpty(_usageCondition) && !_usageCondition.Equals(value))
-                {
-                }
-                _usageCondition = value;
-                OnPropertyChanged(nameof(UsageCondition));
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения с '{_usageCondition}' на '{value}'");
+                SetValue(ref _usageCondition, value, nameof(UsageCondition));
             }
         }
 
@@ -113,6 +112,7 @@ namespace TemplateEngine_v3.Models
         }
 
         private ObservableCollection<GroupNode> _groups;
+
         [JsonIgnore]
         public ObservableCollection<GroupNode> Groups
         {
@@ -178,6 +178,15 @@ namespace TemplateEngine_v3.Models
                 foreach (var item in BuildPropertiesGroup())
                     group.Children.Add(item);
             }
+        }
+
+        [JsonIgnore]
+        private bool _onDeserialized = false;
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            _onDeserialized = true;
         }
     }
 }

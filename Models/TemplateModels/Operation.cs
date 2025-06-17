@@ -3,7 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
+using TemplateEngine_v3.Models.LogModels;
 using TemplateEngine_v3.Services;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
 {
@@ -23,11 +26,9 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                if (!string.IsNullOrEmpty(_name) && !_name.Equals(value))
-                {
-                }
-                _name = value;
-                OnPropertyChanged(nameof(Name));
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия операции с '{_name}' на '{value}'");
+                SetValue(ref _name, value, nameof(Name));
             }
         }
 
@@ -40,11 +41,9 @@ namespace TemplateEngine_v3.Models
             get => _order;
             set
             {
-                if (!string.IsNullOrEmpty(_order) && !_order.Equals(value))
-                {
-                }
-                _order = value;
-                OnPropertyChanged(nameof(Order));
+                if (_onDeserialized)
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование номера операции с '{_order}' на '{value}'");
+                SetValue(ref _order, value, nameof(Order));
             }
         }
 
@@ -57,21 +56,7 @@ namespace TemplateEngine_v3.Models
             get => _branchDivisionDetails;
             set
             {
-                if (_branchDivisionDetails.Count < value.Count)
-                {
-                }
-                else if (_branchDivisionDetails.Count > value.Count)
-                {
-                    var list = _branchDivisionDetails.Where(x =>
-                        !value.Any(v => v.Branch.Name?.Equals(x.Branch.Name, StringComparison.OrdinalIgnoreCase) == true));
-                    string logString = string.Empty;
-                    if(list.Count() > 1)
-                    {
-                        logString = $"Удалены детали для филиалов: {string.Join(",", list)}";
-                    }
-                }
-                _branchDivisionDetails = value;
-                OnPropertyChanged(nameof(BranchDivisionDetails));
+                SetValue(ref _branchDivisionDetails, value, nameof(BranchDivisionDetails));
             }
         }
 
@@ -88,12 +73,19 @@ namespace TemplateEngine_v3.Models
             BranchDivisionDetails = new(operation.BranchDivisionDetails);
         }
 
-
-
         public Operation Copy()
         {
             string json = JsonConvert.SerializeObject(this);
             return JsonConvert.DeserializeObject<Operation>(json);
+        }
+
+        [JsonIgnore]
+        private bool _onDeserialized = false;
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            _onDeserialized = true;
         }
     }
 }

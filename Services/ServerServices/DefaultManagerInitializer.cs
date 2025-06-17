@@ -41,7 +41,6 @@ namespace TemplateEngine_v3.Services.ServerServices
 
             // Создаем загрузчик справочников из JSON
             var jsonreferenceLoader = new JsonReferenceLoader();
-
             // Возвращаем ReferenceManager, который в текущей реализации
             // использует JSON-загрузчик для справочников
             return new ReferenceManager(connection, jsonreferenceLoader);

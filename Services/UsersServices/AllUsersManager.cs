@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using TemplateEngine_v3.Mappers;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TFlex.DOCs.Common;
 using TFlex.DOCs.Model;
 using TFlex.DOCs.Model.References.Users;
@@ -26,6 +27,7 @@ namespace TemplateEngine_v3.Services.UsersServices
         {
             _connection = serverConnection;
             var currentUser = UserMapper.FromTFlexUser(_connection.ClientView.GetUser());
+            LogManager.UserName = currentUser.FullName;
             SetUsersList();
         }
 
