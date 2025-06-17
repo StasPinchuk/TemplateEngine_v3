@@ -12,6 +12,9 @@ using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.VM.Pages
 {
+    /// <summary>
+    /// ViewModel для редактирования узла в предварительном просмотре.
+    /// </summary>
     public class EditNodePreviewVM : BaseNotifyPropertyChanged
     {
         private readonly Operation _editOperation;
@@ -22,12 +25,21 @@ namespace TemplateEngine_v3.VM.Pages
 
         private readonly Node _editNode;
         private Node _currentNode;
+
+        /// <summary>
+        /// Текущий редактируемый узел.
+        /// </summary>
         public Node CurrentNode
         {
-            get => _currentNode; set => SetValue(ref _currentNode, value, nameof(CurrentNode));
+            get => _currentNode;
+            set => SetValue(ref _currentNode, value, nameof(CurrentNode));
         }
 
         private string _nodeType = string.Empty;
+
+        /// <summary>
+        /// Тип текущего узла.
+        /// </summary>
         public string NodeType
         {
             get => _nodeType;
@@ -38,19 +50,39 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
-        private ObservableCollection<TreeEvaluator> _parts = new ObservableCollection<TreeEvaluator>();
+        private ObservableCollection<TreeEvaluator> _parts = new();
+
+        /// <summary>
+        /// Коллекция связанных условий (Parts) в виде дерева.
+        /// </summary>
         public ObservableCollection<TreeEvaluator> Parts
         {
             get => _parts;
             set => SetValue(ref _parts, value, nameof(Parts));
         }
 
+        /// <summary>
+        /// Доступные типы узлов.
+        /// </summary>
         public ObservableCollection<string> NodeTypes => NodeTypeManager.NodeTypes;
 
+        /// <summary>
+        /// Контекстное меню для текстовых полей.
+        /// </summary>
         public ContextMenu TextBoxContextMenu => _contextMenuHelper.GetContextMenu();
 
+        /// <summary>
+        /// Команда для применения изменений узла.
+        /// </summary>
         public ICommand EditNodeCommand { get; set; }
 
+        /// <summary>
+        /// Конструктор ViewModel для редактирования узла.
+        /// </summary>
+        /// <param name="node">Редактируемый узел.</param>
+        /// <param name="evaluatorManager">Менеджер условий и выражений.</param>
+        /// <param name="contextMenuHelper">Помощник для создания контекстного меню.</param>
+        /// <param name="drawerHost">DrawerHost для закрытия окна редактирования.</param>
         public EditNodePreviewVM(Node node, IEvaluatorManager evaluatorManager, ContextMenuHelper contextMenuHelper, DrawerHost drawerHost)
         {
             _editNode = node;
@@ -63,6 +95,11 @@ namespace TemplateEngine_v3.VM.Pages
             EditNodeCommand = new RelayCommand(EditNode);
         }
 
+        /// <summary>
+        /// Построение дерева условий на основе <see cref="ConditionEvaluator"/>.
+        /// </summary>
+        /// <param name="evaluator">Условие, из которого строится дерево.</param>
+        /// <returns>Корень дерева условий.</returns>
         private TreeEvaluator BuildTreeEvaluator(ConditionEvaluator evaluator)
         {
             try
@@ -90,10 +127,15 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Устанавливает дерево условий (Parts) для отображения.
+        /// </summary>
+        /// <param name="evaluator">Корневое условие.</param>
         public void SetParts(ConditionEvaluator evaluator)
         {
             if (!_evaluatorManager.AllTemplateEvaluator.Any(eval => eval.Id.Equals(evaluator.Id)))
                 return;
+
             var root = BuildTreeEvaluator(evaluator);
             if (root != null)
             {
@@ -105,11 +147,17 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Очищает коллекцию Parts.
+        /// </summary>
         public void ClearParts()
         {
             Parts.Clear();
         }
 
+        /// <summary>
+        /// Применяет изменения в узле и закрывает Drawer.
+        /// </summary>
         private void EditNode()
         {
             _editNode.SetValue(CurrentNode);

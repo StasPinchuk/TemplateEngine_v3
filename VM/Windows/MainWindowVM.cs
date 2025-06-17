@@ -18,6 +18,9 @@ using TemplateEngine_v3.VM.Pages;
 
 namespace TemplateEngine_v3.VM.Windows
 {
+    /// <summary>
+    /// ViewModel главного окна приложения, отвечает за навигацию и основные команды.
+    /// </summary>
     public class MainWindowVM : BaseNotifyPropertyChanged
     {
         private readonly ITemplateManager _templateManager;
@@ -27,14 +30,43 @@ namespace TemplateEngine_v3.VM.Windows
         private readonly ColumnDefinition _sideBar;
         private readonly Frame _mainFrame;
 
+        /// <summary>
+        /// Коллекция элементов меню для боковой панели.
+        /// </summary>
         public ObservableCollection<PageModel> MenuItems { get; } = new();
 
+        /// <summary>
+        /// Команда открытия страницы.
+        /// </summary>
         public ICommand OpenPageCommand { get; set; }
+
+        /// <summary>
+        /// Команда сохранения данных в JSON файлы.
+        /// </summary>
         public ICommand SaveToJsonCommand { get; set; }
+
+        /// <summary>
+        /// Команда для замены значений в шаблонах.
+        /// </summary>
         public ICommand ReplaceValueInTemplateCommand { get; set; }
+
+        /// <summary>
+        /// Команда для открытия списка типов деталей.
+        /// </summary>
         public ICommand DetailTypeListCommand { get; set; }
+
+        /// <summary>
+        /// Команда для открытия окна настроек.
+        /// </summary>
         public ICommand OpenSettingsCommand { get; set; }
 
+        /// <summary>
+        /// Конструктор ViewModel главного окна.
+        /// </summary>
+        /// <param name="referenceManager">Менеджер ссылок для получения сервисов.</param>
+        /// <param name="userManager">Менеджер пользователей.</param>
+        /// <param name="mainFrame">Фрейм для навигации страниц.</param>
+        /// <param name="sideBar">Колонка сайдбара для управления разметкой.</param>
         public MainWindowVM(ReferenceManager referenceManager, UserManager userManager, Frame mainFrame, ColumnDefinition sideBar)
         {
             _templateManager = referenceManager.TemplateManager;
@@ -101,6 +133,7 @@ namespace TemplateEngine_v3.VM.Windows
             foreach (var item in menuItems)
                 MenuItems.Add(item);
 
+            // Навигация на первую страницу меню по умолчанию
             var currentPage = MenuItems.First().ModelPage;
             mainFrame.Navigate(currentPage);
             currentPage = null;
@@ -108,6 +141,9 @@ namespace TemplateEngine_v3.VM.Windows
             InitializeCommand();
         }
 
+        /// <summary>
+        /// Инициализация команд.
+        /// </summary>
         private void InitializeCommand()
         {
             OpenPageCommand = new RelayCommand(OnPageOpen);
@@ -117,20 +153,31 @@ namespace TemplateEngine_v3.VM.Windows
             OpenSettingsCommand = new RelayCommand(OpenSettings);
         }
 
+        /// <summary>
+        /// Обработчик команды открытия страницы.
+        /// Очищает историю меню, навигирует на выбранную страницу и сбрасывает состояние менеджеров.
+        /// </summary>
+        /// <param name="parameter">Ожидается объект PageModel.</param>
         private void OnPageOpen(object parameter)
         {
             if (parameter is PageModel pageModel)
             {
                 if (MenuHistory.VisiblePageHistory.Count > 0)
                     _sideBar.Width = GridLength.Auto;
+
                 MenuHistory.Clear();
                 pageModel.ClearPage();
                 _mainFrame.Navigate(pageModel.ModelPage);
+
                 _templateManager.ClearTemplate();
                 _technologiesManager.CurrentTechnologies = null;
             }
         }
 
+        /// <summary>
+        /// Сохраняет данные различных менеджеров в JSON файлы в соответствующие папки.
+        /// </summary>
+        /// <param name="parameter">Параметр команды (не используется).</param>
         private void SaveToJson(object parameter)
         {
             FileService.WriteToFolder("saveTemplate\\Ready", _templateManager.GetReadyTemplate(),
@@ -149,18 +196,30 @@ namespace TemplateEngine_v3.VM.Windows
                 b => b.Name, b => b.ObjectStruct);
         }
 
+        /// <summary>
+        /// Открывает диалог замены значений в шаблонах.
+        /// </summary>
+        /// <param name="parameter">Параметр команды (не используется).</param>
         private async void ReplaceValueInTemplate(object parameter)
         {
             var dialog = new ReplaceChoiceDialog(_templateManager.GetReadyTemplate(), _templateManager);
             await DialogHost.Show(dialog, "MainDialog");
         }
 
+        /// <summary>
+        /// Открывает диалог выбора типа деталей.
+        /// </summary>
+        /// <param name="parameter">Параметр команды (не используется).</param>
         private async void DetailTypeList(object parameter)
         {
             var dialog = new DeteilTypeChoiceDialog();
             await DialogHost.Show(dialog, "MainDialog");
         }
 
+        /// <summary>
+        /// Открывает окно настроек приложения.
+        /// </summary>
+        /// <param name="parameter">Параметр команды (не используется).</param>
         private async void OpenSettings(object parameter)
         {
             var dialog = new SettingsChoiceDialog();

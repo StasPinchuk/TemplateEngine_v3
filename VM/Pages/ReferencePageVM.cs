@@ -13,16 +13,30 @@ using TemplateEngine_v3.Views.Pages;
 
 namespace TemplateEngine_v3.VM.Pages
 {
+    /// <summary>
+    /// Типы классов шаблонов для отображения.
+    /// </summary>
     public enum TemplateClass
     {
+        /// <summary>Готовые шаблоны</summary>
         Ready,
+        /// <summary>Черновики</summary>
         Draft,
+        /// <summary>Корзина (удалённые)</summary>
         TrashCan
     }
 
+    /// <summary>
+    /// ViewModel для страницы со списком ссылок на шаблоны, филиалы или технологии.
+    /// Обеспечивает команды для создания, удаления, клонирования и редактирования элементов.
+    /// </summary>
     public class ReferencePageVM : BaseNotifyPropertyChanged
     {
+        /// <summary>
+        /// Список ссылок на модели (шаблоны, филиалы, технологии).
+        /// </summary>
         public ObservableCollection<ReferenceModelInfo> ReferencesList { get; set; } = new();
+
         private readonly ITemplateManager _templateManager;
         private readonly IBranchManager _branchManager;
         private readonly ITechnologiesManager _technologiesManager;
@@ -30,17 +44,39 @@ namespace TemplateEngine_v3.VM.Pages
         private readonly ColumnDefinition _sideBar;
 
         private object _permission = null;
+
+        /// <summary>
+        /// Разрешения пользователя для текущей страницы.
+        /// </summary>
         public object Permission
         {
             get => _permission;
             set => SetValue(ref _permission, value, nameof(Permission));
         }
 
+        /// <summary>
+        /// Команда удаления элемента.
+        /// </summary>
         public ICommand RemoveCommand { get; set; }
+
+        /// <summary>
+        /// Команда клонирования элемента.
+        /// </summary>
         public ICommand CloneCommand { get; set; }
+
+        /// <summary>
+        /// Команда редактирования элемента.
+        /// </summary>
         public ICommand EditCommand { get; set; }
+
+        /// <summary>
+        /// Команда создания нового элемента.
+        /// </summary>
         public ICommand CreateCommand { get; set; }
 
+        /// <summary>
+        /// Конструктор для страницы с шаблонами (без технологий).
+        /// </summary>
         public ReferencePageVM(ITemplateManager templateManager, IBranchManager branchManager, UserManager userManager, TemplateClass templateClass, ColumnDefinition sideBar)
         {
             _templateManager = templateManager;
@@ -54,6 +90,9 @@ namespace TemplateEngine_v3.VM.Pages
             InitializeTemplateCommand();
         }
 
+        /// <summary>
+        /// Конструктор для страницы с шаблонами и технологиями.
+        /// </summary>
         public ReferencePageVM(ITemplateManager templateManager, ITechnologiesManager technologiesManager, IBranchManager branchManager, UserManager userManager, TemplateClass templateClass, ColumnDefinition sideBar)
         {
             _templateManager = templateManager;
@@ -68,6 +107,9 @@ namespace TemplateEngine_v3.VM.Pages
             InitializeTemplateCommand();
         }
 
+        /// <summary>
+        /// Инициализация команд для работы с шаблонами.
+        /// </summary>
         private void InitializeTemplateCommand()
         {
             RemoveCommand = new RelayCommand(RemoveTemplate);
@@ -76,6 +118,9 @@ namespace TemplateEngine_v3.VM.Pages
             CreateCommand = new RelayCommand(CreateTemplate);
         }
 
+        /// <summary>
+        /// Конструктор для страницы с филиалами.
+        /// </summary>
         public ReferencePageVM(IBranchManager branchManager, UserManager userManager, ColumnDefinition sideBar)
         {
             _branchManager = branchManager;
@@ -87,6 +132,9 @@ namespace TemplateEngine_v3.VM.Pages
             SetBranchesList();
         }
 
+        /// <summary>
+        /// Инициализация команд для работы с филиалами.
+        /// </summary>
         private void InitializeBranchCommand()
         {
             RemoveCommand = new RelayCommand(RemoveBranch);
@@ -95,6 +143,9 @@ namespace TemplateEngine_v3.VM.Pages
             CreateCommand = new RelayCommand(CreateBranch);
         }
 
+        /// <summary>
+        /// Конструктор для страницы с технологиями.
+        /// </summary>
         public ReferencePageVM(ITechnologiesManager technologiesManager, UserManager userManager, ColumnDefinition sideBar)
         {
             _technologiesManager = technologiesManager;
@@ -106,6 +157,9 @@ namespace TemplateEngine_v3.VM.Pages
             SetTechnologiesList();
         }
 
+        /// <summary>
+        /// Инициализация команд для работы с технологиями.
+        /// </summary>
         private void InitializeTechnologiesCommand()
         {
             RemoveCommand = new RelayCommand(RemoveTechnologies);
@@ -114,6 +168,9 @@ namespace TemplateEngine_v3.VM.Pages
             CreateCommand = new RelayCommand(CreateTechnologies);
         }
 
+        /// <summary>
+        /// Устанавливает список ссылок в зависимости от класса шаблона.
+        /// </summary>
         private void SetReferenceList()
         {
             switch (_templateClass)
@@ -132,40 +189,55 @@ namespace TemplateEngine_v3.VM.Pages
 
         private readonly object _lockObject = new object();
 
+        /// <summary>
+        /// Загружает список готовых шаблонов.
+        /// </summary>
         private void SetReadyTemplateList()
         {
             ReferencesList = _templateManager.GetReadyTemplate();
             OnPropertyChanged(nameof(ReferencesList));
         }
 
+        /// <summary>
+        /// Загружает список шаблонов-черновиков.
+        /// </summary>
         private void SetDraftTemplateList()
         {
             ReferencesList = _templateManager.GetDraftTemplates();
-
             OnPropertyChanged(nameof(ReferencesList));
         }
 
+        /// <summary>
+        /// Загружает список шаблонов из корзины.
+        /// </summary>
         private void SetTrashCanTemplateList()
         {
             ReferencesList = _templateManager.GetTrashCanTemplates();
-
             OnPropertyChanged(nameof(ReferencesList));
         }
 
+        /// <summary>
+        /// Загружает список всех филиалов.
+        /// </summary>
         private void SetBranchesList()
         {
             ReferencesList = _branchManager.GetAllBranches();
-
             OnPropertyChanged(nameof(ReferencesList));
         }
 
+        /// <summary>
+        /// Загружает список всех технологий.
+        /// </summary>
         private void SetTechnologiesList()
         {
             ReferencesList = _technologiesManager.GetAllTechnologies();
-
             OnPropertyChanged(nameof(ReferencesList));
         }
 
+        /// <summary>
+        /// Удаляет шаблон после подтверждения.
+        /// </summary>
+        /// <param name="parameter">Ссылка на шаблон для удаления.</param>
         private async void RemoveTemplate(object parameter)
         {
             if (parameter is ReferenceModelInfo referenceModel)
@@ -186,6 +258,10 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Удаляет филиал после подтверждения.
+        /// </summary>
+        /// <param name="parameter">Ссылка на филиал для удаления.</param>
         private async void RemoveBranch(object parameter)
         {
             if (parameter is ReferenceModelInfo referenceModel)
@@ -206,6 +282,10 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Удаляет технологию после подтверждения.
+        /// </summary>
+        /// <param name="parameter">Ссылка на технологию для удаления.</param>
         private async void RemoveTechnologies(object parameter)
         {
             if (parameter is ReferenceModelInfo referenceModel)
@@ -226,7 +306,10 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
-
+        /// <summary>
+        /// Клонирует шаблон.
+        /// </summary>
+        /// <param name="parameter">Ссылка на шаблон для клонирования.</param>
         private async void CloneTemplate(object parameter)
         {
             if (parameter is ReferenceModelInfo referenceModel)
@@ -240,6 +323,10 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Клонирует филиал.
+        /// </summary>
+        /// <param name="parameter">Ссылка на филиал для клонирования.</param>
         private async void CloneBranch(object parameter)
         {
             if (parameter is ReferenceModelInfo referenceModel)
@@ -253,6 +340,10 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Клонирует технологию.
+        /// </summary>
+        /// <param name="parameter">Ссылка на технологию для клонирования.</param>
         private async void CloneTechnologies(object parameter)
         {
             if (parameter is ReferenceModelInfo referenceModel)
@@ -266,6 +357,10 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Редактирует шаблон. Если шаблон в корзине, восстанавливает его.
+        /// </summary>
+        /// <param name="parameter">Ссылка на шаблон для редактирования.</param>
         private async void EditTemplate(object parameter)
         {
             if (parameter is ReferenceModelInfo referenceModel)
@@ -293,6 +388,10 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Редактирует технологию.
+        /// </summary>
+        /// <param name="parameter">Ссылка на технологию для редактирования.</param>
         private void EditTechnologies(object parameter)
         {
             if (parameter is ReferenceModelInfo referenceModel)
@@ -306,6 +405,10 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Редактирует филиал.
+        /// </summary>
+        /// <param name="parameter">Ссылка на филиал для редактирования.</param>
         private void EditBranch(object parameter)
         {
             if (parameter is ReferenceModelInfo referenceModel)
@@ -319,6 +422,10 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Создаёт новый шаблон и открывает страницу редактирования.
+        /// </summary>
+        /// <param name="parameter">Параметры команды (не используются).</param>
         private void CreateTemplate(object parameter)
         {
             var template = new Template() { Name = "Новый шаблон" };
@@ -331,6 +438,10 @@ namespace TemplateEngine_v3.VM.Pages
             _sideBar.Width = new GridLength(80);
         }
 
+        /// <summary>
+        /// Создаёт новую технологию и открывает страницу редактирования.
+        /// </summary>
+        /// <param name="parameter">Параметры команды (не используются).</param>
         private void CreateTechnologies(object parameter)
         {
             _technologiesManager.CurrentTechnologies = new Technologies() { Name = "Новое ТП" };
@@ -341,6 +452,10 @@ namespace TemplateEngine_v3.VM.Pages
             _sideBar.Width = new GridLength(80);
         }
 
+        /// <summary>
+        /// Создаёт новый филиал и открывает страницу редактирования.
+        /// </summary>
+        /// <param name="parameter">Параметры команды (не используются).</param>
         private void CreateBranch(object parameter)
         {
             var newBranch = new Branch()

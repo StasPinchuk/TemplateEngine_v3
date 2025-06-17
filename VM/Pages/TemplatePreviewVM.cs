@@ -26,16 +26,26 @@ namespace TemplateEngine_v3.VM.Pages
         private TemplateRelations _relations;
         private TemplateRelations _editRelation;
         private string _orderString;
+
+        /// <summary>
+        /// Строка заказа, для формирования спецификации
+        /// </summary>
         public string OrderString
         {
             get => _orderString;
             set => SetValue(ref _orderString, value, nameof(OrderString));
         }
 
-
+        /// <summary>
+        /// Коллекция деталей (узлов), отображаемых в интерфейсе.
+        /// </summary>
         public ObservableCollection<Node> Details { get; private set; } = [];
 
         private ObservableCollection<string> _branches = [];
+
+        /// <summary>
+        /// Список доступных веток шаблона.
+        /// </summary>
         public ObservableCollection<string> Branches
         {
             get => _branches;
@@ -43,6 +53,9 @@ namespace TemplateEngine_v3.VM.Pages
         }
 
         private string _branch = string.Empty;
+        /// <summary>
+        /// Выбранная пользователем ветка шаблона.
+        /// </summary>
         public string Branch
         {
             get => _branch;
@@ -51,16 +64,58 @@ namespace TemplateEngine_v3.VM.Pages
 
         private readonly List<Page> _pageHistory = [];
 
+        /// <summary>
+        /// Команда редактирования параметра
+        /// </summary>
         public ICommand EditParameterCommand => new RelayCommand(EditParameter);
+
+        /// <summary>
+        /// Команда удаления параметра
+        /// </summary>
         public ICommand DeleteParameterCommand => new RelayCommand(DeleteParameter);
+
+        /// <summary>
+        /// Команда редактирования операции
+        /// </summary>
         public ICommand EditOperationCommand => new RelayCommand(EditOperation);
+
+        /// <summary>
+        /// Команда удаления операции
+        /// </summary>
         public ICommand DeleteOperationCommand => new RelayCommand(DeleteOperation);
+
+        /// <summary>
+        /// Команда редактирования детали
+        /// </summary>
         public ICommand EditNodeCommand => new RelayCommand(EditNode);
+
+        /// <summary>
+        /// Команда удаления команды
+        /// </summary>
         public ICommand DeleteNodeCommand => new RelayCommand(DeleteNode);
+
+        /// <summary>
+        /// Команда удаления узла.
+        /// </summary>
         public ICommand BackPageCommand => new RelayCommand(BackPage);
+
+        /// <summary>
+        /// Команда формирования спецификации
+        /// </summary>
         public ICommand CreateSpecCommand => new RelayCommand(CreateSpec, CanCreateSpec);
+
+        /// <summary>
+        /// Команда формирования спецификации
+        /// </summary>
         public ICommand GetMaterialsCommand => new RelayCommand(GetMaterials, CanGetMateria);
 
+        /// <summary>
+        /// Конструктор ViewModel. Загружает ветки и инициализирует зависимости.
+        /// </summary>
+        /// <param name="templateManager">Менеджер шаблонов</param>
+        /// <param name="branchManager">Менеджер филиалов</param>
+        /// <param name="drawerHost">Контейнер DrawerHost.</param>
+        /// <param name="frame">Фрейм для навигации между страницами.</param>
         public TemplatePreviewVM(ITemplateManager templateManager, IBranchManager branchManager, DrawerHost drawerHost, Frame frame)
         {
             _templateManager = templateManager;
@@ -73,11 +128,20 @@ namespace TemplateEngine_v3.VM.Pages
 
         }
 
+        /// <summary>
+        /// Проверка возможности генерации спецификации
+        /// </summary>
+        /// <returns>
+        /// Возвращает <c>true</c>, если указаны и строка заказа (<see cref="OrderString"/>), и ветка (<see cref="Branch"/>); иначе <c>false</c>.
+        /// </returns>
         private bool CanCreateSpec(object parameter)
         {
-            return !string.IsNullOrEmpty(OrderString);
+            return !string.IsNullOrEmpty(OrderString) && !string.IsNullOrEmpty(Branch);
         }
 
+        /// <summary>
+        /// Создаёт спецификацию на основе текущего шаблона и строки заказа.
+        /// </summary>
         public void CreateSpec(object parameter)
         {
             try
@@ -102,6 +166,16 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Открывает страницу редактирования параметра в режиме предпросмотра.
+        /// </summary>
+        /// <param name="parameter">
+        /// Массив из двух объектов, где:
+        /// <list type="bullet">
+        /// <item><description><see cref="ConditionEvaluator"/> — параметр для редактирования.</description></item>
+        /// <item><description><see cref="DrawerHost"/> — контейнер, в котором будет открыт Drawer.</description></item>
+        /// </list>
+        /// </param>
         private void EditParameter(object parameter)
         {
             if (parameter is object[] args &&
@@ -119,6 +193,12 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Удаляет указанный параметр
+        /// </summary>
+        /// <param name="parameter">
+        /// Объект типа <see cref="ConditionEvaluator"/>, представляющий удаляемый параметр.
+        /// </param>
         private void DeleteParameter(object parameter)
         {
             if (parameter is ConditionEvaluator item)
@@ -130,6 +210,11 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Рекурсивно удаляет параметр <paramref name="parameter"/> из коллекции узлов <paramref name="nodes"/>.
+        /// </summary>
+        /// <param name="parameter">Удаляемый параметр.</param>
+        /// <param name="nodes">Коллекция узлов, в которых производится удаление.</param>
         private void RemoveCondition(ConditionEvaluator parameter, ObservableCollection<Node> nodes)
         {
             foreach (var node in nodes)
@@ -145,6 +230,13 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Рекурсивно ищет параметр <paramref name="parameter"/> в коллекции узлов <paramref name="nodes"/>.
+        /// При нахождении настраивает вычислитель для соответствующего узла.
+        /// </summary>
+        /// <param name="parameter">Параметр, который необходимо найти.</param>
+        /// <param name="nodes">Коллекция узлов для поиска.</param>
+        /// <returns>Найденный экземпляр <see cref="ConditionEvaluator"/>, либо <c>null</c>, если не найден.</returns>
         private ConditionEvaluator FindCondition(ConditionEvaluator parameter, ObservableCollection<Node> nodes)
         {
             foreach (var node in nodes)
@@ -165,6 +257,12 @@ namespace TemplateEngine_v3.VM.Pages
             return null;
         }
 
+        /// <summary>
+        /// Открывает страницу редактирования операции с заданным идентификатором.
+        /// </summary>
+        /// <param name="parameter">
+        /// Массив, содержащий объект <see cref="Operation"/> и <see cref="DrawerHost"/> для отображения формы редактирования.
+        /// </param>
         private void EditOperation(object parameter)
         {
             if (parameter is object[] args &&
@@ -177,21 +275,27 @@ namespace TemplateEngine_v3.VM.Pages
                 var page = new EditOperationPreviewPage(FindOperation(item, _editRelation.Nodes, _relations.Nodes), _evaluatorManager, _templateManager.MenuHelper, drawer, _frame);
                 _pageHistory.Add(page);
                 _frame.Navigate(page);
-                // Открываем правый Drawer
+
                 DrawerHost.OpenDrawerCommand.Execute(Dock.Right, drawer);
             }
         }
 
+        /// <summary>
+        /// Рекурсивно ищет операцию <paramref name="operation"/> в коллекции <paramref name="nodes"/> 
+        /// и настраивает вычислитель для соответствующего узла из <paramref name="_actualNodes"/>.
+        /// </summary>
+        /// <param name="operation">Операция, которую необходимо найти.</param>
+        /// <param name="nodes">Коллекция узлов редактируемого шаблона.</param>
+        /// <param name="_actualNodes">Коллекция актуальных узлов для настройки вычислений.</param>
+        /// <returns>Найденная операция или <c>null</c>, если не найдена.</returns>
         private Operation FindOperation(Operation operation, ObservableCollection<Node> nodes, ObservableCollection<Node> _actualNodes)
         {
             foreach (var node in nodes)
             {
-                Node actualNode = new();
-                // Проверка текущего уровня
-                actualNode = _actualNodes.FirstOrDefault(n => n.Id == node.Id);
+                Node actualNode = _actualNodes.FirstOrDefault(n => n.Id == node.Id);
+
                 if (node.Technologies.Operations.Any(op => op.Id.Equals(operation.Id)))
                 {
-                    // Найти соответствующий node в _actualNodes по Id
                     if (actualNode != null)
                     {
                         _evaluatorManager.SetNodeEvaluators(actualNode);
@@ -200,7 +304,6 @@ namespace TemplateEngine_v3.VM.Pages
                     return node.Technologies.Operations.FirstOrDefault(op => op.Id.Equals(operation.Id));
                 }
 
-                // Проверка вложенных узлов
                 if (node.Nodes.Count > 0)
                 {
                     var foundOperation = FindOperation(operation, node.Nodes, actualNode.Nodes);
@@ -212,7 +315,10 @@ namespace TemplateEngine_v3.VM.Pages
             return null;
         }
 
-
+        /// <summary>
+        /// Удаляет операцию из обоих наборов узлов (_relations и _editRelation).
+        /// </summary>
+        /// <param name="parameter">Операция для удаления.</param>
         private void DeleteOperation(object parameter)
         {
             if (parameter is Operation operation)
@@ -224,6 +330,11 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Рекурсивно удаляет указанную операцию из коллекции узлов.
+        /// </summary>
+        /// <param name="operation">Операция для удаления.</param>
+        /// <param name="nodes">Коллекция узлов, в которых производится удаление.</param>
         private void RemoveOperation(Operation operation, ObservableCollection<Node> nodes)
         {
             foreach (var node in nodes)
@@ -239,6 +350,10 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Открывает страницу редактирования узла.
+        /// </summary>
+        /// <param name="parameter">Массив, содержащий Node и DrawerHost.</param>
         private void EditNode(object parameter)
         {
             if (parameter is object[] args &&
@@ -249,18 +364,24 @@ namespace TemplateEngine_v3.VM.Pages
                 ClearFrameHistory();
                 var page = new EditNodePreviewPage(FindNode(item, _editRelation.Nodes), _evaluatorManager, _templateManager.MenuHelper, drawer, _frame);
                 _frame.Navigate(page);
-                // Открываем правый Drawer
+
                 DrawerHost.OpenDrawerCommand.Execute(Dock.Right, drawer);
             }
         }
 
+        /// <summary>
+        /// Рекурсивно ищет узел по идентификатору и настраивает вычислители.
+        /// </summary>
+        /// <param name="currentNode">Искомый узел.</param>
+        /// <param name="nodes">Коллекция узлов, в которой производится поиск.</param>
+        /// <returns>Найденный узел или <c>null</c>.</returns>
         private Node FindNode(Node currentNode, ObservableCollection<Node> nodes)
         {
             if (nodes.Any(op => op.Id.Equals(currentNode.Id)))
             {
                 var node = nodes.FirstOrDefault(n => n.Id.Equals(currentNode.Id));
                 _evaluatorManager.SetNodeEvaluators(node);
-                return nodes.FirstOrDefault(n => n.Id.Equals(currentNode.Id));
+                return node;
             }
             foreach (var node in nodes)
             {
@@ -275,6 +396,10 @@ namespace TemplateEngine_v3.VM.Pages
             return null;
         }
 
+        /// <summary>
+        /// Удаляет указанный узел из обоих наборов (_relations и _editRelation).
+        /// </summary>
+        /// <param name="parameter">Массив, содержащий Node и DrawerHost.</param>
         private void DeleteNode(object parameter)
         {
             if (parameter is object[] args &&
@@ -290,6 +415,11 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Рекурсивно удаляет узел по идентификатору из коллекции.
+        /// </summary>
+        /// <param name="currentNode">Узел для удаления.</param>
+        /// <param name="nodes">Коллекция узлов.</param>
         private void RemoveNode(Node currentNode, ObservableCollection<Node> nodes)
         {
             if (nodes.Any(op => op.Id.Equals(currentNode.Id)))
@@ -305,6 +435,9 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Возвращает пользователя на предыдущую страницу или закрывает Drawer, если история пуста.
+        /// </summary>
         private void BackPage()
         {
             if (_frame != null && _pageHistory.Count == 1)
@@ -317,12 +450,20 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Проверяет, доступна ли команда получения материалов.
+        /// </summary>
+        /// <param name="parameter">Не используется.</param>
+        /// <returns>True, если _relations не равен null.</returns>
         private bool CanGetMateria(object parameter)
         {
             return _relations != null;
         }
 
-
+        /// <summary>
+        /// Собирает и сохраняет параметры материалов из дерева узлов и отображает их.
+        /// </summary>
+        /// <param name="parameter">Не используется.</param>
         private void GetMaterials(object parameter)
         {
             if (_relations != null)
@@ -334,6 +475,11 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Рекурсивно собирает материалы и их веса из узлов и их подузлов.
+        /// </summary>
+        /// <param name="nodes">Список узлов для обработки.</param>
+        /// <returns>Словарь с материалами и их суммарными количествами.</returns>
         private Dictionary<string, double> GetMaterialParameters(List<Node> nodes)
         {
             Dictionary<string, double> materials = new();
@@ -373,6 +519,12 @@ namespace TemplateEngine_v3.VM.Pages
             return materials.OrderBy(kv => kv.Key).ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
+        /// <summary>
+        /// Добавляет материал и его вес в словарь, если данные корректны.
+        /// </summary>
+        /// <param name="materials">Целевой словарь материалов.</param>
+        /// <param name="name">Название материала.</param>
+        /// <param name="weight">Вес материала в строковом формате.</param>
         private void AddMaterial(Dictionary<string, double> materials, string name, string weight)
         {
             if (name != null && weight != null)
@@ -390,9 +542,13 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        /// <summary>
+        /// Очищает историю переходов по страницам.
+        /// </summary>
         private void ClearFrameHistory()
         {
             _pageHistory.Clear();
         }
+
     }
 }
