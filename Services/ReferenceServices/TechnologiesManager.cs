@@ -117,7 +117,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             try
             {
-                var newTechnologies = _reference.CreateReferenceObject();
+                var newTechnologies = _reference.CreateReferenceObject(_technologiesClass);
 
                 if (_nameParameter == null || _objectStringParameter == null)
                     return false;

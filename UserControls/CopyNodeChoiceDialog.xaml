@@ -6,11 +6,17 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
              xmlns:model="clr-namespace:TemplateEngine_v3.Models"
              xmlns:local="clr-namespace:TemplateEngine_v3.UserControls"
+             xmlns:conv="clr-namespace:TemplateEngine_v3.Converters"
              mc:Ignorable="d" 
              x:Name="copyNodeChoiceDialog"
-             Width="450"
-             Height="500"
-             MaxWidth="550">
+             Width="650"
+             Height="600"
+             MaxWidth="650">
+
+    <UserControl.Resources>
+        <conv:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter"/>
+    </UserControl.Resources>
+
     <Grid Margin="20">
 
         <Grid.RowDefinitions>
@@ -53,13 +59,31 @@
         <TreeView ItemsSource="{Binding Nodes, ElementName=copyNodeChoiceDialog}"
                   x:Name="Tree"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  SelectedItemChanged="TreeView_OnSelectedItemChanged"
+                  MouseDoubleClick="TreeView_OnMouseDoubleClick"
                   Grid.Row="3">
             <TreeView.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type model:Node}" ItemsSource="{Binding Nodes}">
-                    <TextBlock Text="{Binding Name}" 
-                               TextWrapping="Wrap"
-                               MaxWidth="{Binding ElementName=Tree, Path=ActualWidth}"/>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding Name}"
+                                   FontSize="15"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap"
+                                   MaxWidth="{Binding ElementName=Tree, Path=ActualWidth}"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   MaxWidth="{Binding ElementName=Tree, Path=ActualWidth}">
+                            <Run Text="КД:"
+                                 FontWeight="SemiBold"/>
+                            <Run Text="{Binding Designation}"/>
+                        </TextBlock>
+                        <TextBlock TextWrapping="Wrap"
+                                   Visibility="{Binding UsageCondition, Converter={StaticResource EmptyStringToVisibilityConverter}}"
+                                   MaxWidth="{Binding ElementName=Tree, Path=ActualWidth}">
+                            <Run Text="Условия применения:"
+                                 FontWeight="SemiBold"/>
+                            <LineBreak/>
+                            <Run Text="{Binding UsageCondition}"/>
+                        </TextBlock>
+                    </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>
         </TreeView>

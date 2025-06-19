@@ -24,8 +24,9 @@ namespace TemplateEngine_v3.Models
             get => _branch;
             set
             {
-                if (_onDeserialized && value != null)
-                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия филиала ТП с '{_branch.Name}' на '{value.Name}'");
+                if(value != null)
+                    if (ShouldLogChange(_branch.Name, value.Name))
+                        LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия филиала ТП с '{_branch.Name}' на '{value.Name}'");
                 SetValue(ref _branch, value, nameof(Branch));
             }
         }
@@ -39,7 +40,7 @@ namespace TemplateEngine_v3.Models
             get => _unitEquipment;
             set
             {
-                if (_onDeserialized)
+                if (ShouldLogChange(_unitEquipment, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия оборудования с '{_unitEquipment}' на '{value}'");
                 SetValue(ref _unitEquipment, value, nameof(UnitEquipment));
             }
@@ -54,7 +55,7 @@ namespace TemplateEngine_v3.Models
             get => _divisionCode;
             set
             {
-                if (_onDeserialized)
+                if (ShouldLogChange(_divisionCode, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование кода подразделения с '{_divisionCode}' на '{value}'");
                 SetValue(ref _divisionCode, value, nameof(DivisionCode));
             }
@@ -83,7 +84,7 @@ namespace TemplateEngine_v3.Models
             get => _usageCondition;
             set
             {
-                if (_onDeserialized)
+                if (ShouldLogChange(_usageCondition, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения с '{_usageCondition}' на '{value}'");
                 SetValue(ref _usageCondition, value, nameof(UsageCondition));
             }
@@ -179,6 +180,14 @@ namespace TemplateEngine_v3.Models
                     group.Children.Add(item);
             }
         }
+
+        private bool ShouldLogChange(string oldValue, string newValue)
+        {
+            return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
+        }
+
+        [JsonIgnore]
+        public bool IsLoggingEnabled { get; set; } = true;
 
         [JsonIgnore]
         private bool _onDeserialized = false;

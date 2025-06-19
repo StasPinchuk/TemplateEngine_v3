@@ -187,9 +187,11 @@ namespace TemplateEngine_v3.VM.Pages
             CurrentNode = node;
             _evaluatorManager.SetNodeEvaluators(node);
             OnPropertyChanged(nameof(CurrentNode));
-
-            Formulas = node.ExpressionRepository.Formulas;
-            Terms = node.ExpressionRepository.Terms;
+            if(node != null)
+            {
+                Formulas = node.ExpressionRepository.Formulas;
+                Terms = node.ExpressionRepository.Terms;
+            }
             NodeEvaluators = _evaluatorManager.NodeEvaluators;
             OnPropertyChanged(nameof(NodeEvaluators));
             SetEvaluator();

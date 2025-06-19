@@ -44,6 +44,7 @@
                 BorderBrush="Green"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
+                IsEnabled="{Binding CanCreate, UpdateSourceTrigger=PropertyChanged}"
                 Width="35"
                 Height="35"
                 Margin="25, 10"

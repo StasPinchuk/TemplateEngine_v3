@@ -19,7 +19,7 @@
 
             <ComboBox ItemsSource="{Binding NodeTypes}"
                       materialDesign:HintAssist.Hint="Тип детали"
-                      SelectedItem="{Binding NodeType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding NodeType, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                       Style="{StaticResource MaterialDesignOutlinedComboBox}"  
                       Margin="0, 20"/>
 
@@ -31,7 +31,7 @@
             <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      materialDesign:HintAssist.Hint="Количество" 
                      ContextMenu="{Binding TextBoxMenu, UpdateSourceTrigger=PropertyChanged}"
-                     Text="{Binding CurrentNode.Amount.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     Text="{Binding CurrentNode.Amount.Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
                      Margin="0, 20"/>
 
             <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"

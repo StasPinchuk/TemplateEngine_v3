@@ -147,12 +147,16 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="node">Новый текущий узел.</param>
         private void OnCurrentNodeChanged(Node node)
         {
-            Evaluator = node.Parameters;
+            if(node != null)
+            {
+                Evaluator = node.Parameters;
 
-            _evaluatorManager.SetNodeEvaluators(node);
-            NodeEvaluators = new(_evaluatorManager.NodeEvaluators);
-            OnPropertyChanged(nameof(NodeEvaluators));
-            OnPropertyChanged(nameof(Evaluator));
+                _evaluatorManager.SetNodeEvaluators(node);
+                NodeEvaluators = new(_evaluatorManager.NodeEvaluators);
+                OnPropertyChanged(nameof(NodeEvaluators));
+                OnPropertyChanged(nameof(Evaluator));
+
+            }
         }
 
         /// <summary>

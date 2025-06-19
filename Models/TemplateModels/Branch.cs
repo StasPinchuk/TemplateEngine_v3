@@ -29,7 +29,7 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                if (_onDeserialized)
+                if (ShouldLogChange(_name, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия филиала с '{_name}' на '{value}'");
                 SetValue(ref _name, value, nameof(Name));
             }
@@ -59,7 +59,7 @@ namespace TemplateEngine_v3.Models
             get => _designation;
             set
             {
-                if (_onDeserialized)
+                if (ShouldLogChange(_designation, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование обозначения филиала с '{_designation}' на '{value}'");
                 SetValue(ref _designation, value, nameof(Designation));
             }
@@ -129,6 +129,14 @@ namespace TemplateEngine_v3.Models
             CreationDate = branch.CreationDate;
             LastModifiedDate = branch.LastModifiedDate;
         }
+
+        private bool ShouldLogChange(string oldValue, string newValue)
+        {
+            return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
+        }
+
+        [JsonIgnore]
+        public bool IsLoggingEnabled { get; set; } = true;
 
         [JsonIgnore]
         private bool _onDeserialized = false;

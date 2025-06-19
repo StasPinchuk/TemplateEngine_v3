@@ -210,5 +210,25 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 return false;
             }
         }
+
+        Task<bool> IBranchManager.RemoveBranch(ReferenceModelInfo branch)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IBranchManager.AddBranch(Branch createBranch)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IBranchManager.EditBranch(Branch editBranchObj)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IBranchManager.CloneBranch(ReferenceModelInfo branch)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

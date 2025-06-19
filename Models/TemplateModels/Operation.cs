@@ -26,7 +26,7 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                if (_onDeserialized)
+                if (ShouldLogChange(_name, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия операции с '{_name}' на '{value}'");
                 SetValue(ref _name, value, nameof(Name));
             }
@@ -41,7 +41,7 @@ namespace TemplateEngine_v3.Models
             get => _order;
             set
             {
-                if (_onDeserialized)
+                if (ShouldLogChange(_order, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование номера операции с '{_order}' на '{value}'");
                 SetValue(ref _order, value, nameof(Order));
             }
@@ -78,6 +78,14 @@ namespace TemplateEngine_v3.Models
             string json = JsonConvert.SerializeObject(this);
             return JsonConvert.DeserializeObject<Operation>(json);
         }
+
+        private bool ShouldLogChange(string oldValue, string newValue)
+        {
+            return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
+        }
+
+        [JsonIgnore]
+        public bool IsLoggingEnabled { get; set; } = true;
 
         [JsonIgnore]
         private bool _onDeserialized = false;

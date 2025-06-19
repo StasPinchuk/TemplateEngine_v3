@@ -8,6 +8,7 @@
         xmlns:local="clr-namespace:TemplateEngine_v3"
         mc:Ignorable="d"
         MinWidth="850"
+        MinHeight="600"
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource MaterialDesignWindow}"
         Title="Редактор шаблонов">
@@ -30,10 +31,11 @@
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="35"/>
-                        <RowDefinition Height="35"/>
-                        <RowDefinition Height="35"/>
-                        <RowDefinition Height="35"/>
+                        <RowDefinition MaxHeight="35"/>
+                        <RowDefinition MaxHeight="35"/>
+                        <RowDefinition MaxHeight="35"/>
+                        <RowDefinition MaxHeight="35"/>
+                        <RowDefinition MaxHeight="35"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
@@ -82,6 +84,7 @@
                             HorizontalContentAlignment="Left"
                             Command="{Binding DetailTypeListCommand}"
                             Foreground="#FFF"
+                            Visibility="{Binding IsAdminVisibility, UpdateSourceTrigger=PropertyChanged}"
                             Grid.Row="3">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Width="24"
@@ -114,11 +117,31 @@
                         </StackPanel>
                     </Button>
                     <Button Style="{StaticResource MaterialDesignFlatButton}"
+                            Command="{Binding OpenLogsCommand}"
+                            HorizontalContentAlignment="Left"
+                            Foreground="#FFF"
+                            Visibility="{Binding IsAdminVisibility, UpdateSourceTrigger=PropertyChanged}"
+                            Grid.Row="5">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Width="24"
+                                                     Height="24"
+                                                     Kind="ListStatus"
+                                                     Foreground="#FFF"
+                                                     VerticalAlignment="Center" />
+
+                            <TextBlock Text="Открыть логи"
+                                       TextWrapping="Wrap"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,0,0" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"
                             HorizontalContentAlignment="Left"
                             Foreground="#FFF"
                             VerticalAlignment="Bottom"
+                            Visibility="{Binding IsAdminVisibility, UpdateSourceTrigger=PropertyChanged}"
                             Command="{Binding OpenSettingsCommand}"
-                            Grid.Row="5">
+                            Grid.Row="6">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Width="24"
                                                      Height="24"
@@ -144,6 +167,7 @@
             <Frame x:Name="MainFrame"
                    Grid.Column="2"
                    NavigationUIVisibility="Hidden"/>
+
         </Grid>
     </materialDesign:DialogHost>
 </Window>

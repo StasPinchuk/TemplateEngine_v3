@@ -58,7 +58,7 @@
 
                 <TextBox VerticalAlignment="Top"
                          materialDesign:HintAssist.Hint="Название изделия"
-                         Text="{Binding CurrentTemplate.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Text="{Binding CurrentTemplate.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Grid.Row="0"/>
 
@@ -160,7 +160,7 @@
                                                                                      MaxWidth="{Binding ElementName=itemsControl, Path=ActualWidth, Converter={StaticResource MaxWidthConverter}, ConverterParameter=70}"
                                                                                      Command="{Binding DataContext.SetRelationsCommand, ElementName=MainTemplateInfo}"
                                                                                      CommandParameter="{Binding}">
-                                                                            <TextBlock Text="{Binding Designation}"
+                                                                            <TextBlock Text="{Binding Designation, UpdateSourceTrigger=LostFocus}"
                                                                                        TextWrapping="Wrap"
                                                                                        HorizontalAlignment="Stretch"
                                                                                        FontWeight="Bold"
@@ -193,7 +193,7 @@
                                                                  VerticalScrollBarVisibility="Auto"
                                                                  Loaded="TextBox_Loaded"
                                                                  TextChanged="TextBox_TextChanged"
-                                                                 Text="{Binding Designation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                 Text="{Binding Designation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                                                         <TextBox x:Name="UsageConditionBox"
                                                                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                                                  materialDesign:HintAssist.Hint="Условия КД"
@@ -201,10 +201,10 @@
                                                                  TextWrapping="Wrap"
                                                                  AcceptsReturn="True"
                                                                  Margin="0,10"
-                                                                 Text="{Binding UsageCondition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                 Text="{Binding UsageCondition, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                                                  Loaded="TextBox_Loaded"/>
                                                         <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                                                 Text="{Binding DesignationComment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                 Text="{Binding DesignationComment, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                                                  materialDesign:HintAssist.Hint="Комментарий"
                                                                  FontSize="16"
                                                                  TextWrapping="Wrap"
@@ -281,7 +281,7 @@
                                         Margin="10, 0, 10, 10"
                                         Padding="10"
                                         VerticalAlignment="Stretch">
-                                    <ItemsControl ItemsSource="{Binding CurrentTemplate.ExampleMarkings}"
+                                    <ItemsControl ItemsSource="{Binding ExampleMarkings, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                   AlternationCount="100">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -301,7 +301,7 @@
                                                             <ColumnDefinition Width="50"/>
                                                             <ColumnDefinition Width="40"/>
                                                         </Grid.ColumnDefinitions>
-                                                        <TextBox Text="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                        <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                                                  TextWrapping="Wrap"
                                                                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                                                  IsEnabled="{Binding Path=IsChecked, ElementName=EnabledTextBox}"
@@ -324,6 +324,8 @@
                                                                       Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
                                                                       Background="{DynamicResource PrimaryHueMidBrush}"
                                                                       Cursor="Hand"
+                                                                      Tag="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}}"
+                                                                      Unchecked="EnabledTextBox_Unchecked"
                                                                       Foreground="White"
                                                                       Grid.Column="2">
                                                             <materialDesign:PackIcon Kind="Edit" 

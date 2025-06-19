@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Interfaces;
@@ -55,6 +56,14 @@ namespace TemplateEngine_v3.VM.Pages
             set => SetValue(ref _permission, value, nameof(Permission));
         }
 
+        private bool _canCreate = false;
+
+        public bool CanCreate
+        {
+            get => _canCreate;
+            set => SetValue(ref _canCreate, value, nameof(CanCreate));
+        }
+
         /// <summary>
         /// Команда удаления элемента.
         /// </summary>
@@ -87,6 +96,9 @@ namespace TemplateEngine_v3.VM.Pages
 
             Permission = userManager.CurrentUser.TemplatePermission;
 
+            if (Permission is TemplatePermissions templatePermission)
+                CanCreate = (templatePermission.HasFlag(TemplatePermissions.All) || templatePermission.HasFlag(TemplatePermissions.Create));
+
             SetReferenceList();
             InitializeTemplateCommand();
         }
@@ -103,6 +115,9 @@ namespace TemplateEngine_v3.VM.Pages
             _sideBar = sideBar;
 
             Permission = userManager.CurrentUser.TemplatePermission;
+
+            if (Permission is TemplatePermissions templatePermission)
+                CanCreate = (templatePermission.HasFlag(TemplatePermissions.All) || templatePermission.HasFlag(TemplatePermissions.Create));
 
             SetReferenceList();
             InitializeTemplateCommand();
@@ -129,6 +144,8 @@ namespace TemplateEngine_v3.VM.Pages
             InitializeBranchCommand();
 
             Permission = userManager.CurrentUser.BranchPermission;
+            if(Permission is BranchPermissions branchPermissions)
+                CanCreate = (branchPermissions == BranchPermissions.All || branchPermissions.HasFlag(BranchPermissions.Create));
 
             SetBranchesList();
         }
@@ -154,6 +171,9 @@ namespace TemplateEngine_v3.VM.Pages
             InitializeTechnologiesCommand();
 
             Permission = userManager.CurrentUser.TechnologiesPermission;
+
+            if (Permission is TechnologiesPermissions technologiesPermissions)
+                CanCreate = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Create));
 
             SetTechnologiesList();
         }
@@ -243,7 +263,7 @@ namespace TemplateEngine_v3.VM.Pages
         {
             if (parameter is ReferenceModelInfo referenceModel)
             {
-                var result = MessageBox.Show($"Вы действительно хотите удалить шаблон \"{referenceModel.Name}\"?",
+                var result = System.Windows.MessageBox.Show($"Вы действительно хотите удалить шаблон \"{referenceModel.Name}\"?",
                                              "Подтверждение удаления",
                                              MessageBoxButton.YesNo,
                                              MessageBoxImage.Warning);
@@ -267,7 +287,7 @@ namespace TemplateEngine_v3.VM.Pages
         {
             if (parameter is ReferenceModelInfo referenceModel)
             {
-                var result = MessageBox.Show($"Вы действительно хотите удалить ветку \"{referenceModel.Name}\"?",
+                var result = System.Windows.MessageBox.Show($"Вы действительно хотите удалить ветку \"{referenceModel.Name}\"?",
                                              "Подтверждение удаления",
                                              MessageBoxButton.YesNo,
                                              MessageBoxImage.Warning);
@@ -291,7 +311,7 @@ namespace TemplateEngine_v3.VM.Pages
         {
             if (parameter is ReferenceModelInfo referenceModel)
             {
-                var result = MessageBox.Show($"Вы действительно хотите удалить технологию \"{referenceModel.Name}\"?",
+                var result = System.Windows.MessageBox.Show($"Вы действительно хотите удалить технологию \"{referenceModel.Name}\"?",
                                              "Подтверждение удаления",
                                              MessageBoxButton.YesNo,
                                              MessageBoxImage.Warning);
@@ -371,7 +391,7 @@ namespace TemplateEngine_v3.VM.Pages
                     var isRestory = await _templateManager.RestoreTemplateAsync(referenceModel);
                     string msg = isRestory ? "Шаблон успешно восстановлен" : "Шаблон не восстановлен";
 
-                    MessageBox.Show(msg, "Восстановление шаблона");
+                    System.Windows.MessageBox.Show(msg, "Восстановление шаблона");
 
                     return;
                 }

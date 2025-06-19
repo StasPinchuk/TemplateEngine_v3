@@ -62,16 +62,23 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
+        private void SetWorkbookAsync(string tableName)
+        {
+            string tablePath = GetSelectedTable(tableName);
+            if (!string.IsNullOrEmpty(tablePath))
+                _workbook = new Workbook(tablePath);
+        }
+
         /// <summary>
         /// Асинхронно получает список листов указанной таблицы.
         /// </summary>
         /// <param name="tableName">Имя таблицы (файла).</param>
         /// <returns>Коллекция имён листов Excel в таблице.</returns>
-        public async Task<ObservableCollection<string>> GetWorksheets(string tableName)
+        public ObservableCollection<string> GetWorksheets(string tableName)
         {
             var worksheetNames = new ObservableCollection<string>();
 
-            string tablePath = await GetSelectedTable(tableName);
+            string tablePath = GetSelectedTable(tableName);
             if (string.IsNullOrEmpty(tablePath))
                 return worksheetNames;
 
@@ -90,16 +97,21 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// </summary>
         /// <param name="tableName">Имя таблицы (файла).</param>
         /// <returns>Локальный путь к файлу таблицы либо пустая строка, если файл не найден.</returns>
-        private async Task<string> GetSelectedTable(string tableName)
+        private string GetSelectedTable(string tableName)
         {
-            var file = await _fileReference.FindByRelativePathAsync(@$"Генератор шаблонов\Таблицы\{tableName}") as FileObject;
+            var file = _fileReference.FindByRelativePath(@$"Генератор шаблонов\Таблицы\{tableName}") as FileObject;
 
             if (file == null)
                 return string.Empty;
 
-            await FileReference.GetHeadRevisionAsync(new[] { file });
+            FileReference.GetHeadRevision(new[] { file });
 
             return file.LocalPath;
+        }
+
+        public void SetCurrentWorkSheet(string worksheetName)
+        {
+            _currentWorksheet = _workbook.Worksheets.FirstOrDefault(sheet => sheet.Name.Equals(worksheetName, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -110,9 +122,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <returns>Словарь параметров: имя параметра => адрес ячейки со значением.</returns>
         public Dictionary<string, string> GetWorksheetParameters(string worksheetName)
         {
+            SetCurrentWorkSheet(worksheetName);
             var parameterDictionary = new Dictionary<string, string>();
-            _currentWorksheet = _workbook.Worksheets.FirstOrDefault(sheet => sheet.Name.Equals(worksheetName, StringComparison.OrdinalIgnoreCase));
-
             if (_currentWorksheet == null)
                 return parameterDictionary;
 
@@ -169,8 +180,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <param name="parameterValue">Массив значений параметров для подстановки.</param>
         /// <param name="isRange">Флаг, указывающий, возвращать ли диапазон значений.</param>
         /// <returns>Найденное значение или пустая строка.</returns>
-        public string GetFindParameter(string tableName, string width, string heigth, string[] parameterValue = null, bool isRange = false)
+        public string GetFindParameter(string tableName, string workSheetName, string width, string heigth, string[] parameterValue = null, bool isRange = false)
         {
+            SetWorkbookAsync(tableName);
+            SetCurrentWorkSheet(workSheetName);
             var valueDict = GetWorksheetParameters(_currentWorksheet?.Name ?? string.Empty);
 
             Dictionary<string, string> parametersValueDict = valueDict.Values.ToDictionary(value => value, value => string.Empty);

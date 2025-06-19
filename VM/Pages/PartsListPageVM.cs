@@ -65,11 +65,21 @@ namespace TemplateEngine_v3.VM.Pages
             get => _nodeManager?.CurrentNode;
             set
             {
+                _nodeManager.CurrentNode = value;
                 if (value != null)
                 {
-                    _nodeManager.CurrentNode = value;
                     _technologiesManager.CurrentTechnologies = value.Technologies;
                     SetPageCollection();
+                    if (_currentPage == null)
+                    {
+                        _currentPage = PageCollection.FirstOrDefault();
+                    }
+                }
+                else
+                {
+                    PageCollection.Clear();
+                    _currentPage = null;
+                    SetNodePage(_currentPage);
                 }
             }
         }
@@ -108,7 +118,7 @@ namespace TemplateEngine_v3.VM.Pages
             _technologiesManager = technologiesManager;
             _templateManager = templateManager;
             _technologiesManager.MenuHelper = _nodeManager.MenuHelper;
-            Nodes = new(_nodeManager.Nodes);
+            Nodes = _nodeManager.Nodes;
             _nodePage = nodePage;
 
             SelectedNode = Nodes.FirstOrDefault();
@@ -152,6 +162,7 @@ namespace TemplateEngine_v3.VM.Pages
                 .ToList();
 
             NodeGroups = new(grouped);
+            OnPropertyChanged(nameof(NodeGroups));
         }
 
         /// <summary>
@@ -192,7 +203,7 @@ namespace TemplateEngine_v3.VM.Pages
                     {
                         NodeGroups.Remove(currentGroup);
                     }
-                    SelectedNode = Nodes.FirstOrDefault();
+                    SelectedNode = Nodes.Count > 0 ? Nodes.FirstOrDefault() : null;
                 }
             }
         }
@@ -333,7 +344,7 @@ namespace TemplateEngine_v3.VM.Pages
         {
             var existingPage = PageCollection.FirstOrDefault(p => p.Title == Title);
 
-            if (existingPage != null && existingPage.ConstructorParameters.Any(param => param is INodeManager))
+            if (existingPage != null && existingPage.Title.Equals("Детали") && existingPage.ConstructorParameters.Any(param => param is INodeManager))
             {
                 var nodeManager = existingPage.ConstructorParameters.FirstOrDefault(param => param is INodeManager) as INodeManager;
                 nodeManager.CurrentNode = SelectedNode;
@@ -356,7 +367,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// </summary>
         private async void CopyNodeCurrentTemplate()
         {
-            var dialog = new CopyNodeChoiceDialog(_templateManager.GetSelectedTemplate(), _nodeManager);
+            var dialog = new CopyNodeChoiceDialog(_templateManager.GetSelectedTemplate(), Nodes);
             await DialogHost.Show(dialog, "MainDialog");
             SetNodeGroup();
         }
@@ -366,7 +377,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// </summary>
         private async void CopyNodeAllTemplate()
         {
-            var dialog = new CopyNodeChoiceDialog(_templateManager.GetReadyTemplate(), _nodeManager);
+            var dialog = new CopyNodeChoiceDialog(_templateManager.GetReadyTemplate(), Nodes);
             await DialogHost.Show(dialog, "MainDialog");
             SetNodeGroup();
         }

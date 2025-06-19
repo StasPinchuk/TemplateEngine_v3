@@ -366,21 +366,27 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             try
             {
                 var findTemplate = await _reference.FindAsync(SelectedTemplate.Id);
-                await findTemplate.EndChangesAsync();
+                if(findTemplate != null)
+                    await findTemplate.EndChangesAsync();
                 var currentList = type.Equals("draft") ? GetDraftTemplates() : GetReadyTemplate();
 
                 if (currentList.Any(temp => temp.Id.Equals(SelectedTemplate.Id)))
                 {
+                    await LogManager.SaveLog();
                     return await EditTemplateAsync(SelectedTemplate);
                 }
                 else
                 {
                     ClassObject templateType = type.Equals("draft") ? _draftTemplateType : _readyTemplateType;
                     findTemplate = await _reference.FindAsync(SelectedTemplate.Id);
-                    await findTemplate.BeginChangesAsync();
+                    if (findTemplate != null)
+                        await findTemplate.BeginChangesAsync();
                     bool isSave = await AddTemplateAsync(SelectedTemplate, templateType);
+
+                    await LogManager.SaveLog();
                     return isSave;
                 }
+
             }
             catch (Exception ex)
             {

@@ -67,7 +67,6 @@ namespace TemplateEngine_v3.Models
             get => _usageCondition;
             set
             {
-
                 if (ShouldLogChange(_usageCondition, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения переменной с '{_usageCondition}' на '{value}'");
                 SetValue(ref _usageCondition, value, nameof(UsageCondition));
@@ -107,8 +106,11 @@ namespace TemplateEngine_v3.Models
 
         private bool ShouldLogChange(string oldValue, string newValue)
         {
-            return _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
+            return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
         }
+
+        [JsonIgnore]
+        public bool IsLoggingEnabled { get; set; } = true;
 
         [JsonIgnore]
         private bool _onDeserialized = false;

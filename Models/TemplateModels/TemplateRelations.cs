@@ -21,7 +21,7 @@ namespace TemplateEngine_v3.Models
             {
                 if (_designation != value)
                 {
-                    if (_onDeserialized)
+                    if (ShouldLogChange(_designation, value))
                         LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия КД с '{_designation}' на '{value}'");
                     SetValue(ref _designation, value, nameof(Designation));
                 }
@@ -53,7 +53,7 @@ namespace TemplateEngine_v3.Models
             get => _usageCondition;
             set
             {
-                if (_onDeserialized)
+                if (ShouldLogChange(_usageCondition, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения КД с '{_usageCondition}' на '{value}'"); 
                 SetValue(ref _usageCondition, value, nameof(UsageCondition));
             }
@@ -65,7 +65,7 @@ namespace TemplateEngine_v3.Models
             get => _designationComment;
             set
             {
-                if (_onDeserialized)
+                if (ShouldLogChange(_designationComment, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения КД с '{_designationComment}' на '{value}'");
                 SetValue(ref _designationComment, value, nameof(DesignationComment));
             }
@@ -87,6 +87,14 @@ namespace TemplateEngine_v3.Models
             UsageCondition = source.UsageCondition;
             DesignationComment = source.DesignationComment;
         }
+
+        private bool ShouldLogChange(string oldValue, string newValue)
+        {
+            return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
+        }
+
+        [JsonIgnore]
+        public bool IsLoggingEnabled { get; set; } = true;
 
         [JsonIgnore]
         private bool _onDeserialized = false;

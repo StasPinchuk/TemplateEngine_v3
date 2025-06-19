@@ -62,12 +62,14 @@ namespace TemplateEngine_v3.Helpers
             var removeRelations = new List<TemplateRelations>();
             foreach (var relation in currentTemplate.TemplateRelations)
             {
+                relation.IsLoggingEnabled = false;
                 relation.UsageCondition = Calculate(relation.UsageCondition)?.ToString();
 
                 if (string.IsNullOrEmpty(relation.UsageCondition) ||
                     (bool.TryParse(relation.UsageCondition, out bool usage) && usage))
                 {
                     currentRelations = relation;
+
                     break;
                 }
                 else
@@ -101,6 +103,7 @@ namespace TemplateEngine_v3.Helpers
                 node.Name = ReplaceDesignation(node.Name);
                 node.UsageCondition = ReplaceValues(node.UsageCondition);
                 node.UsageCondition = Calculate(node.UsageCondition)?.ToString();
+                node.IsLoggingEnabled = true;
             }
 
             currentRelations.Designation = ReplaceDesignation(currentRelations.Designation);
@@ -114,6 +117,7 @@ namespace TemplateEngine_v3.Helpers
             );
 
             RemoveNodeIsNotUsage(currentRelations.Nodes);
+            currentRelations.IsLoggingEnabled = true;
             return currentTemplate;
         }
 
@@ -192,6 +196,7 @@ namespace TemplateEngine_v3.Helpers
         {
             return nodes.SelectMany(node =>
             {
+                node.IsLoggingEnabled = false;
                 SetLists(node);
                 return new[] { node }.Concat(GetAllNode(node.Nodes?.ToList() ?? new List<Node>()));
             }).ToList();
@@ -273,7 +278,11 @@ namespace TemplateEngine_v3.Helpers
 
                 if (branchDivision != null && branchDivision?.Materials != null)
                 {
+                    branchDivision.IsLoggingEnabled = false;
                     var material = branchDivision.Materials;
+                    material.IsLoggingEnabled = false;
+                    material.Name.IsLoggingEnabled = false;
+                    material.Consumption.IsLoggingEnabled = false;
                     if (material.Name.Parts.Count > 0)
                         Materials.Add(material.Name);
                     if (material.Consumption.Parts.Count > 0)
@@ -295,12 +304,14 @@ namespace TemplateEngine_v3.Helpers
                 var count = FormulasAndTerms.Where(ff => ff.Id.Equals("6d14dbe3-8fcb-419f-bc93-837c961e794c"));
                 if (evaluator != null)
                 {
+                    evaluator.IsLoggingEnabled = false;
                     evaluator.Value = GetEvaluatorForId(evaluator.Id);
 
                     if (evaluator.Name.ToLower().Contains("покрытие") && evaluator.Value == "''")
                     {
                         evaluator.Value = $"'{materialName}'";
                     }
+                    evaluator.IsLoggingEnabled = true;
 
                     if (MarkDictionary.ContainsKey(evaluator.Name))
                         MarkDictionary[evaluator.Name] = evaluator.Value;
@@ -318,7 +329,7 @@ namespace TemplateEngine_v3.Helpers
             ConditionEvaluator evaluator = FormulasAndTerms.FirstOrDefault(evaluator => evaluator.Id.Equals(id));
             if (evaluator == null)
                 return string.Empty;
-
+            evaluator.IsLoggingEnabled = false;
             if (evaluator.Parts.Count > 0)
             {
                 foreach (var part in evaluator.Parts)
@@ -383,6 +394,7 @@ namespace TemplateEngine_v3.Helpers
         {
             foreach (var evaluator in evaluators)
             {
+                evaluator.IsLoggingEnabled = false;
                 if (!string.IsNullOrEmpty(evaluator.UsageCondition))
                 {
                     evaluator.UsageCondition = ReplaceValues(evaluator.UsageCondition);
@@ -425,6 +437,7 @@ namespace TemplateEngine_v3.Helpers
                 }
 
                 evaluator.Value = ReplaceMarkingParameter(evaluator.Value.Replace("'", ""));
+                evaluator.IsLoggingEnabled = true;
             }
         }
 
@@ -702,9 +715,10 @@ namespace TemplateEngine_v3.Helpers
             {
                 var count = args.Parameters.Count();
                 var tableName = args.Parameters[0].Evaluate()?.ToString();
+                var sheetName = args.Parameters[1].Evaluate()?.ToString();
 
                 string width = string.Empty;
-                if (Guid.TryParse(args.Parameters[1].Evaluate()?.ToString(), out Guid widthId))
+                if (Guid.TryParse(args.Parameters[2].Evaluate()?.ToString(), out Guid widthId))
                 {
                     var findCondition = FormulasAndTerms.FirstOrDefault(cond => cond.Id.Equals(widthId.ToString()));
                     if (findCondition != null)
@@ -715,11 +729,11 @@ namespace TemplateEngine_v3.Helpers
                 }
                 else
                 {
-                    width = args.Parameters[1].Evaluate()?.ToString();
+                    width = args.Parameters[2].Evaluate()?.ToString();
                 }
 
                 string height = string.Empty;
-                if (Guid.TryParse(args.Parameters[2].Evaluate()?.ToString(), out Guid heightId))
+                if (Guid.TryParse(args.Parameters[3].Evaluate()?.ToString(), out Guid heightId))
                 {
                     var findCondition = FormulasAndTerms.FirstOrDefault(cond => cond.Id.Equals(heightId.ToString()));
                     if (findCondition != null)
@@ -730,25 +744,25 @@ namespace TemplateEngine_v3.Helpers
                 }
                 else
                 {
-                    height = args.Parameters[2].Evaluate()?.ToString();
+                    height = args.Parameters[3].Evaluate()?.ToString();
                 }
 
                 List<string> parameters = new();
 
                 // Обратите внимание: корректно ли тут args.Parameters.Length - 1?
-                for (int i = 3; i < args.Parameters.Length - 1; i++)
+                for (int i = 4; i < args.Parameters.Length - 1; i++)
                 {
                     parameters.Add(args.Parameters[i].Evaluate()?.ToString());
                 }
 
                 var isRange = bool.Parse(args.Parameters.Last().Evaluate()?.ToString());
 
-                if (tableName == null || width == null || height == null || parameters.Count == 0)
+                if (tableName == null || width == null || height == null )
                 {
                     throw new ArgumentException("Invalid parameters for ReadTable.");
                 }
 
-                return _tableService.GetFindParameter(tableName, width, height, parameters.ToArray(), isRange);
+                return _tableService.GetFindParameter(tableName, sheetName, width, height, parameters.ToArray(), isRange);
             },
 
             /// <summary>Проверяет, содержится ли последний параметр в остальных (InRange).</summary>
@@ -756,8 +770,24 @@ namespace TemplateEngine_v3.Helpers
             {
                 var parameters = args.Parameters.ToList();
                 var findValue = parameters.Last();
-
                 parameters.Remove(findValue);
+
+                var rangeItem = parameters.FirstOrDefault(p => p.ToString().Contains("-"));
+                if (rangeItem != null)
+                {
+                    parameters.Remove(rangeItem);
+
+                    var parts = rangeItem.ToString().Split('-');
+                    if (parts.Length == 2 &&
+                        int.TryParse(parts[0], out int start) &&
+                        int.TryParse(parts[1], out int end))
+                    {
+                        for (int i = start; i <= end; i++)
+                        {
+                            parameters.Add(new Expression(i.ToString()));
+                        }
+                    }
+                }
 
                 if (parameters == null || findValue == null)
                 {
@@ -765,6 +795,7 @@ namespace TemplateEngine_v3.Helpers
                 }
 
                 return parameters.Contains(findValue);
+
             },
         };
 

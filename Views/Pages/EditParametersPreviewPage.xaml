@@ -43,7 +43,7 @@
                     ClipToBounds="True"
                     Margin="0,0,10,10"
                     Grid.Column="0">
-                <TreeView ItemsSource="{Binding CurrentEvaluatorTree, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                <TreeView ItemsSource="{Binding CurrentEvaluatorTree, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
                           x:Name="Trees"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch"
@@ -225,7 +225,7 @@
                              HorizontalScrollBarVisibility="Disabled"
                              VerticalScrollBarVisibility="Auto"
                              TextWrapping="Wrap"
-                             Text="{Binding SelectedEvaluator.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                             Text="{Binding SelectedEvaluator.Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
 
 
                 </Grid>
@@ -235,7 +235,7 @@
                               HorizontalAlignment="Stretch"
                               Grid.Column="1"/>
 
-                <TreeView ItemsSource="{Binding Parts.TreeEvaluators, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                <TreeView ItemsSource="{Binding Parts.TreeEvaluators, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
                           x:Name="Tree"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch"

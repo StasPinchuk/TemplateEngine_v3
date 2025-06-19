@@ -36,7 +36,7 @@
             </Grid.RowDefinitions>
 
             <ComboBox ItemsSource="{Binding BranchDivision}"
-                      SelectedItem="{Binding CurrentBranchDivision, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding CurrentBranchDivision, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                       Style="{StaticResource MaterialDesignOutlinedComboBox}"
                       Grid.Row="0">
                 <ComboBox.ItemTemplate>
@@ -47,20 +47,20 @@
             </ComboBox>
 
 
-            <TextBox Text="{Binding CurrentBranchDivision.UnitEquipment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding CurrentBranchDivision.UnitEquipment, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      materialDesign:HintAssist.Hint="Оборудование"
                      Grid.Row="1"
                      GotFocus="TextBox_GotFocus"
                      Margin="0,10"/>
 
-            <TextBox Text="{Binding CurrentBranchDivision.DivisionCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding CurrentBranchDivision.DivisionCode, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      materialDesign:HintAssist.Hint="Номер подразделения"
                      GotFocus="TextBox_GotFocus"
                      Grid.Row="2"/>
 
-            <TextBox Text="{Binding CurrentBranchDivision.UsageCondition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding CurrentBranchDivision.UsageCondition, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      materialDesign:HintAssist.Hint="Условие для операции"
                      GotFocus="TextBox_GotFocus"
@@ -68,14 +68,14 @@
                      Grid.Row="3"
                      Margin="0,10"/>
 
-            <TextBox Text="{Binding CurrentBranchDivision.Materials.Name.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding CurrentBranchDivision.Materials.Name.Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      GotFocus="TextBox_GotFocus"
                      materialDesign:HintAssist.Hint="Название материала"
                      ContextMenu="{Binding TextBoxContextMenu}"
                      Grid.Row="4"/>
 
-            <TextBox Text="{Binding CurrentBranchDivision.Materials.Consumption.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding CurrentBranchDivision.Materials.Consumption.Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      materialDesign:HintAssist.Hint="Расход материала"
                      GotFocus="TextBox_GotFocus"
@@ -83,7 +83,7 @@
                      Grid.Row="5"
                      Margin="0,10"/>
 
-            <TextBox Text="{Binding CurrentBranchDivision.Materials.Unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding CurrentBranchDivision.Materials.Unit, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      GotFocus="TextBox_GotFocus"
                      materialDesign:HintAssist.Hint="Единицы измерения"

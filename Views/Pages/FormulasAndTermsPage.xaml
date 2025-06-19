@@ -58,7 +58,7 @@
                     ClipToBounds="True"
                     Margin="0,0,10,10"
                     Grid.Column="0">
-                <ListBox ItemsSource="{Binding Evaluator, UpdateSourceTrigger=LostFocus}"
+                <ListBox ItemsSource="{Binding Evaluator, UpdateSourceTrigger=PropertyChanged}"
                          SelectedItem="{Binding SelectedEvaluator, UpdateSourceTrigger=PropertyChanged}"
                          HorizontalContentAlignment="Stretch"
                          VirtualizingStackPanel.IsVirtualizing="True"
@@ -249,7 +249,7 @@
                           HorizontalAlignment="Stretch"
                           Grid.Column="1"/>
 
-                <TreeView ItemsSource="{Binding Parts.TreeEvaluators, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                <TreeView ItemsSource="{Binding Parts.TreeEvaluators, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
                           x:Name="Tree"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch"
@@ -289,7 +289,7 @@
                     Margin="0,5,0,0"
                     HorizontalAlignment="Center">
             <Button Tag="TransperentAccept"
-                    Content="{Binding ButtonText, UpdateSourceTrigger=PropertyChanged}"
+                    Content="{Binding ButtonText, UpdateSourceTrigger=LostFocus}"
                     IsDefault="True"
                     Margin="0,0,10,0"
                     Command="{Binding ModifyEvalutorCommand}"/>

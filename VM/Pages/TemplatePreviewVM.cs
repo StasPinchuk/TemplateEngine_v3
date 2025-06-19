@@ -23,10 +23,15 @@ namespace TemplateEngine_v3.VM.Pages
         private readonly DrawerHost _drawerHost;
         private readonly Frame _frame;
         private IEvaluatorManager _evaluatorManager;
-        private TemplateRelations _relations;
         private TemplateRelations _editRelation;
         private string _orderString;
 
+        private TemplateRelations _relations;
+        public TemplateRelations Relations
+        {
+            get => _relations;
+            set => SetValue(ref _relations, value, nameof(Relations));
+        }
         /// <summary>
         /// Строка заказа, для формирования спецификации
         /// </summary>
@@ -150,7 +155,7 @@ namespace TemplateEngine_v3.VM.Pages
 
                 var template = calculateHelper.CalculateTemplate(_templateManager, OrderString, Branch);
 
-                _relations = template.TemplateRelations.FirstOrDefault();
+                Relations = template.TemplateRelations.FirstOrDefault();
 
                 _editRelation = _templateManager.GetSelectedTemplate().TemplateRelations
                     .FirstOrDefault(realtion => realtion.Id.Equals(_relations.Id));

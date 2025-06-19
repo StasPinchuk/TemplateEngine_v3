@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>TemplateEngine_v3</id>
+    <version>1.0.0</version>
+    <authors>ТвоёИмя</authors>
+    <owners>ТвоёИмя</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>TemplateEngine_v3 description</description>
+    <tags>WPF squirrel</tags>
+  </metadata>
+  <files>
+    <file src="TemplateEngine_v3\bin\Release\net6.0-windows\win-x64\*.*" target="lib\net6.0-windows" />
+  </files>
+</package>

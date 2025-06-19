@@ -15,14 +15,14 @@
 
         <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
                  materialDesign:HintAssist.Hint="Название филиала"
-                 Text="{Binding CurrentBranch.Name, UpdateSourceTrigger=PropertyChanged}"/>
+                 Text="{Binding CurrentBranch.Name, UpdateSourceTrigger=LostFocus}"/>
 
         <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
                  materialDesign:HintAssist.Hint="Обозначение филиала"
-                 Text="{Binding CurrentBranch.Designation, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding CurrentBranch.Designation, UpdateSourceTrigger=LostFocus}"
                  Margin="0,10"/>
 
-        <Button Content="{Binding ButtonText, UpdateSourceTrigger=PropertyChanged}"
+        <Button Content="{Binding ButtonText, UpdateSourceTrigger=LostFocus}"
                 Style="{StaticResource MaterialDesignRaisedButton}"
                 Background="Green"
                 BorderBrush="Green"

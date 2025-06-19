@@ -30,6 +30,14 @@ namespace TemplateEngine_v3.VM.Windows
         private readonly ColumnDefinition _sideBar;
         private readonly Frame _mainFrame;
 
+        private Visibility _isAdminVisibility = Visibility.Collapsed;
+
+        public Visibility IsAdminVisibility
+        {
+            get => _isAdminVisibility;
+            set => SetValue(ref _isAdminVisibility, value, nameof(IsAdminVisibility));
+        }
+
         /// <summary>
         /// Коллекция элементов меню для боковой панели.
         /// </summary>
@@ -59,6 +67,7 @@ namespace TemplateEngine_v3.VM.Windows
         /// Команда для открытия окна настроек.
         /// </summary>
         public ICommand OpenSettingsCommand { get; set; }
+        public ICommand OpenLogsCommand { get; set; }
 
         /// <summary>
         /// Конструктор ViewModel главного окна.
@@ -126,9 +135,12 @@ namespace TemplateEngine_v3.VM.Windows
                     Icon = PackIconKind.User,
                     PageType = typeof(UsersPage),
                     GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _userManager, sideBar }
+                    ConstructorParameters = new object[] { _userManager, sideBar },
+                    IsEnabled = userManager.CurrentUser.IsAdmin,
                 }
             };
+
+            IsAdminVisibility = userManager.CurrentUser.IsAdmin ? Visibility.Visible : Visibility.Collapsed;
 
             foreach (var item in menuItems)
                 MenuItems.Add(item);
@@ -151,6 +163,7 @@ namespace TemplateEngine_v3.VM.Windows
             ReplaceValueInTemplateCommand = new RelayCommand(ReplaceValueInTemplate);
             DetailTypeListCommand = new RelayCommand(DetailTypeList);
             OpenSettingsCommand = new RelayCommand(OpenSettings);
+            OpenLogsCommand = new RelayCommand(OpenLogs);
         }
 
         /// <summary>
@@ -223,6 +236,12 @@ namespace TemplateEngine_v3.VM.Windows
         private async void OpenSettings(object parameter)
         {
             var dialog = new SettingsChoiceDialog();
+            await DialogHost.Show(dialog, "MainDialog");
+        }
+
+        private async void OpenLogs(object parameter)
+        {
+            var dialog = new LogsChoiceDialog();
             await DialogHost.Show(dialog, "MainDialog");
         }
     }

@@ -27,7 +27,7 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                if (_onDeserialized)
+                if (ShouldLogChange(_name, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия ТП с '{_name}' на '{value}'");
                 SetValue(ref _name, value, nameof(Name));
             }
@@ -113,6 +113,14 @@ namespace TemplateEngine_v3.Models
             CreationDate = technologies.CreationDate;
             LastModifiedDate = technologies.LastModifiedDate;
         }
+
+        private bool ShouldLogChange(string oldValue, string newValue)
+        {
+            return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
+        }
+
+        [JsonIgnore]
+        public bool IsLoggingEnabled { get; set; } = true;
 
         [JsonIgnore]
         private bool _onDeserialized = false;

@@ -44,9 +44,9 @@
                 Margin="25, 10"
                 Command="{Binding DataContext.SetUserPermissionsCommand, ElementName=usersPage}">
             <materialDesign:PackIcon Kind="Plus"
-                             Width="25"
-                             Height="25"
-                             Foreground="White"/>
+                                     Width="25"
+                                     Height="25"
+                                     Foreground="White"/>
         </Button>
     </Grid>
 </Page>

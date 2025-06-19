@@ -202,14 +202,13 @@ namespace TemplateEngine_v3.UserControls
 
             if (!string.IsNullOrEmpty(selectedTable))
             {
-                // Fire and forget
-                _ = control.LoadWorksheetsAsync(selectedTable);
+                control.LoadWorksheetsAsync(selectedTable);
             }
         }
 
-        private async Task LoadWorksheetsAsync(string selectedTable)
+        private void LoadWorksheetsAsync(string selectedTable)
         {
-            var sheets = await _tableService.GetWorksheets(selectedTable); // допустим, этот метод асинхронный
+            var sheets = _tableService.GetWorksheets(selectedTable);
             Application.Current.Dispatcher.Invoke(() =>
             {
                 Sheet = new ObservableCollection<string>(sheets);
@@ -228,7 +227,6 @@ namespace TemplateEngine_v3.UserControls
                     control._tableService.GetWorksheetParameters(selectedSheet)
                         .Select(kv => new ParameterItem { Key = kv.Key, Value = string.Empty })
                 );
-
             }
         }
 

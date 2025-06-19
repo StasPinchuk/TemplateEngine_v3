@@ -44,7 +44,7 @@
             <ComboBox ItemsSource="{Binding NodeTypes}"
                       IsEditable="True"
                       materialDesign:HintAssist.Hint="Тип детали"
-                      SelectedItem="{Binding NodeType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding NodeType, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                       Style="{StaticResource MaterialDesignOutlinedComboBox}"  
                       Margin="0, 10"
                       Grid.Row="1"/>

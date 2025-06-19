@@ -32,6 +32,8 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="10"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="10"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
@@ -71,7 +73,10 @@
                             Margin="10,0,0,0"/>
                 </Grid>
 
-                <Grid Grid.Row="2">
+                <TextBlock Text="{Binding Relations.Designation, UpdateSourceTrigger=PropertyChanged}"
+                           Grid.Row="2"/>
+
+                <Grid Grid.Row="4">
                     <TreeView x:Name="MyTreeView"
                               ItemsSource="{Binding Details, UpdateSourceTrigger=PropertyChanged}"
                               PreviewMouseRightButtonDown="TreeView_PreviewMouseRightButtonDown">

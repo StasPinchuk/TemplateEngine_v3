@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -7,6 +9,7 @@ using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
+using TemplateEngine_v3.Models.TemplateModels;
 using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.Views.Pages;
@@ -61,6 +64,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// Коллекция страниц, отображаемых в интерфейсе.
         /// </summary>
         public ObservableCollection<PageModel> PagesCollection { get; private set; } = new();
+        public ObservableCollection<ExampleMarking> ExampleMarkings { get; set; } = new();
 
         /// <summary>
         /// Команда перехода на следующую страницу.
@@ -108,6 +112,11 @@ namespace TemplateEngine_v3.VM.Pages
                 TableManager = templateManager.TableService
             };
             CurrentTemplate = _templateManager.GetSelectedTemplate();
+
+            foreach(string marking in CurrentTemplate.ExampleMarkings)
+            {
+                ExampleMarkings.Add(new ExampleMarking() { Text = marking });
+            }
 
             technologiesManager.CurrentTechnologies = CurrentRelation?.Technologies ?? null;
             technologiesManager.MenuHelper = _templateManager.MenuHelper;
@@ -220,7 +229,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="parameters">Параметры команды (не используются).</param>
         private void AddExampleMarkingsAsync(object parameters)
         {
-            CurrentTemplate.ExampleMarkings.Add(string.Empty);
+            ExampleMarkings.Add(new ExampleMarking());
             UpdateContextMenu();
         }
 
@@ -243,5 +252,27 @@ namespace TemplateEngine_v3.VM.Pages
         {
             await _nodeManager.MenuHelper.UpdateContextMenuAsync();
         }
+
+        public void UpdateExampleMarking(int index, string value)
+        {
+            if (index <= ExampleMarkings.Count-1)
+            {
+                if(index > CurrentTemplate.ExampleMarkings.Count - 1)
+                    CurrentTemplate.ExampleMarkings.Add(ExampleMarkings[index].Text);
+                else
+                    CurrentTemplate.ExampleMarkings[index] = ExampleMarkings[index].Text;
+                CurrentTemplate.ProductMarkingAttributes.Clear();
+                foreach (string exampleMerking in CurrentTemplate.ExampleMarkings)
+                {
+                    string[] markings = exampleMerking.Split(new string[] { "-", "*" }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach(string marking in markings)
+                    {
+                        CurrentTemplate.ProductMarkingAttributes.Add(marking);
+                    }
+                }
+            }
+            UpdateContextMenu();
+        }
+
     }
 }

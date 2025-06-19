@@ -9,6 +9,7 @@ using System.Windows.Documents;
 using TemplateEngine_v3.Models.LogModels;
 using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
+using TFlex.DOCs.Model.References.Units;
 
 namespace TemplateEngine_v3.Models
 {
@@ -42,7 +43,7 @@ namespace TemplateEngine_v3.Models
             {
                 if(_name != value)
                 {
-                    if (_onDeserialized)
+                    if (ShouldLogChange(_name, value))
                         LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия детали с '{_name}' на '{value}'");
                     SetValue(ref _name, value, nameof(Name));
                     UpdateMenuHandler?.Invoke();
@@ -59,7 +60,7 @@ namespace TemplateEngine_v3.Models
             get => _designation;
             set
             {
-                if (_onDeserialized)
+                if (ShouldLogChange(_designation, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование КД детали с '{_designation}' на '{value}'");
                 SetValue(ref _designation, value, nameof(Designation));
             }
@@ -80,7 +81,7 @@ namespace TemplateEngine_v3.Models
 
                 if (value.Equals("Прочее изделие"))
                     Parameters.Clear();
-                if (_onDeserialized)
+                if (ShouldLogChange(_type, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование типа детали с '{_type}' на '{value}'");
                 SetValue(ref _type, value, nameof(Type));
                 UpdateMenuHandler?.Invoke();
@@ -157,7 +158,7 @@ namespace TemplateEngine_v3.Models
             {
                 if (_usageCondition != value)
                 {
-                    if (_onDeserialized)
+                    if (ShouldLogChange(_usageCondition, value))
                         LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения детали с '{_usageCondition}' на '{value}'");
                     SetValue(ref _usageCondition, value, nameof(UsageCondition));
                     UpdateMenuHandler?.Invoke();
@@ -402,6 +403,14 @@ namespace TemplateEngine_v3.Models
                     _groups.Remove(group);
             }
         }
+
+        private bool ShouldLogChange(string oldValue, string newValue)
+        {
+            return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
+        }
+
+        [JsonIgnore]
+        public bool IsLoggingEnabled { get; set; } = true;
 
         [JsonIgnore]
         private bool _onDeserialized = false;

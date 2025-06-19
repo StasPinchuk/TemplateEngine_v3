@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TemplateEngine_v3.Models.LogModels;
 using TemplateEngine_v3.Services.FileServices;
 using TFlex.DOCs.Model;
@@ -19,30 +20,33 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         private static LogObjectGroup _currentLogObjectGroup;
         private static LogEntry _currentLogEntry;
         private static Reference _logReference;
-        private static ReferenceObject _logReferenceObjec;
+        private static ReferenceObject _logReferenceObject;
         private static ParameterInfo _objectStruc;
 
 
         public static void ReadLogs()
         {
-            _logReference = LogReferenceInfo.CreateReference();
+            if(_logReference == null)
+            {
+                _logReference = LogReferenceInfo.CreateReference();
 
-            if (_logReference == null)
-                return;
+                if (_logReference == null)
+                    return;
+            }
 
             _objectStruc = _logReference.ParameterGroup.Parameters.FindByName("Структура файла");
 
             _logReference.Objects.Reload();
-            _logReferenceObjec = _logReference.Objects.FirstOrDefault(referenceObject => referenceObject.ToString().Equals("LogsObject (Не удалять)"));
+            _logReferenceObject = _logReference.Objects.FirstOrDefault(referenceObject => referenceObject.ToString().Equals("LogsObject (Не удалять)"));
 
-            if (_logReferenceObjec == null)
+            if (_logReferenceObject == null)
                 return;
 
-            AllLogs = new JsonSerializer().Deserialize<List<DailyLog>>(_logReferenceObjec[_objectStruc].Value.ToString());
+            AllLogs = new JsonSerializer().Deserialize<List<DailyLog>>(_logReferenceObject[_objectStruc].Value.ToString());
 
             if (AllLogs == null)
                 AllLogs = [];
-            CurrentDailyLog = AllLogs.FirstOrDefault(dailyLog => dailyLog.Date.Equals(DateTime.Now));
+            CurrentDailyLog = AllLogs.FirstOrDefault(dailyLog => dailyLog.Date.Equals(DateTime.Now.Date));
             if (CurrentDailyLog == null)
                 CreateDailyLog();
         }
@@ -62,6 +66,25 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             var logEntry = new LogEntry(actionType, message);
             _currentLogObjectGroup.Entries.Add(logEntry);
+        }
+
+        public static async Task<bool> SaveLog()
+        {
+            try
+            {
+                CurrentDailyLog.ObjectGroups.Add(_currentLogObjectGroup);
+
+                await _logReferenceObject.BeginChangesAsync();
+
+                _logReferenceObject[_objectStruc].Value = new JsonSerializer().Serialize(AllLogs);
+
+                await _logReferenceObject.EndChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

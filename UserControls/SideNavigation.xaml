@@ -24,6 +24,7 @@
                              IsChecked="{Binding IsSelected}"
                              GroupName="{Binding GroupName}"
                              Cursor="Hand"
+                             IsEnabled="{Binding IsEnabled}"
                              HorizontalContentAlignment="Left"
                              Command="{Binding OpenPageCommand, ElementName=controlGrid}"
                              CommandParameter="{Binding}">

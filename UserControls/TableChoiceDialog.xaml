@@ -80,6 +80,7 @@
                                      materialDesign:HintAssist.HintPaddingBrush="#FFF"
                                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                      Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" 
+                                     ContextMenu="{Binding ParametersMenu, ElementName=tableChoiceDialog}"
                                      Margin="15,8,15,8"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

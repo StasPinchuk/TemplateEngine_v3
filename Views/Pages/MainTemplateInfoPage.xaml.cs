@@ -1,6 +1,8 @@
 ﻿using Aspose.Cells;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.VM.Pages;
 
@@ -41,6 +43,21 @@ namespace TemplateEngine_v3.Views.Pages
             {
                 if(textBox != null)
                     textBox.ContextMenu = menu;
+            }
+        }
+
+        private void EnabledTextBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToggleButton toggle && toggle.Tag is int index)
+            {
+                var vm = DataContext as MainTemplateInfoPageVM;
+                if (vm?.ExampleMarkings != null && index >= 0 && index < vm.ExampleMarkings.Count)
+                {
+                    string currentValue = vm.ExampleMarkings[index].Text;
+
+                    // Обновите значение — например, вызов сохранения
+                    vm.UpdateExampleMarking(index, currentValue);
+                }
             }
         }
 

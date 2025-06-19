@@ -17,7 +17,7 @@ namespace TemplateEngine_v3.Models
         /// <summary>
         /// Unique identifier of the template
         /// </summary>
-        public Guid Id { get; set; } = Guid.Empty;
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         /// <summary>
         /// Name of the template
@@ -28,7 +28,7 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                if (_onDeserialized)
+                if (ShouldLogChange(_name, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия шаблона с '{_name}' на '{value}'");
                 _name = value;
                 OnPropertyChanged(nameof(Name));
@@ -126,6 +126,14 @@ namespace TemplateEngine_v3.Models
         {
             return Name;
         }
+
+        private bool ShouldLogChange(string oldValue, string newValue)
+        {
+            return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
+        }
+
+        [JsonIgnore]
+        public bool IsLoggingEnabled { get; set; } = true;
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)

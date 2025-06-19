@@ -2,6 +2,9 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.FileServices;
@@ -14,8 +17,6 @@ namespace TemplateEngine_v3.UserControls
     /// </summary>
     public partial class CopyNodeChoiceDialog : UserControl
     {
-        private INodeManager _nodeManager;
-
         public static DependencyProperty TemplatesProperty =
             DependencyProperty.Register(
                     "Templates",
@@ -86,18 +87,20 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(SelectedRelationProperty, value );
         }
 
-        public CopyNodeChoiceDialog(ObservableCollection<ReferenceModelInfo> templates, INodeManager nodeManager)
+        private ObservableCollection<Node> _allNodes;
+
+        public CopyNodeChoiceDialog(ObservableCollection<ReferenceModelInfo> templates, ObservableCollection<Node> nodes)
         {
             InitializeComponent();
             Templates = templates;
-            _nodeManager = nodeManager;
+            _allNodes = nodes;
         }
 
-        public CopyNodeChoiceDialog(Template currentTemplate, INodeManager nodeManager)
+        public CopyNodeChoiceDialog(Template currentTemplate, ObservableCollection<Node> nodes)
         {
             InitializeComponent();
             Relations = currentTemplate.TemplateRelations;
-            _nodeManager = nodeManager;
+            _allNodes = nodes;
             TemplateComboBox.Visibility = Visibility.Collapsed;
         }
 
@@ -125,9 +128,31 @@ namespace TemplateEngine_v3.UserControls
         {
             if (e.NewValue is Node selectedNode)
             {
-                _nodeManager.Nodes.Add( selectedNode.DeepCopyWithNewIds() );
+                _allNodes.Add( selectedNode.DeepCopyWithNewIds() );
             }
         }
 
+        private void TreeView_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            DependencyObject clickedElement = e.OriginalSource as DependencyObject;
+
+            while (clickedElement != null && !(clickedElement is TreeViewItem))
+            {
+                if (clickedElement is Visual || clickedElement is Visual3D)
+                {
+                    clickedElement = VisualTreeHelper.GetParent(clickedElement);
+                }
+                else
+                {
+                    clickedElement = LogicalTreeHelper.GetParent(clickedElement);
+                }
+            }
+
+            if (clickedElement is TreeViewItem item && item.DataContext is Node node)
+            {
+
+                _allNodes.Add(node.DeepCopyWithNewIds());
+            }
+        }
     }
 }

@@ -43,7 +43,7 @@ namespace TemplateEngine_v3.Models.PageCollection
             set => SetValue(ref _isSelected, value, nameof(IsSelected));
         }
 
-        private bool _isEnabled = false;
+        private bool _isEnabled = true;
         /// <summary>
         /// Доступна ли текущая страница.
         /// </summary>
