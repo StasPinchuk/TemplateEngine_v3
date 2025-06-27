@@ -64,8 +64,16 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         public static void CreateLogEntry(LogActionType actionType, string message)
         {
-            var logEntry = new LogEntry(actionType, message);
-            _currentLogObjectGroup.Entries.Add(logEntry);
+            try
+            {
+                var logEntry = new LogEntry(actionType, message);
+                _currentLogObjectGroup.Entries.Add(logEntry);
+
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         public static async Task<bool> SaveLog()

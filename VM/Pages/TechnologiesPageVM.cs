@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -38,7 +39,11 @@ namespace TemplateEngine_v3.VM.Pages
         public BranchDivisionDetails SelectedBranch
         {
             get => _selectedBranch;
-            set => SetValue(ref _selectedBranch, value, nameof(SelectedBranch));
+            set
+            {
+                IsBranchSelected = value != null;
+                SetValue(ref _selectedBranch, value, nameof(SelectedBranch));
+            }
         }
 
         private bool _isEnableBranchList;
@@ -67,6 +72,14 @@ namespace TemplateEngine_v3.VM.Pages
                 IsEnableBranchList = value != null;
                 SetBranchesList();
             }
+        }
+
+        private bool _isBranchSelected = false;
+
+        public bool IsBranchSelected
+        {
+            get => _isBranchSelected;
+            set => SetValue(ref _isBranchSelected, value, nameof(IsBranchSelected));
         }
 
         /// <summary>
@@ -147,7 +160,7 @@ namespace TemplateEngine_v3.VM.Pages
             SetBranchCommand = new RelayCommand(SetBranch);
             RemoveBranchCommand = new RelayCommand(RemoveBranch);
             SetCurrentTechnologiesCommand = new RelayCommand(SetCurrentTechnologies);
-            SaveOrEditCurrentTechnologiesCommand = new RelayCommand(SaveOrEditCurrentTechnologies);
+            SaveOrEditCurrentTechnologiesCommand = new RelayCommand(SaveOrEditCurrentTechnologies, CanSaveOrEditCurrentTechnologies);
         }
 
         /// <summary>
@@ -277,21 +290,31 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
+        private bool CanSaveOrEditCurrentTechnologies(object parameter)
+        {
+            if(CurrentTechnologies != null)
+                return !string.IsNullOrEmpty(CurrentTechnologies.Name);
+            return true;
+        }
+
         /// <summary>
         /// Сохраняет или редактирует текущий технологический процесс через менеджер.
         /// </summary>
-        private void SaveOrEditCurrentTechnologies()
+        private async void SaveOrEditCurrentTechnologies(object parameter)
         {
             var selectedTech = Technologies.FirstOrDefault(tech => tech.Id.Equals(CurrentTechnologies.Id));
-
+            bool isSave = false;
             if (selectedTech != null)
             {
-                _technologiesManager.EditTechnologies(CurrentTechnologies);
+                isSave = await _technologiesManager.EditTechnologies(CurrentTechnologies);
             }
             else
             {
-                _technologiesManager.AddTechnologies(CurrentTechnologies);
+                isSave = await _technologiesManager.AddTechnologies(CurrentTechnologies);
             }
+
+            if (isSave)
+                MessageBox.Show("ТП сохранено");
         }
     }
 }

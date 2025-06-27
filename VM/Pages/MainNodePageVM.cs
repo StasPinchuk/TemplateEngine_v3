@@ -53,6 +53,9 @@ namespace TemplateEngine_v3.VM.Pages
         /// Контекстное меню для текстового поля, предоставленное менеджером узлов.
         /// </summary>
         public ContextMenu TextBoxMenu => _nodeManager.MenuHelper.GetContextMenu();
+        public ContextMenu DesignationMenu => _nodeManager.MenuHelper.GetContextMenu();
+        public ContextMenu AmountMenu => _nodeManager.MenuHelper.GetContextMenu();
+        public ContextMenu UsageConditionMenu => _nodeManager.MenuHelper.GetContextMenu();
 
         /// <summary>
         /// Конструктор ViewModel страницы основного узла.

@@ -363,12 +363,14 @@ namespace TemplateEngine_v3.Helpers
             {
                 if (parameter is ConditionEvaluator evaluator)
                 {
-                    var condition = GetBoundPropertyObject(textBox, getParent: true) as ConditionEvaluator;
-                    if (condition != null)
+                    var condition = GetBoundPropertyObject(textBox, getParent: true);
+                    if (condition is ConditionEvaluator cond)
                     {
                         textBox.Text += $"[{evaluator.Name}]";
-                        condition.Parts.Add(evaluator.Id);
+                        cond.Parts.Add(evaluator.Id);
                     }
+                    if(condition is string)
+                        textBox.Text += $"[{evaluator.Name}]";
                 }
 
                 if (parameter is string material)
@@ -396,11 +398,14 @@ namespace TemplateEngine_v3.Helpers
             {
                 var path = bindingExpression.ParentBinding.Path.Path;
 
+                DataContext = bindingExpression.DataItem;
+
                 if (DataContext != null)
                 {
                     var parts = path.Split('.');
-                    if (getParent)
-                        parts = parts.Take(parts.Length - 1).ToArray();
+                    if(parts.Length > 2)
+                        if (getParent)
+                            parts = parts.Take(parts.Length - 1).ToArray();
 
                     return TryResolvePath(DataContext, parts);
                 }

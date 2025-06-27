@@ -7,6 +7,7 @@
       xmlns:converters="clr-namespace:TemplateEngine_v3.Converters"
       xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
       xmlns:help="clr-namespace:TemplateEngine_v3.Helpers"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:local="clr-namespace:TemplateEngine_v3.Views.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -46,8 +47,8 @@
                 <ColumnDefinition Width="*"
                                   MinWidth="300"/>
                 <ColumnDefinition Width="12"/>
-                <ColumnDefinition Width="*"
-                                  MinWidth="300"
+                <ColumnDefinition Width="560"
+                                  MinWidth="560"
                                   MaxWidth="{Binding RelativeSource={RelativeSource AncestorType={x:Type Page}}, Path=ActualWidth, Converter={StaticResource MaxWidthConverter}, ConverterParameter=40}"/>
 
             </Grid.ColumnDefinitions>
@@ -75,10 +76,10 @@
             </Border>
 
             <GridSplitter Grid.Column="1"
-                      VerticalAlignment="Stretch"
-                      HorizontalAlignment="Stretch"
-                      Background="Transparent"
-                      Margin="5,0"/>
+                          VerticalAlignment="Stretch"
+                          HorizontalAlignment="Stretch"
+                          Background="Transparent"
+                          Margin="5,0"/>
 
             <Border x:Name="FormulasBorder"
                     Background="#FFF"
@@ -88,117 +89,142 @@
                     Padding="10"
                     Margin="0,0,10,10"
                     Grid.Column="2">
-                <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                              VerticalScrollBarVisibility="Auto">
-                    <Grid VerticalAlignment="Stretch">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="60"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                        <Button Content="Прочитать с таблицы"
-                                Margin="70,0"
-                                Grid.Row="0"
-                                Command="{Binding DataContext.SetTableCommand, ElementName=formulasAndTermsPage}"
-                                CommandParameter="{Binding Value}"/>
+                    <Button Content="Прочитать с таблицы"
+                            MaxWidth="200"
+                            Margin="70,0"
+                            Grid.Row="0"
+                            Command="{Binding DataContext.SetTableCommand, ElementName=formulasAndTermsPage}"
+                            CommandParameter="{Binding Value}"/>
 
-                        <Expander Background="Transparent"
-                                  Grid.Row="1">
-                            <Expander.HeaderTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="Системные формулы"
-                                               TextWrapping="Wrap"/>
-                                </DataTemplate>
-                            </Expander.HeaderTemplate>
+                    <TabControl Grid.Row="1">
+                        <TabControl.Template>
+                            <ControlTemplate TargetType="TabControl">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                                  VerticalScrollBarVisibility="Disabled"
+                                                  CanContentScroll="False">
+                                        <WrapPanel IsItemsHost="True"
+                                                   Orientation="Horizontal"
+                                                   Margin="2"/>
+                                    </ScrollViewer>
+
+                                    <ContentPresenter Grid.Row="1"
+                                                      ContentSource="SelectedContent"
+                                                      Margin="4"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </TabControl.Template>
+
+                        <TabItem Header="Системные формулы" 
+                                 Height="25"
+                                 Padding="10, 0">
                             <ListBox ItemsSource="{Binding SystemEvaluators}"
+                                     MinHeight="50"
                                      VirtualizingStackPanel.IsVirtualizing="True"
                                      HorizontalContentAlignment="Stretch"
-                                     VerticalAlignment="Stretch">
+                                     VerticalAlignment="Stretch"
+                                     Cursor="Hand">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Button Content="{Binding Name}"
-                                                Command="{Binding DataContext.SetSystemFormulaCommand, ElementName=formulasAndTermsPage}"
-                                                CommandParameter="{Binding Value}"/>
+                                        <TextBlock Text="{Binding Name}"
+                                                   ToolTip="{Binding Value}"
+                                                   TextAlignment="Center"
+                                                   TextWrapping="Wrap"
+                                                   MouseLeftButtonUp="SetSystemFormulaCommand"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-                        </Expander>
-
-                        <Expander Background="Transparent"
-                                  Grid.Row="2">
-                            <Expander.HeaderTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="Параметры маркировки"
-                                               TextWrapping="Wrap"/>
-                                </DataTemplate>
-                            </Expander.HeaderTemplate>
+                        </TabItem>
+                        <TabItem Header="Параметры маркировки" 
+                                 Height="25"
+                                 Padding="10, 0">
                             <ListBox ItemsSource="{Binding TemplateMarkings}"
+                                     MaxHeight="300"
+                                     ScrollViewer.CanContentScroll="True"
                                      VirtualizingStackPanel.IsVirtualizing="True"
+                                     VirtualizingStackPanel.VirtualizationMode="Recycling"
                                      HorizontalContentAlignment="Stretch"
-                                     VerticalAlignment="Stretch">
+                                     VerticalAlignment="Stretch"
+                                     Cursor="Hand">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Button Content="{Binding}"
-                                                ToolTip="{Binding Value}"
-                                                Command="{Binding DataContext.SetMarkingCommand, ElementName=formulasAndTermsPage}"
-                                                CommandParameter="{Binding}"/>
+                                        <TextBlock Text="{Binding}"
+                                                   MouseLeftButtonUp="SetMarkingCommand"
+                                                   TextAlignment="Center"
+                                                   TextWrapping="Wrap"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-                        </Expander>
-
-                        <Expander Background="Transparent"
-                                  Grid.Row="3"
-                                  Visibility="{Binding NodeEvaluators, Converter={StaticResource CollectionToVisibilityConverter}}">
-                            <Expander.HeaderTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="Формулы и условия текущей детали"
-                                               TextWrapping="Wrap"/>
-                                </DataTemplate>
-                            </Expander.HeaderTemplate>
+                        </TabItem>
+                        <TabItem Header="Формулы и условия текущей детали" 
+                                 Height="25"
+                                 Padding="10, 0">
                             <ListBox ItemsSource="{Binding NodeEvaluators}"
+                                     MaxHeight="300"
+                                     ScrollViewer.CanContentScroll="True"
                                      VirtualizingStackPanel.IsVirtualizing="True"
+                                     VirtualizingStackPanel.VirtualizationMode="Recycling"
                                      HorizontalContentAlignment="Stretch"
-                                     VerticalAlignment="Stretch">
+                                     VerticalAlignment="Stretch"
+                                     Cursor="Hand">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Button Content="{Binding Name}"
-                                                ToolTip="{Binding Value}"
-                                                Command="{Binding DataContext.SetCurrentEvaluatorCommand, ElementName=formulasAndTermsPage}"
-                                                CommandParameter="{Binding}"/>
+                                        <TextBlock Text="{Binding Name}"
+                                                   ToolTip="{Binding Value}"
+                                                   MouseLeftButtonUp="SetCurrentEvaluatorCommand"
+                                                   TextAlignment="Center"
+                                                   TextWrapping="Wrap"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-                        </Expander>
+                        </TabItem>
+                        <TabItem Header="Формулы и условия текущего КД" 
+                                 Height="25"
+                                 Padding="10, 0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="50"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
 
-                        <Expander Background="Transparent"
-                                  Grid.Row="4"
-                                  Visibility="{Binding AllTemplateEvaluator, Converter={StaticResource CollectionToVisibilityConverter}}">
-                            <Expander.HeaderTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="Формулы и условия текущего КД"
-                                               TextWrapping="Wrap"/>
-                                </DataTemplate>
-                            </Expander.HeaderTemplate>
-                            <ListBox ItemsSource="{Binding AllTemplateEvaluator}"
-                                     VirtualizingStackPanel.IsVirtualizing="True"
-                                     HorizontalContentAlignment="Stretch"
-                                     VerticalAlignment="Stretch">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <Button Content="{Binding Name}"
-                                                ToolTip="{Binding Value}"
-                                                Command="{Binding DataContext.SetCurrentEvaluatorCommand, ElementName=formulasAndTermsPage}"
-                                                CommandParameter="{Binding}"/>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                        </Expander>
-                    </Grid>
-                </ScrollViewer>
+                                <TextBox Grid.Row="0"
+                                         Text="{Binding FilterAllTemplateEvaluators, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         materialDesign:HintAssist.Hint="Фильтр"/>
+
+                                <ListBox ItemsSource="{Binding AllTemplateEvaluator, UpdateSourceTrigger=PropertyChanged}"
+                                         MaxHeight="300"
+                                         ScrollViewer.CanContentScroll="True"
+                                         VirtualizingStackPanel.IsVirtualizing="True"
+                                         VirtualizingStackPanel.VirtualizationMode="Recycling"
+                                         HorizontalContentAlignment="Stretch"
+                                         VerticalAlignment="Stretch"
+                                         Cursor="Hand"
+                                         Grid.Row="1">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"
+                                       ToolTip="{Binding Value}"
+                                       MouseLeftButtonUp="SetCurrentEvaluatorCommand"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
             </Border>
 
         </Grid>

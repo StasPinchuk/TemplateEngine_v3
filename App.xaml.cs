@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Windows;
+using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Services.ServerServices;
 using TemplateEngine_v3.Views.Windows;
 
@@ -48,7 +49,7 @@ namespace TemplateEngine_v3
         {
             if (_serverManager.IsConnected())
             {
-                _serverManager.ReferenceManager.TemplateManager.ClearTemplate();
+                _serverManager.ReferenceManager?.TemplateManager.ClearTemplate();
                 _serverManager.Disconnect();
             }
         }

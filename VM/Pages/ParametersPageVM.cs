@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
+using TFlex.DOCs.Common;
 
 namespace TemplateEngine_v3.VM.Pages
 {
@@ -93,6 +96,36 @@ namespace TemplateEngine_v3.VM.Pages
         /// Коллекция строковых маркировок шаблона.
         /// </summary>
         public ObservableCollection<string> TemplateMarkings { get; set; }
+
+        private string _filterAllTemplateEvaluator = string.Empty;
+
+        public string FilterAllTemplateEvaluators
+        {
+            get => _filterAllTemplateEvaluator;
+            set
+            {
+                SetValue(ref _filterAllTemplateEvaluator, value, nameof(FilterAllTemplateEvaluators));
+
+                Task.Run(() =>
+                {
+                    ObservableCollection<ConditionEvaluator> filtered = string.IsNullOrEmpty(value)
+                      ? new ObservableCollection<ConditionEvaluator>(_evaluatorManager.AllTemplateEvaluator)
+                      : new ObservableCollection<ConditionEvaluator>(_evaluatorManager.AllTemplateEvaluator
+                        .Where(filterObject => filterObject.Name.Contains(value, StringComparison.OrdinalIgnoreCase))
+                        .ToList());
+
+                    // Обновляем коллекцию на UI-потоке
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        AllTemplateEvaluator.Clear();
+                        foreach (var item in filtered)
+                            AllTemplateEvaluator.Add(item);
+
+                    });
+                });
+            }
+
+        }
 
         /// <summary>
         /// Команды для взаимодействия с параметрами.
@@ -284,9 +317,9 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="parameter">Строка формулы.</param>
         private void SetSystemFormula(object parameter)
         {
-            if (parameter is string evaluator)
+            if (parameter is ConditionEvaluator evaluator)
             {
-                CurrentEvaluator.Value += evaluator;
+                CurrentEvaluator.Value += evaluator.Value;
             }
         }
 

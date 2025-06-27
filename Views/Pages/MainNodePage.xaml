@@ -15,6 +15,7 @@
             <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      materialDesign:HintAssist.Hint="Название детали"
                      ContextMenu="{Binding TextBoxMenu, UpdateSourceTrigger=PropertyChanged}"
+                     ContextMenuOpening="TextBox_ContextMenuOpening"
                      Text="{Binding CurrentNode.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
 
             <ComboBox ItemsSource="{Binding NodeTypes}"
@@ -25,13 +26,15 @@
 
             <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      materialDesign:HintAssist.Hint="КД" 
-                     ContextMenu="{Binding TextBoxMenu, UpdateSourceTrigger=PropertyChanged}"
+                     ContextMenu="{Binding DesignationMenu, UpdateSourceTrigger=PropertyChanged}"
+                     ContextMenuOpening="TextBox_ContextMenuOpening"
                      Text="{Binding CurrentNode.Designation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
 
             <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      materialDesign:HintAssist.Hint="Количество" 
-                     ContextMenu="{Binding TextBoxMenu, UpdateSourceTrigger=PropertyChanged}"
-                     Text="{Binding CurrentNode.Amount.Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
+                     ContextMenu="{Binding AmountMenu, UpdateSourceTrigger=PropertyChanged}"
+                     Text="{Binding CurrentNode.Amount.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     ContextMenuOpening="TextBox_ContextMenuOpening"
                      Margin="0, 20"/>
 
             <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
@@ -40,7 +43,8 @@
 
             <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      materialDesign:HintAssist.Hint="Условие использования детали" 
-                     ContextMenu="{Binding TextBoxMenu, UpdateSourceTrigger=PropertyChanged}"
+                     ContextMenu="{Binding UsageConditionMenu, UpdateSourceTrigger=PropertyChanged}"
+                     ContextMenuOpening="TextBox_ContextMenuOpening"
                      Text="{Binding CurrentNode.UsageCondition, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
                      Margin="0, 20"/>
         </StackPanel>

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Mappers;
 using TemplateEngine_v3.Models;
@@ -72,6 +73,7 @@ namespace TemplateEngine_v3.Services.ServerServices
                         await ReferenceManager.TemplateManager.SetTemplateAsync(template);
                         await ReferenceManager.TemplateManager.SaveTemplate("Ready");
                     }
+                    Updater.CheckForUpdatesOnStartup(_connection);
                     return true;
                 }
 

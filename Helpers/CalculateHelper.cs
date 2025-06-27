@@ -772,29 +772,38 @@ namespace TemplateEngine_v3.Helpers
                 var findValue = parameters.Last();
                 parameters.Remove(findValue);
 
-                var rangeItem = parameters.FirstOrDefault(p => p.ToString().Contains("-"));
-                if (rangeItem != null)
+                List<string> parametersList = [];
+
+                var rangeItem = parameters.FirstOrDefault(p => p.ParsedExpression.ToString().Contains("-"));
+                while(rangeItem != null)
                 {
                     parameters.Remove(rangeItem);
 
-                    var parts = rangeItem.ToString().Split('-');
+                    var parts = rangeItem.ParsedExpression.ToString().Split('-');
                     if (parts.Length == 2 &&
                         int.TryParse(parts[0], out int start) &&
                         int.TryParse(parts[1], out int end))
                     {
                         for (int i = start; i <= end; i++)
                         {
-                            parameters.Add(new Expression(i.ToString()));
+                            parametersList.Add(i.ToString());
                         }
                     }
+
+                    rangeItem = parameters.FirstOrDefault(p => p.ParsedExpression != null && p.ParsedExpression.ToString().Contains("-"));
                 }
 
-                if (parameters == null || findValue == null)
+                foreach(var param in parameters)
+                {
+                    parametersList.Add(param.ParsedExpression.ToString());
+                }
+
+                if (parametersList == null || findValue == null)
                 {
                     throw new ArgumentException("Invalid parameters for InRange.");
                 }
 
-                return parameters.Contains(findValue);
+                return parametersList.Contains(findValue.ParsedExpression.ToString());
 
             },
         };

@@ -136,6 +136,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             {
                 try
                 {
+                    await _reference.Objects.ReloadAsync();
                     var newTemplate = _reference.CreateReferenceObject(selectedTemplate.Type);
                     var newName = $"{selectedTemplate.Name} - копия";
 
@@ -169,6 +170,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             try
             {
+                await _reference.Objects.ReloadAsync();
                 var templateToRemove = await _reference.FindAsync(referenceModelInfo.Id);
 
                 if (templateToRemove == null)
@@ -214,6 +216,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             try
             {
+                await _reference.Objects.ReloadAsync();
                 var editReference = await _reference.FindAsync(editTemplate.Id);
 
                 if (editReference == null || _nameParameter == null || _objectStringParameter == null)
@@ -221,8 +224,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
                 await editReference.BeginChangesAsync();
 
+                string jsonString = new JsonSerializer().Serialize(editTemplate);
+
                 editReference[_nameParameter.Guid].Value = editTemplate.Name;
-                editReference[_objectStringParameter.Guid].Value = new JsonSerializer().Serialize(editTemplate);
+                editReference[_objectStringParameter.Guid].Value = jsonString;
 
                 await editReference.EndChangesAsync();
                 await editReference.BeginChangesAsync();
@@ -253,13 +258,14 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             {
                 try
                 {
+                    await _reference.Objects.ReloadAsync();
                     var newTemplate = _reference.CreateReferenceObject(classObject);
 
                     createTemplate.Id = newTemplate.Guid;
                     newTemplate[_nameParameter.Guid].Value = createTemplate.Name;
                     newTemplate[_objectStringParameter.Guid].Value = new JsonSerializer().Serialize(createTemplate);
 
-                    await newTemplate.EndChangesAsync();
+                    newTemplate.EndChanges();
                     await newTemplate.BeginChangesAsync();
 
                     return true;
@@ -278,6 +284,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <param name="referenceModel">Объект модели справочника шаблонов.</param>
         public async Task<bool> SetTemplateAsync(ReferenceModelInfo referenceModel)
         {
+            await _reference.Objects.ReloadAsync();
             var findTemplate = await _reference.FindAsync(referenceModel.Id);
 
             if (findTemplate == null)
@@ -310,26 +317,32 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             if (template.Name.Equals("Новый шаблон"))
             {
                 SelectedTemplate = template;
-                MenuHelper = new ContextMenuHelper(template, MaterialManager);
+                MenuHelper = new ContextMenuHelper(SelectedTemplate, MaterialManager);
+                await MenuHelper.CreateContextMenuAsync();
+                return true;
             }
-
-            var findTemplate = await _reference.FindAsync(template.Id);
-
-            if (findTemplate == null)
-                return false;
-
-            if (findTemplate.LockState != ReferenceObjectLockState.None && findTemplate.LockState != ReferenceObjectLockState.LockedByCurrentUser)
+            else
             {
-                MessageBox.Show("Данный шаблон взят на редактирование другим пользователем", "Ошибка");
-                return false;
-            }
-            await findTemplate.BeginChangesAsync();
-            template.ProductMarkingAttributes = SetMarkingAttributes(template.ExampleMarkings);
+                await _reference.Objects.ReloadAsync();
+                var findTemplate = await _reference.FindAsync(template.Id);
 
-            MenuHelper = new ContextMenuHelper(template, MaterialManager);
-            await MenuHelper.CreateContextMenuAsync();
-            SelectedTemplate = template;
-            return true;
+                if (findTemplate != null)
+                {
+                    if (findTemplate.LockState != ReferenceObjectLockState.None && findTemplate.LockState != ReferenceObjectLockState.LockedByCurrentUser)
+                    {
+                        MessageBox.Show("Данный шаблон взят на редактирование другим пользователем", "Ошибка");
+                        return false;
+                    }
+                    await findTemplate.BeginChangesAsync();
+                    template.ProductMarkingAttributes = SetMarkingAttributes(template.ExampleMarkings);
+                }
+
+                MenuHelper = new ContextMenuHelper(template, MaterialManager);
+                await MenuHelper.CreateContextMenuAsync();
+                SelectedTemplate = template;
+                return true;
+            }
+           
         }
 
         /// <summary>
@@ -348,6 +361,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             if (SelectedTemplate == null)
                 return;
+            _reference.Objects.Reload();
             var findTemplate = await _reference.FindAsync(SelectedTemplate.Id);
             if (findTemplate != null && findTemplate.CanUnlock)
             {
@@ -365,6 +379,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             try
             {
+                await _reference.Objects.ReloadAsync();
                 var findTemplate = await _reference.FindAsync(SelectedTemplate.Id);
                 if(findTemplate != null)
                     await findTemplate.EndChangesAsync();
@@ -378,9 +393,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 else
                 {
                     ClassObject templateType = type.Equals("draft") ? _draftTemplateType : _readyTemplateType;
-                    findTemplate = await _reference.FindAsync(SelectedTemplate.Id);
-                    if (findTemplate != null)
-                        await findTemplate.BeginChangesAsync();
                     bool isSave = await AddTemplateAsync(SelectedTemplate, templateType);
 
                     await LogManager.SaveLog();
@@ -399,6 +411,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             try
             {
+                await _reference.Objects.ReloadAsync();
                 await SetTemplateAsync(reference);
                 var findTemplate = await _reference.FindAsync(SelectedTemplate.Id);
                 await findTemplate.EndChangesAsync();

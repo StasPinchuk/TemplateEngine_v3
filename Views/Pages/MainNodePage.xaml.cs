@@ -15,5 +15,13 @@ namespace TemplateEngine_v3.Views.Pages
             InitializeComponent();
             DataContext = new MainNodePageVM(nodeManager, updatePage, updateNodeGroup);
         }
+
+        private void TextBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            if (sender is TextBox tb && tb.ContextMenu != null)
+            {
+                tb.ContextMenu.PlacementTarget = tb;
+            }
+        }
     }
 }

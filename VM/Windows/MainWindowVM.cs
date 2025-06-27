@@ -194,19 +194,19 @@ namespace TemplateEngine_v3.VM.Windows
         private void SaveToJson(object parameter)
         {
             FileService.WriteToFolder("saveTemplate\\Ready", _templateManager.GetReadyTemplate(),
-                t => t.Name, t => t.ObjectStruct);
+                t => t.Name.Replace('\"', '_'), t => t.ObjectStruct);
 
             FileService.WriteToFolder("saveTemplate\\Draft", _templateManager.GetDraftTemplates(),
-                t => t.Name, t => t.ObjectStruct);
+                t => t.Name.Replace('\"', '_'), t => t.ObjectStruct);
 
             FileService.WriteToFolder("saveTemplate\\TrahCan", _templateManager.GetTrashCanTemplates(),
-                t => t.Name, t => t.ObjectStruct);
+                t => t.Name.Replace('\"', '_'), t => t.ObjectStruct);
 
             FileService.WriteToFolder("saveTemplate\\Technologies", _technologiesManager.GetAllTechnologies(),
-                tech => tech.Name, tech => tech.ObjectStruct);
+                tech => tech.Name.Replace('\"', '_'), tech => tech.ObjectStruct);
 
             FileService.WriteToFolder("saveTemplate\\Branch", _branchManager.GetAllBranches(),
-                b => b.Name, b => b.ObjectStruct);
+                b => b.Name.Replace('\"', '_'), b => b.ObjectStruct);
         }
 
         /// <summary>

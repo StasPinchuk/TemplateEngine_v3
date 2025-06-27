@@ -27,8 +27,6 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                if (ShouldLogChange(_name, value))
-                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия ТП с '{_name}' на '{value}'");
                 SetValue(ref _name, value, nameof(Name));
             }
         }

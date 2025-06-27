@@ -122,7 +122,7 @@ namespace TemplateEngine_v3.VM.Pages
             _nodePage = nodePage;
 
             SelectedNode = Nodes.FirstOrDefault();
-            _nodeManager.Nodes = new(Nodes);
+            _nodeManager.Nodes = Nodes;
             SetNodeGroup();
             SetNodePage(PageCollection.FirstOrDefault());
 
