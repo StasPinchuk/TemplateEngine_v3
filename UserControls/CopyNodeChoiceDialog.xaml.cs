@@ -1,14 +1,13 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.FileServices;
-using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.UserControls
 {
@@ -20,9 +19,9 @@ namespace TemplateEngine_v3.UserControls
         public static DependencyProperty TemplatesProperty =
             DependencyProperty.Register(
                     "Templates",
-                    typeof(ObservableCollection<ReferenceModelInfo>),
+                    typeof(IEnumerable<ReferenceModelInfo>),
                     typeof(CopyNodeChoiceDialog),
-                    new PropertyMetadata(new ObservableCollection<ReferenceModelInfo>())
+                    new PropertyMetadata(null)
                 );
 
         public static DependencyProperty CurrentTemplateProperty =
@@ -57,10 +56,10 @@ namespace TemplateEngine_v3.UserControls
                     new PropertyMetadata(new ObservableCollection<Node>())
                 );
 
-        public ObservableCollection<ReferenceModelInfo> Templates
+        public IEnumerable<ReferenceModelInfo> Templates
         {
-            get => (ObservableCollection<ReferenceModelInfo>)GetValue( TemplatesProperty );
-            set => SetValue( TemplatesProperty, value );
+            get => (IEnumerable<ReferenceModelInfo>)GetValue(TemplatesProperty);
+            set => SetValue(TemplatesProperty, value);
         }
 
         public ReferenceModelInfo CurrentTemplate
@@ -72,24 +71,24 @@ namespace TemplateEngine_v3.UserControls
         public ObservableCollection<TemplateRelations> Relations
         {
             get => (ObservableCollection<TemplateRelations>)GetValue(RelationsProperty);
-            set => SetValue(RelationsProperty, value );
+            set => SetValue(RelationsProperty, value);
         }
 
         public ObservableCollection<Node> Nodes
         {
             get => (ObservableCollection<Node>)GetValue(NodesProperty);
-            set => SetValue(NodesProperty, value );
+            set => SetValue(NodesProperty, value);
         }
 
         public TemplateRelations SelectedRelation
         {
             get => (TemplateRelations)GetValue(SelectedRelationProperty);
-            set => SetValue(SelectedRelationProperty, value );
+            set => SetValue(SelectedRelationProperty, value);
         }
 
-        private ObservableCollection<Node> _allNodes;
+        private readonly ObservableCollection<Node> _allNodes;
 
-        public CopyNodeChoiceDialog(ObservableCollection<ReferenceModelInfo> templates, ObservableCollection<Node> nodes)
+        public CopyNodeChoiceDialog(IEnumerable<ReferenceModelInfo> templates, ObservableCollection<Node> nodes)
         {
             InitializeComponent();
             Templates = templates;
@@ -128,7 +127,7 @@ namespace TemplateEngine_v3.UserControls
         {
             if (e.NewValue is Node selectedNode)
             {
-                _allNodes.Add( selectedNode.DeepCopyWithNewIds() );
+                _allNodes.Add(selectedNode.DeepCopyWithNewIds());
             }
         }
 

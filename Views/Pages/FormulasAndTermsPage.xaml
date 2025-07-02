@@ -150,7 +150,6 @@
                                  Height="25"
                                  Padding="10, 0">
                             <ListBox ItemsSource="{Binding TemplateMarkings}"
-                                     MaxHeight="300"
                                      ScrollViewer.CanContentScroll="True"
                                      VirtualizingStackPanel.IsVirtualizing="True"
                                      VirtualizingStackPanel.VirtualizationMode="Recycling"
@@ -203,7 +202,6 @@
                                          materialDesign:HintAssist.Hint="Фильтр"/>
 
                                 <ListBox ItemsSource="{Binding AllTemplateEvaluator, UpdateSourceTrigger=PropertyChanged}"
-                                         MaxHeight="300"
                                          ScrollViewer.CanContentScroll="True"
                                          VirtualizingStackPanel.IsVirtualizing="True"
                                          VirtualizingStackPanel.VirtualizationMode="Recycling"

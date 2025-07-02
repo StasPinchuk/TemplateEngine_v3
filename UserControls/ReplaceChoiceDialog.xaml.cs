@@ -99,11 +99,12 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(TemplateManagerProperty, value);
         }
 
-        public ReplaceChoiceDialog(ObservableCollection<ReferenceModelInfo> referencesList, ITemplateManager templateManager)
+        public ReplaceChoiceDialog(ITemplateManager templateManager)
         {
             InitializeComponent();
-            ReferencesList = referencesList;
+            ReferencesList = templateManager.GetReadyTemplate();
             TemplateManager = templateManager;
+            SelectedReferencesList.Clear();
             ReplaceCommand = new RelayCommand(Replace, CanRepalce);
         }
 
@@ -158,6 +159,7 @@ namespace TemplateEngine_v3.UserControls
                 }
 
             }
+            SelectedReferencesList.Clear();
             if (!string.IsNullOrEmpty(replaceInfo))
             {
                 MessageBox.Show(replaceInfo, "Замена значений в шаблонах");

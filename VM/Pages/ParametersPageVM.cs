@@ -185,8 +185,9 @@ namespace TemplateEngine_v3.VM.Pages
                 Evaluator = node.Parameters;
 
                 _evaluatorManager.SetNodeEvaluators(node);
-                NodeEvaluators = new(_evaluatorManager.NodeEvaluators);
-                OnPropertyChanged(nameof(NodeEvaluators));
+                NodeEvaluators.Clear();
+                foreach (var eval in _evaluatorManager.NodeEvaluators)
+                    NodeEvaluators.Add(eval);
                 OnPropertyChanged(nameof(Evaluator));
 
             }
@@ -374,8 +375,9 @@ namespace TemplateEngine_v3.VM.Pages
         {
             _evaluatorManager.UpdateTemplateEvaluator();
             _evaluatorManager.SetNodeEvaluators(_nodeManager.CurrentNode);
-            NodeEvaluators = new(_evaluatorManager.NodeEvaluators);
-            AllTemplateEvaluator = new(_evaluatorManager.AllTemplateEvaluator);
+            NodeEvaluators.Clear();
+            foreach (var eval in _evaluatorManager.NodeEvaluators)
+                NodeEvaluators.Add(eval);
 
             OnPropertyChanged(nameof(NodeEvaluators));
             OnPropertyChanged(nameof(AllTemplateEvaluator));

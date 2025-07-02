@@ -13,10 +13,19 @@ namespace TemplateEngine_v3.VM.Pages
     /// </summary>
     public class MainNodePageVM : BaseNotifyPropertyChanged
     {
+        private string _lastNodeName = string.Empty;
+
         /// <summary>
         /// Текущий узел, получаемый из менеджера узлов.
         /// </summary>
-        public Node CurrentNode => _nodeManager.CurrentNode;
+        public Node CurrentNode
+        {
+            get
+            {
+                _lastNodeName = _nodeManager.CurrentNode.Name;
+                return _nodeManager.CurrentNode;
+            }
+        }
 
         /// <summary>
         /// Список доступных типов узлов.
@@ -39,15 +48,27 @@ namespace TemplateEngine_v3.VM.Pages
             get => _nodeType;
             set
             {
-                SetValue(ref _nodeType, value, nameof(NodeType));
-                if (CurrentNode != null)
+                if (SetValue(ref _nodeType, value, nameof(NodeType)))
                 {
-                    CurrentNode.Type = value;
-                    _updatePage?.Invoke();
-                    _updateNodeGroup?.Invoke();
+                    if (CurrentNode != null && CurrentNode.Type != value)
+                    {
+                        bool sameName = CurrentNode.Name.Equals(_lastNodeName);
+
+                        _updatePage?.Invoke();
+                        CurrentNode.Type = value;
+
+                        if (sameName)
+                        {
+                            _updateNodeGroup?.Invoke();
+                        }
+
+                        // Обновляем имя в любом случае после смены типа
+                        _lastNodeName = CurrentNode.Name;
+                    }
                 }
             }
         }
+
 
         /// <summary>
         /// Контекстное меню для текстового поля, предоставленное менеджером узлов.

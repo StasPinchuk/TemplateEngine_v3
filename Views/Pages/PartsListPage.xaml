@@ -14,6 +14,8 @@
 
     <Page.Resources>
         <converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="InvertedBoolToVis" Inverted="True"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToHiddenVis" UseHidden="True"/>
     </Page.Resources>
 
     <Grid>
@@ -43,6 +45,7 @@
                                      IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      GroupName="NodePages"
                                      Cursor="Hand"
+                                     Visibility="{Binding IsEnabled, Converter={StaticResource BoolToHiddenVis}, UpdateSourceTrigger=PropertyChanged}"
                                      Command="{Binding DataContext.NextPageCommand, ElementName=partsListPage}"
                                      CommandParameter="{Binding}">
                             <StackPanel Orientation="Vertical">

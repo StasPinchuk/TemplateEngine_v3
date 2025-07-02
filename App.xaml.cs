@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using System.Windows;
-using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Services.ServerServices;
 using TemplateEngine_v3.Views.Windows;
 
@@ -28,6 +27,9 @@ namespace TemplateEngine_v3
             Application.Current.Dispatcher.InvokeAsync(async () =>
             {
                 bool connectionEstablished = await Task.Run(() => _serverManager.SetServerConnection());
+
+                if (!connectionEstablished)
+                    Application.Current.Shutdown();
 
                 Window windowToShow = connectionEstablished
                     ? new MainWindow(_serverManager)

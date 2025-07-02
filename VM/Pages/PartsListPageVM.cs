@@ -16,50 +16,45 @@ using TemplateEngine_v3.Views.Pages;
 
 namespace TemplateEngine_v3.VM.Pages
 {
-    /// <summary>
-    /// ViewModel страницы списка деталей (узлов).
-    /// Управляет коллекциями узлов, группами узлов и навигацией по страницам.
-    /// </summary>
     public class PartsListPageVM : BaseNotifyPropertyChanged
     {
-        private readonly Frame _nodePage; // Frame для отображения страниц с деталями узлов
-        private readonly INodeManager _nodeManager; // Менеджер узлов, содержит коллекцию узлов и текущее выделение
-        private readonly ITechnologiesManager _technologiesManager; // Менеджер технологий для работы с технологическими процессами
-        private readonly ITemplateManager _templateManager; // Менеджер шаблонов, используется для копирования узлов из шаблонов
+        private readonly Frame _nodePage;
+        private readonly INodeManager _nodeManager;
+        private readonly ITechnologiesManager _technologiesManager;
+        private readonly ITemplateManager _templateManager;
 
-        /// <summary>
-        /// Коллекция всех узлов (деталей) для отображения
-        /// </summary>
-        public ObservableCollection<Node> Nodes { get; set; } = new();
+        private ObservableCollection<Node> _nodes;
+        public ObservableCollection<Node> Nodes
+        {
+            get => _nodes;
+            set => SetValue(ref _nodes, value, nameof(Nodes));
+        }
 
-        /// <summary>
-        /// Коллекция моделей страниц для навигации внутри текущей страницы
-        /// </summary>
-        public ObservableCollection<PageModel> PageCollection { get; set; } = new();
+        private ObservableCollection<PageModel> _pageCollection = new();
+        public ObservableCollection<PageModel> PageCollection
+        {
+            get => _pageCollection;
+            set => SetValue(ref _pageCollection, value, nameof(PageCollection));
+        }
 
-        /// <summary>
-        /// Группы узлов, сгруппированные по типу узла
-        /// </summary>
-        public ObservableCollection<NodeGroup> NodeGroups { get; set; } = new();
+        private ObservableCollection<NodeGroup> _nodeGroups = new();
+        public ObservableCollection<NodeGroup> NodeGroups
+        {
+            get => _nodeGroups;
+            set => SetValue(ref _nodeGroups, value, nameof(NodeGroups));
+        }
 
-        private HashSet<string> _expandedGroups = new HashSet<string>(); // Состояние раскрытия групп узлов
+        private HashSet<string> _expandedGroups = new();
 
-        private PageModel _currentPage; // Текущая выбранная страница для отображения деталей узла
+        private PageModel _currentPage;
 
         private int _columnCount = 4;
-        /// <summary>
-        /// Количество колонок для отображения страниц
-        /// </summary>
         public int ColumnCount
         {
             get => _columnCount;
             set => SetValue(ref _columnCount, value, nameof(ColumnCount));
         }
 
-        /// <summary>
-        /// Выбранный узел (деталь)
-        /// При изменении обновляет текущий узел в менеджере и технологии
-        /// </summary>
         public Node SelectedNode
         {
             get => _nodeManager?.CurrentNode;
@@ -70,10 +65,6 @@ namespace TemplateEngine_v3.VM.Pages
                 {
                     _technologiesManager.CurrentTechnologies = value.Technologies;
                     SetPageCollection();
-                    if (_currentPage == null)
-                    {
-                        _currentPage = PageCollection.FirstOrDefault();
-                    }
                 }
                 else
                 {
@@ -85,10 +76,6 @@ namespace TemplateEngine_v3.VM.Pages
         }
 
         private string _filterString = string.Empty;
-        /// <summary>
-        /// Строка фильтра для поиска узлов по имени
-        /// При изменении запускает фильтрацию
-        /// </summary>
         public string FilterString
         {
             get => _filterString;
@@ -99,7 +86,6 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
-        // Команды для управления интерфейсом и действиями
         public ICommand NextPageCommand { get; set; }
         public ICommand DeleteNodeCommand { get; set; }
         public ICommand CopyNodeCommand { get; set; }
@@ -108,30 +94,23 @@ namespace TemplateEngine_v3.VM.Pages
         public ICommand CopyNodeAllTemplateCommand { get; set; }
         public ICommand FilterNodeCommand { get; set; }
 
-        /// <summary>
-        /// Конструктор VM
-        /// Инициализирует зависимости, загружает узлы, устанавливает начальную страницу и команды
-        /// </summary>
         public PartsListPageVM(ITechnologiesManager technologiesManager, INodeManager nodeManager, ITemplateManager templateManager, Frame nodePage)
         {
             _nodeManager = nodeManager;
             _technologiesManager = technologiesManager;
             _templateManager = templateManager;
             _technologiesManager.MenuHelper = _nodeManager.MenuHelper;
-            Nodes = _nodeManager.Nodes;
+            Nodes = new(_nodeManager.Nodes);
             _nodePage = nodePage;
 
-            SelectedNode = Nodes.FirstOrDefault();
             _nodeManager.Nodes = Nodes;
+            SelectedNode = Nodes.FirstOrDefault();
             SetNodeGroup();
             SetNodePage(PageCollection.FirstOrDefault());
 
             InitializeCommand();
         }
 
-        /// <summary>
-        /// Инициализация команд, связанных с действиями UI
-        /// </summary>
         private void InitializeCommand()
         {
             NextPageCommand = new RelayCommand(SetNodePage);
@@ -143,13 +122,9 @@ namespace TemplateEngine_v3.VM.Pages
             FilterNodeCommand = new RelayCommand(FilterNode);
         }
 
-        /// <summary>
-        /// Формирование групп узлов по их типу с сохранением состояния раскрытия групп
-        /// </summary>
         private void SetNodeGroup()
         {
-            _expandedGroups = new HashSet<string>(
-                NodeGroups.Where(g => g.IsExpanded).Select(g => g.Key));
+            _expandedGroups = new(NodeGroups.Where(g => g.IsExpanded).Select(g => g.Key));
 
             var grouped = Nodes
                 .GroupBy(n => n.Type)
@@ -161,13 +136,13 @@ namespace TemplateEngine_v3.VM.Pages
                 })
                 .ToList();
 
-            NodeGroups = new(grouped);
-            OnPropertyChanged(nameof(NodeGroups));
+            NodeGroups.Clear();
+
+            foreach (var group in grouped)
+                NodeGroups.Add(group);
+
         }
 
-        /// <summary>
-        /// Навигация на страницу с деталями, переданной в параметре
-        /// </summary>
         private void SetNodePage(object parameter)
         {
             if (parameter is PageModel page)
@@ -178,89 +153,63 @@ namespace TemplateEngine_v3.VM.Pages
                     MenuHistory.NextPage(page);
                 }
                 else
+                {
                     _nodePage.Navigate(page.ModelPage);
-
+                }
                 _currentPage = page;
             }
         }
 
-        /// <summary>
-        /// Удаление узла из коллекций и групп
-        /// </summary>
         private void DeleteNode(object parameter)
         {
             if (parameter is Node node)
             {
-                var removeNode = Nodes.FirstOrDefault(findNode => findNode.Id.Equals(node.Id));
+                var removeNode = Nodes.FirstOrDefault(n => n.Id == node.Id);
+                if (removeNode == null) return;
 
-                if (removeNode != null)
-                {
-                    Nodes.Remove(removeNode);
-                    var currentGroup = NodeGroups.FirstOrDefault(g => g.Key.Equals(node.Type));
-                    var removeNodeInGroup = currentGroup.Nodes.FirstOrDefault(findNode => findNode.Id.Equals(node.Id));
-                    currentGroup.Nodes.Remove(removeNodeInGroup);
-                    if (currentGroup.Nodes.Count == 0)
-                    {
-                        NodeGroups.Remove(currentGroup);
-                    }
-                    SelectedNode = Nodes.Count > 0 ? Nodes.FirstOrDefault() : null;
-                }
+                Nodes.Remove(removeNode);
+                var group = NodeGroups.FirstOrDefault(g => g.Key == node.Type);
+                group?.Nodes.Remove(removeNode);
+                if (group?.Nodes.Count == 0) NodeGroups.Remove(group);
+
+                SelectedNode = Nodes.FirstOrDefault();
             }
         }
 
-        /// <summary>
-        /// Копирование узла с созданием нового уникального идентификатора
-        /// </summary>
         private void CopyNode(object parameter)
         {
-            if (parameter is Node node)
-            {
-                var copyNode = Nodes.FirstOrDefault(findNode => findNode.Id.Equals(node.Id));
+            if (parameter is not Node node) return;
+            var copy = node.DeepCopyWithNewIds();
+            Nodes.Add(copy);
 
-                Node newNode = new();
-                newNode = copyNode.DeepCopyWithNewIds();
+            var group = NodeGroups.FirstOrDefault(g => g.Key == copy.Type);
+            if (group == null)
+                NodeGroups.Add(new NodeGroup { Key = copy.Type, Nodes = new() { copy } });
+            else
+                group.Nodes.Add(copy);
 
-                Nodes.Add(newNode);
-                var currentGroup = NodeGroups.FirstOrDefault(g => g.Key.Equals(newNode.Type));
-                currentGroup?.Nodes.Add(newNode);
-                SelectedNode = Nodes.Last();
-                newNode = null;
-                copyNode = null;
-            }
+            SelectedNode = copy;
         }
 
-        /// <summary>
-        /// Добавление нового узла с типом "Сборочная единица" и именем по умолчанию
-        /// </summary>
         private void AddNode()
         {
-            var newNode = new Node()
-            {
-                Name = "Новая деталь",
-                Type = "Сборочная единица",
-            };
+            var newNode = new Node { Name = "Новая деталь", Type = "Сборочная единица" };
             Nodes.Add(newNode);
 
-            var currentGroup = NodeGroups.FirstOrDefault(g => g.Key.Equals(newNode.Type));
-            if (currentGroup == null)
-            {
-                NodeGroups.Add(new() { Key = newNode.Type, Nodes = new() { newNode } });
-            }
+            var group = NodeGroups.FirstOrDefault(g => g.Key == newNode.Type);
+            if (group == null)
+                NodeGroups.Add(new NodeGroup { Key = newNode.Type, Nodes = new() { newNode } });
             else
-                currentGroup.Nodes.Add(newNode);
+                group.Nodes.Add(newNode);
 
-            SelectedNode = Nodes.Last();
-            newNode = null;
+            SelectedNode = newNode;
         }
 
-        /// <summary>
-        /// Формирование или обновление коллекции страниц для выбранного узла
-        /// </summary>
         private void SetPageCollection()
         {
             bool isAssembly = SelectedNode?.Type == "Сборочная единица";
             bool isDetail = SelectedNode?.Type == "Деталь";
-            bool needParamsAndTech = isAssembly || isDetail;
+            bool needParamsAndTech = !isAssembly && !isDetail;
 
             if (PageCollection.Count == 0)
             {
@@ -268,103 +217,78 @@ namespace TemplateEngine_v3.VM.Pages
             }
             else
             {
-                INodeManager nodeManager = new NodeManager()
+                var nodeManager = new NodeManager
                 {
                     MenuHelper = _nodeManager.MenuHelper,
                     TableManager = _nodeManager.TableManager,
                     EvaluatorManager = _nodeManager.EvaluatorManager,
+                    CurrentNode = SelectedNode.Nodes.FirstOrDefault() ?? SelectedNode,
+                    Nodes = SelectedNode.Nodes
                 };
 
-                if (SelectedNode != null)
+                if (isAssembly)
                 {
-                    nodeManager.CurrentNode = SelectedNode.Nodes.Count > 0 ? SelectedNode.Nodes.First() : SelectedNode;
-                    nodeManager.Nodes = SelectedNode.Nodes;
+                    foreach(var page in PageCollection)
+                        page.IsEnabled = true;
                 }
 
-                UpdatePage(Title: "Основная информация", required: true, typeofPage: typeof(MainNodePage), PackIconKind.NoteText, new object[] { _nodeManager, SetPageCollection, SetNodeGroup });
-                UpdatePage(Title: "Формулы и условия", required: true, typeofPage: typeof(FormulasAndTermsPage), PackIconKind.Function, new object[] { _nodeManager });
-                UpdatePage(Title: "Параметры", required: needParamsAndTech, typeofPage: typeof(ParametersPage), PackIconKind.Tune, new object[] { _nodeManager });
-                UpdatePage(Title: "Тех. процесс", required: needParamsAndTech, typeofPage: typeof(TechnologiesPage), PackIconKind.Cogs, new object[] { _technologiesManager });
-                UpdatePage(Title: "Детали", required: isAssembly, typeofPage: typeof(PartsListPage), PackIconKind.Cube, new object[] { _technologiesManager, nodeManager, _templateManager });
+                if (isDetail)
+                {
+                    foreach(var page in PageCollection)
+                        page.IsEnabled = true;
+
+                    PageCollection.Last().IsEnabled = false;
+                }
+
+                if (needParamsAndTech)
+                {
+                    foreach(var page in PageCollection.Skip(2))
+                        page.IsEnabled = false;
+
+                }
+
+                UpdatePage("Детали", isAssembly, typeof(PartsListPage), PackIconKind.Cube, new object[] { _technologiesManager, nodeManager, _templateManager });
             }
 
             ColumnCount = PageCollection.Count;
 
-            if (!PageCollection.Any(page => page.Title.Equals(_currentPage?.Title)))
+            if (!PageCollection.Any(p => p.Title == _currentPage?.Title))
             {
                 _currentPage = PageCollection.FirstOrDefault();
                 _currentPage.IsSelected = true;
-                SetNodePage(_currentPage);
             }
         }
 
-        /// <summary>
-        /// Инициализация коллекции страниц при первом заполнении
-        /// </summary>
         private void InitializePages(bool isAssembly, bool needParamsAndTech)
         {
-            INodeManager nodeManager = new NodeManager()
+            var nodeManager = new NodeManager
             {
                 MenuHelper = _nodeManager.MenuHelper,
                 TableManager = _nodeManager.TableManager,
                 EvaluatorManager = _nodeManager.EvaluatorManager,
+                CurrentNode = SelectedNode.Nodes.FirstOrDefault() ?? SelectedNode,
+                Nodes = SelectedNode.Nodes
             };
 
-            if (SelectedNode != null)
-            {
-                nodeManager.CurrentNode = SelectedNode.Nodes.Count > 0 ? SelectedNode.Nodes.First() : SelectedNode;
-                nodeManager.Nodes = SelectedNode.Nodes;
-            }
-            PageCollection.Clear();
-
+            PageCollection = new();
             PageCollection.Add(new PageModel("Основная информация", typeof(MainNodePage), true, PackIconKind.NoteText, new object[] { _nodeManager, SetPageCollection, SetNodeGroup }));
             PageCollection.Add(new PageModel("Формулы и условия", typeof(FormulasAndTermsPage), PackIconKind.Function, new object[] { _nodeManager }));
-
-            if (needParamsAndTech)
-            {
-                PageCollection.Add(new PageModel("Параметры", typeof(ParametersPage), PackIconKind.Tune, new object[] { _nodeManager }));
-                PageCollection.Add(new PageModel("Тех. процесс", typeof(TechnologiesPage), PackIconKind.Cogs, new object[] { _technologiesManager }));
-            }
-
-            if (isAssembly)
-            {
-                PageCollection.Add(new PageModel("Детали", typeof(PartsListPage), PackIconKind.Cube, new object[] { _technologiesManager, nodeManager, _templateManager }));
-            }
+            PageCollection.Add(new PageModel("Параметры", typeof(ParametersPage), PackIconKind.Tune, new object[] { _nodeManager }));
+            PageCollection.Add(new PageModel("Тех. процесс", typeof(TechnologiesPage), PackIconKind.Cogs, new object[] { _technologiesManager }));
+            PageCollection.Add(new PageModel("Детали", typeof(PartsListPage), PackIconKind.Cube, new object[] { _technologiesManager, nodeManager, _templateManager }));
         }
 
-        /// <summary>
-        /// Обновляет или удаляет страницу из коллекции в зависимости от параметра required
-        /// </summary>
-        /// <param name="Title">Название страницы</param>
-        /// <param name="required">Требуется ли страница для текущего узла</param>
-        /// <param name="typeofPage">Тип страницы</param>
-        /// <param name="icon">Иконка страницы</param>
-        /// <param name="parameters">Параметры конструктора страницы</param>
         private void UpdatePage(string Title, bool required, Type typeofPage, PackIconKind icon, object[] parameters)
         {
-            var existingPage = PageCollection.FirstOrDefault(p => p.Title == Title);
+            var page = PageCollection.Last();
 
-            if (existingPage != null && existingPage.Title.Equals("Детали") && existingPage.ConstructorParameters.Any(param => param is INodeManager))
+            if (page.ConstructorParameters.FirstOrDefault(p => p is INodeManager) is INodeManager nodeManager)
             {
-                var nodeManager = existingPage.ConstructorParameters.FirstOrDefault(param => param is INodeManager) as INodeManager;
                 nodeManager.CurrentNode = SelectedNode;
                 nodeManager.Nodes = SelectedNode.Nodes;
             }
-
-            if (required && existingPage == null)
-            {
-                PageCollection.Add(new PageModel(Title, typeofPage, icon, parameters));
-            }
-            else if (!required && existingPage != null)
-            {
-                existingPage.ClearPage();
-                PageCollection.Remove(existingPage);
-            }
         }
 
-        /// <summary>
-        /// Открывает диалог копирования узла из выбранного шаблона и обновляет группы узлов после
-        /// </summary>
         private async void CopyNodeCurrentTemplate()
         {
             var dialog = new CopyNodeChoiceDialog(_templateManager.GetSelectedTemplate(), Nodes);
@@ -372,9 +296,6 @@ namespace TemplateEngine_v3.VM.Pages
             SetNodeGroup();
         }
 
-        /// <summary>
-        /// Открывает диалог копирования узла из всех готовых шаблонов и обновляет группы узлов после
-        /// </summary>
         private async void CopyNodeAllTemplate()
         {
             var dialog = new CopyNodeChoiceDialog(_templateManager.GetReadyTemplate(), Nodes);
@@ -382,21 +303,12 @@ namespace TemplateEngine_v3.VM.Pages
             SetNodeGroup();
         }
 
-        /// <summary>
-        /// Фильтрует коллекцию узлов по имени, обновляет группы узлов и уведомляет об изменениях
-        /// </summary>
         private void FilterNode()
         {
-            if (string.IsNullOrEmpty(FilterString))
-            {
-                Nodes = new(_nodeManager.Nodes);
-            }                
-            else
-                Nodes = new(_nodeManager.Nodes.Where(node => node.Name.Contains(FilterString)));
-            OnPropertyChanged(nameof(Nodes));
+            Nodes = string.IsNullOrEmpty(FilterString)
+                ? new(_nodeManager.Nodes)
+                : new(_nodeManager.Nodes.Where(n => n.Name.Contains(FilterString)));
             SetNodeGroup();
-            OnPropertyChanged(nameof(NodeGroups));
         }
-
     }
 }

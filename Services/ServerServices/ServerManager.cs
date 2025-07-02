@@ -65,6 +65,9 @@ namespace TemplateEngine_v3.Services.ServerServices
                 {
                     _credentialsStorage.Save(CurrentCredentials);
 
+                    if (await Updater.CheckForUpdatesOnStartup(_connection))
+                        return false;
+
                     UserManager = _managerInitializer.InitializeUserManager(_connection);
                     ReferenceManager = _managerInitializer.InitializeReferenceManager(_connection);
                     var templates = FileService.ReadeFromFolder("configs\\UnhandledException");
@@ -73,7 +76,6 @@ namespace TemplateEngine_v3.Services.ServerServices
                         await ReferenceManager.TemplateManager.SetTemplateAsync(template);
                         await ReferenceManager.TemplateManager.SaveTemplate("Ready");
                     }
-                    Updater.CheckForUpdatesOnStartup(_connection);
                     return true;
                 }
 

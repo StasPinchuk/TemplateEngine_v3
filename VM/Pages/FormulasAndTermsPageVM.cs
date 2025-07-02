@@ -244,8 +244,6 @@ namespace TemplateEngine_v3.VM.Pages
         {
             Evaluator = SelectedList ? Terms : Formulas;
             ButtonText = SelectedList ? "Добавить условие" : "Добавить формулу";
-            _evaluatorManager.SetNodeEvaluators(CurrentNode);
-            NodeEvaluators = new ObservableCollection<ConditionEvaluator>(_evaluatorManager.NodeEvaluators);
 
             OnPropertyChanged(nameof(NodeEvaluators));
             OnPropertyChanged(nameof(Evaluator));
@@ -452,7 +450,6 @@ namespace TemplateEngine_v3.VM.Pages
             _evaluatorManager.UpdateTemplateEvaluator();
             _evaluatorManager.SetNodeEvaluators(CurrentNode);
             NodeEvaluators = new ObservableCollection<ConditionEvaluator>(_evaluatorManager.NodeEvaluators);
-            AllTemplateEvaluator = new ObservableCollection<ConditionEvaluator>(_evaluatorManager.AllTemplateEvaluator);
 
             _nodeManager.MenuHelper.UpdateContextMenuAsync();
 

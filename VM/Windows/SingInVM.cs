@@ -80,6 +80,7 @@ namespace TemplateEngine_v3.VM.Windows
             else
             {
                 System.Windows.MessageBox.Show("Не удалось подключиться к серверу. Проверьте введённые данные.", "Ошибка подключения", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.Application.Current?.Dispatcher.Invoke(() => System.Windows.Application.Current.Shutdown());
             }
         }
 

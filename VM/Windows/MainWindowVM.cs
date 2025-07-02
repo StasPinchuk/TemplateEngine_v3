@@ -215,7 +215,7 @@ namespace TemplateEngine_v3.VM.Windows
         /// <param name="parameter">Параметр команды (не используется).</param>
         private async void ReplaceValueInTemplate(object parameter)
         {
-            var dialog = new ReplaceChoiceDialog(_templateManager.GetReadyTemplate(), _templateManager);
+            var dialog = new ReplaceChoiceDialog(_templateManager);
             await DialogHost.Show(dialog, "MainDialog");
         }
 

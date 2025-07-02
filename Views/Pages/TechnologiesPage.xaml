@@ -24,7 +24,7 @@
                   DockPanel.Dock="Left">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="10"/>
-                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="70"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="1">
@@ -40,6 +40,9 @@
                              materialDesign:HintAssist.Hint="Название технологического процесса"
                              Text="{Binding CurrentTechnologies.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              FontSize="14"
+                             MaxLength="120"
+                             Height="50"
+                             Padding="10"
                              Grid.Column="0"/>
 
                     <Button Style="{StaticResource MaterialDesignRaisedButton}"

@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
@@ -13,7 +11,7 @@ namespace TemplateEngine_v3.Views.Pages
     /// </summary>
     public partial class PartsListPage : Page
     {
-        private PartsListPageVM vm;
+        private readonly PartsListPageVM vm;
         public PartsListPage(ITechnologiesManager technologiesManager, INodeManager nodeManager, ITemplateManager templateManager)
         {
             InitializeComponent();

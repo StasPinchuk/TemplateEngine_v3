@@ -136,7 +136,6 @@
                                  Height="25"
                                  Padding="10, 0">
                             <ListBox ItemsSource="{Binding TemplateMarkings}"
-                                     MaxHeight="300"
                                      ScrollViewer.CanContentScroll="True"
                                      VirtualizingStackPanel.IsVirtualizing="True"
                                      VirtualizingStackPanel.VirtualizationMode="Recycling"
@@ -157,7 +156,6 @@
                                  Height="25"
                                  Padding="10, 0">
                             <ListBox ItemsSource="{Binding NodeEvaluators}"
-                                     MaxHeight="300"
                                      ScrollViewer.CanContentScroll="True"
                                      VirtualizingStackPanel.IsVirtualizing="True"
                                      VirtualizingStackPanel.VirtualizationMode="Recycling"
@@ -189,7 +187,6 @@
                                          materialDesign:HintAssist.Hint="Фильтр"/>
 
                                 <ListBox ItemsSource="{Binding AllTemplateEvaluator, UpdateSourceTrigger=PropertyChanged}"
-                                         MaxHeight="300"
                                          ScrollViewer.CanContentScroll="True"
                                          VirtualizingStackPanel.IsVirtualizing="True"
                                          VirtualizingStackPanel.VirtualizationMode="Recycling"
@@ -305,7 +302,7 @@
 
         <TextBox materialDesign:HintAssist.Hint="Условие применения"
                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                 Text="{Binding Evaluator.UsageCondition, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                 Text="{Binding CurrentEvaluator.UsageCondition, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                  Background="#FFF"
                  Grid.Row="3"/>
 

@@ -52,7 +52,7 @@
                 <TextBlock Text="{Binding CurrentReferenceModel.Name, FallbackValue='Нет данных', RelativeSource={RelativeSource AncestorType=UserControl}}"
                            FontSize="24"
                            TextWrapping="Wrap"
-                           MaxWidth="800"
+                           MaxWidth="1000"
                            FontWeight="SemiBold"
                            TextAlignment="Center"/>
             </Viewbox>
