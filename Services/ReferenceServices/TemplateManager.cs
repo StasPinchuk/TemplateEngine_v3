@@ -216,6 +216,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             try
             {
+                await _reference.RefreshAsync();
                 await _reference.Objects.ReloadAsync();
                 var editReference = await _reference.FindAsync(editTemplate.Id);
 
@@ -230,7 +231,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 editReference[_objectStringParameter.Guid].Value = jsonString;
 
                 await editReference.EndChangesAsync();
-                await editReference.BeginChangesAsync();
+                //await editReference.BeginChangesAsync();
 
                 return true;
             }
@@ -258,6 +259,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             {
                 try
                 {
+                    await _reference.RefreshAsync();
                     await _reference.Objects.ReloadAsync();
                     var newTemplate = _reference.CreateReferenceObject(classObject);
 
@@ -284,6 +286,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <param name="referenceModel">Объект модели справочника шаблонов.</param>
         public async Task<bool> SetTemplateAsync(ReferenceModelInfo referenceModel)
         {
+            await _reference.RefreshAsync();
             await _reference.Objects.ReloadAsync();
             var findTemplate = await _reference.FindAsync(referenceModel.Id);
 
@@ -296,7 +299,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 return false;
             }
 
-            await findTemplate.BeginChangesAsync();
+            //await findTemplate.BeginChangesAsync();
 
             Template template = new JsonSerializer().Deserialize<Template>(referenceModel.ObjectStruct);
 
@@ -379,10 +382,11 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             try
             {
+                await _reference.RefreshAsync();
                 await _reference.Objects.ReloadAsync();
                 var findTemplate = await _reference.FindAsync(SelectedTemplate.Id);
-                if(findTemplate != null)
-                    await findTemplate.EndChangesAsync();
+                /*if(findTemplate != null)
+                    await findTemplate.EndChangesAsync();*/
                 var currentList = type.Equals("draft") ? GetDraftTemplates() : GetReadyTemplate();
 
                 if (currentList.Any(temp => temp.Id.Equals(SelectedTemplate.Id)))

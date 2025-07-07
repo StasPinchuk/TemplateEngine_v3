@@ -22,7 +22,7 @@ namespace TemplateEngine_v3.VM.Pages
         {
             get
             {
-                _lastNodeName = _nodeManager.CurrentNode.Name;
+                _lastNodeName = _nodeManager.CurrentNode?.Name;
                 return _nodeManager.CurrentNode;
             }
         }

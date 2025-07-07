@@ -100,10 +100,9 @@ namespace TemplateEngine_v3.VM.Pages
             _technologiesManager = technologiesManager;
             _templateManager = templateManager;
             _technologiesManager.MenuHelper = _nodeManager.MenuHelper;
-            Nodes = new(_nodeManager.Nodes);
+            Nodes = _nodeManager.Nodes;
             _nodePage = nodePage;
 
-            _nodeManager.Nodes = Nodes;
             SelectedNode = Nodes.FirstOrDefault();
             SetNodeGroup();
             SetNodePage(PageCollection.FirstOrDefault());
