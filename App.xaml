@@ -19,8 +19,41 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <Style x:Key="ScrollableTabControl" TargetType="{x:Type TabControl}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type TabControl}">
+                            <Grid KeyboardNavigation.TabNavigation="Local">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <!-- Заголовки вкладок -->
+                                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Disabled"
+                                  CanContentScroll="False"
+                                  Grid.Row="0">
+                                    <TabPanel x:Name="HeaderPanel"
+                                  IsItemsHost="True"
+                                  Panel.ZIndex="1"
+                                  Margin="2,2,2,0"
+                                  Background="Transparent" />
+                                </ScrollViewer>
+                                <!-- Контент -->
+                                <ContentPresenter x:Name="PART_SelectedContentHost"
+                                      Margin="4"
+                                      ContentSource="SelectedContent"
+                                      Grid.Row="1" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
         </ResourceDictionary>
     </Application.Resources>
+    
     
     
 </Application>

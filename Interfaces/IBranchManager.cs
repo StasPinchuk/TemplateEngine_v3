@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Interfaces
 {
@@ -36,5 +37,7 @@ namespace TemplateEngine_v3.Interfaces
         /// <param name="branch">Филиал для клонирования.</param>
         /// <returns>Задача, возвращающая true при успешном клонировании, иначе false.</returns>
         Task<bool> CloneBranch(ReferenceModelInfo branch);
+
+        BranchManager DeepCopy();
     }
 }

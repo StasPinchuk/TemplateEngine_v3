@@ -215,7 +215,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         public ObservableCollection<ReferenceModelInfo> GetAllTechnologies()
         {
             return new(_referenceLoader.LoadReference(_technologiesInfo)
-                .Where(branch => branch.Type.Equals(_technologiesClass))
+                .Where(technologies => technologies.Type.Equals(_technologiesClass)
+                                && !NavigationService.GetTabs().Any(tab => tab.Title.Equals(technologies.Name)))
                 );
         }
 
@@ -245,5 +246,12 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 return false;
             }
         }
+
+        public TechnologiesManager DeepCopy()
+        {
+            var json = new JsonSerializer().Serialize(this);
+            return new JsonSerializer().Deserialize<TechnologiesManager>(json);
+        }
+
     }
 }

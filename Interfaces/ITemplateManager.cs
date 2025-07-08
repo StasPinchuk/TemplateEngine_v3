@@ -120,5 +120,8 @@ namespace TemplateEngine_v3.Interfaces
         /// Очищает текущий выбранный шаблон.
         /// </summary>
         void ClearTemplate();
+
+        TemplateManager Clone();
+
     }
 }

@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using TemplateEngine_v3.Interfaces;
+using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ServerServices;
 using TemplateEngine_v3.Views.Windows;
 
@@ -51,7 +54,16 @@ namespace TemplateEngine_v3
         {
             if (_serverManager.IsConnected())
             {
-                _serverManager.ReferenceManager?.TemplateManager.ClearTemplate();
+
+                var tabs = NavigationService.GetTabs();
+
+                foreach (var tab in tabs)
+                {
+                    var templateManager = tab.Page.ConstructorParameters.FirstOrDefault(param => param is ITemplateManager) as ITemplateManager;
+                    if (templateManager != null)
+                        templateManager.ClearTemplate();
+
+                }
                 _serverManager.Disconnect();
             }
         }

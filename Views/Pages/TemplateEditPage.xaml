@@ -22,7 +22,7 @@
                         BorderThickness="0,0,0,2"
                         Grid.Row="0">
                     <DockPanel LastChildFill="False">
-                        <controls:Breadcrumb History="{Binding DataContext.PagesHistory, RelativeSource={RelativeSource AncestorType=Page}}"/>
+                        <controls:Breadcrumb History="{Binding DataContext.PagesHistory, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=Page}}"/>
 
                         <StackPanel Orientation="Horizontal"
                                     DockPanel.Dock="Right"

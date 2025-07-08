@@ -1,5 +1,5 @@
 ﻿using System.Windows.Controls;
-using TemplateEngine_v3.Interfaces;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.VM.Pages;
 
 namespace TemplateEngine_v3.Views.Pages
@@ -9,10 +9,10 @@ namespace TemplateEngine_v3.Views.Pages
     /// </summary>
     public partial class TemplateEditPage : Page
     {
-        public TemplateEditPage(ITechnologiesManager technologiesManager, ITemplateManager templateManager, IBranchManager branchManager)
+        public TemplateEditPage(ITemplateManager templateManager, ITechnologiesManager technologiesManager, IBranchManager branchManager)
         {
             InitializeComponent();
-            DataContext = new TemplateEditPageVM(technologiesManager, templateManager, branchManager, TemplateFrame);
+            DataContext = new TemplateEditPageVM(templateManager, technologiesManager, branchManager, TemplateFrame);
         }
     }
 }

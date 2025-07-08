@@ -209,7 +209,9 @@
     <Compile Include="Models\GroupNode.cs" />
     <Compile Include="Models\LogModels\DailyLog.cs" />
     <Compile Include="Models\LogModels\LogEntry.cs" />
+    <Compile Include="Models\NavigationTabs.cs" />
     <Compile Include="Models\TemplateModels\ExampleMarking.cs" />
+    <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\ReferenceServices\LogManager.cs" />
     <Compile Include="Models\LogModels\LogObjectGroup.cs" />
     <Compile Include="Models\NodeGroup.cs" />
@@ -236,7 +238,6 @@
     <Compile Include="Services\FileServices\JsonFileManager.cs" />
     <Compile Include="Services\FileServices\JsonReferenceLoader.cs" />
     <Compile Include="Services\FileServices\JsonSerializer.cs" />
-    <Compile Include="Services\MenuHistory.cs" />
     <Compile Include="Services\ReferenceServices\BranchManager.cs" />
     <Compile Include="Services\ReferenceServices\EvaluatorManager.cs" />
     <Compile Include="Services\ReferenceServices\MaterialManager.cs" />

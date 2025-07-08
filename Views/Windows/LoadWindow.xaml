@@ -11,16 +11,40 @@
         Width="280"
         Height="280"
         Title="LoadWindow">
+
+    <Window.Resources>
+        <Storyboard x:Key="LoopingProgressBarAnimation" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MyProgressBar"
+                                           Storyboard.TargetProperty="Value">
+                <!-- Подъём с 0 до 100 -->
+                <LinearDoubleKeyFrame Value="100" 
+                                      KeyTime="0:0:1" />
+                <!-- Падение до 75 -->
+                <LinearDoubleKeyFrame Value="0" 
+                                      KeyTime="0:0:1.5" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource LoopingProgressBarAnimation}" />
+        </EventTrigger>
+    </Window.Triggers>
+
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="230"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
-        <ProgressBar IsIndeterminate="True"
+        <ProgressBar x:Name="MyProgressBar"
                      Width="200"
                      Height="200"
+                     Minimum="0"
+                     Maximum="100"
+                     Value="0"
                      Style="{StaticResource MaterialDesignCircularProgressBar}"
-                     Value="35"
                      Grid.Row="0"/>
         <TextBlock TextAlignment="Center"
                    VerticalAlignment="Center"
