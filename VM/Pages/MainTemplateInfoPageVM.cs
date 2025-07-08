@@ -173,9 +173,11 @@ namespace TemplateEngine_v3.VM.Pages
 
                 _nodeManager.EvaluatorManager = evaluatorManager;
 
+                NavigationService.AddPageToPageHistory(nextPage);
+                NavigationService.SetPageInSecondaryFrame();
+
                 nextPage.IsSelected = false;
                 PagesCollection.First().IsSelected = false;
-                MenuHistory.NextPage(nextPage);
             }
         }
 

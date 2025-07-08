@@ -164,9 +164,63 @@
                           ResizeBehavior="PreviousAndNext"
                           Grid.Column="1"/>
 
-            <Frame x:Name="MainFrame"
-                   Grid.Column="2"
-                   NavigationUIVisibility="Hidden"/>
+            <Grid Grid.Column="2">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border Background="#FFF"
+                        BorderBrush="#D5D7DA"
+                        BorderThickness="0,0,0,2">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Disabled"
+                                  Grid.Row="0"
+                                  Height="60">
+                        <ListBox ItemsSource="{Binding TabsItem, UpdateSourceTrigger=PropertyChanged}"
+                                    SelectedItem="{Binding SelectedTab, UpdateSourceTrigger=PropertyChanged}"
+                                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                    Cursor="Hand"
+                                    Grid.Row="0">
+
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal"
+                                                MaxHeight="40">
+                                        <TextBlock Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" 
+                                                    VerticalAlignment="Center"
+                                                    Margin="0,0,10,0"/>
+                                        <Button Command="{Binding DataContext.CloseTabCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}">
+                                            <Button.Template>
+                                                <ControlTemplate>
+                                                    <materialDesign:PackIcon Kind="Close"
+                                                                                VerticalAlignment="Center"
+                                                                                Foreground="Red"
+                                                                                Background="Transparent" />
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
+                </Border>
+                
+
+                <Frame x:Name="MainFrame"
+                       Grid.Row="1"
+                       NavigationUIVisibility="Hidden"/>
+            </Grid>
 
         </Grid>
     </materialDesign:DialogHost>

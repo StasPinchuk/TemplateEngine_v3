@@ -78,5 +78,7 @@ namespace TemplateEngine_v3.Interfaces
         /// </summary>
         /// <returns>Экземпляр <see cref="ContextMenu"/> для отображения контекстного меню.</returns>
         ContextMenu GetContextMenu();
+
+        TechnologiesManager DeepCopy();
     }
 }

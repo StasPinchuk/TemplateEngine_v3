@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using System.Windows.Navigation;
 using TemplateEngine_v3.Converters;
 using TemplateEngine_v3.Models.LogModels;
+using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
@@ -31,6 +33,7 @@ namespace TemplateEngine_v3.Models
                 if (ShouldLogChange(_name, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия шаблона с '{_name}' на '{value}'");
                 _name = value;
+                Services.NavigationService.RenameSelectedTab(value);
                 OnPropertyChanged(nameof(Name));
             }
         }

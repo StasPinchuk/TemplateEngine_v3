@@ -399,15 +399,21 @@ namespace TemplateEngine_v3.VM.Pages
                 LogManager.CreateLogObjectGroup(referenceModel.Name, "Шаблоны");
 
                 var isSetTemplate = await _templateManager.SetTemplateAsync(referenceModel);
+
                 if (!isSetTemplate)
                 {
                     return;
                 }
 
+                var templateManager = _templateManager.Clone();
 
-                var templateEditPage = new PageModel(referenceModel.Name, typeof(TemplateEditPage), new object[] { _technologiesManager, _templateManager, _branchManager });
+                NavigationService.RenameSelectedTab(referenceModel.Name);
 
-                MenuHistory.NextPage(templateEditPage, true);
+
+                var templateEditPage = new PageModel(referenceModel.Name, typeof(TemplateEditPage), new object[] { templateManager, _technologiesManager, _branchManager });
+
+                NavigationService.SetPageInMainFrame(templateEditPage);
+
                 _sideBar.Width = new GridLength(80);
             }
         }
@@ -420,11 +426,17 @@ namespace TemplateEngine_v3.VM.Pages
         {
             if (parameter is ReferenceModelInfo referenceModel)
             {
+
                 _technologiesManager.CurrentTechnologies = new JsonSerializer().Deserialize<Technologies>(referenceModel.ObjectStruct);
 
-                var technologiesEditPage = new PageModel(referenceModel.Name, typeof(TechnologiesPage), new object[] { _technologiesManager });
+                var technologiesManager = _technologiesManager.DeepCopy();
 
-                MenuHistory.NextPage(technologiesEditPage, true);
+                NavigationService.RenameSelectedTab(referenceModel.Name);
+
+                var technologiesEditPage = new PageModel(referenceModel.Name, typeof(TechnologiesPage), new object[] { technologiesManager });
+
+                NavigationService.SetPageInMainFrame(technologiesEditPage);
+
                 _sideBar.Width = new GridLength(80);
             }
         }
@@ -439,9 +451,14 @@ namespace TemplateEngine_v3.VM.Pages
             {
                 Branch branch = new JsonSerializer().Deserialize<Branch>(referenceModel.ObjectStruct);
 
-                var branchEditPage = new PageModel(referenceModel.Name, typeof(BranchMainPage), new object[] { _branchManager, branch });
+                var branchManager = _branchManager.DeepCopy();
 
-                MenuHistory.NextPage(branchEditPage, true);
+                NavigationService.RenameSelectedTab(referenceModel.Name);
+
+                var branchEditPage = new PageModel(referenceModel.Name, typeof(BranchMainPage), new object[] { branchManager, branch });
+
+                NavigationService.SetPageInMainFrame(branchEditPage);
+
                 _sideBar.Width = new GridLength(80);
             }
         }
@@ -457,9 +474,14 @@ namespace TemplateEngine_v3.VM.Pages
 
             _templateManager.SetTemplateAsync(template);
 
-            var templateEditPage = new PageModel(template.Name, typeof(TemplateEditPage), new object[] { _technologiesManager, _templateManager, _branchManager });
+            var templateManager = _templateManager.Clone();
 
-            MenuHistory.NextPage(templateEditPage, true);
+            NavigationService.RenameSelectedTab(template.Name);
+
+            var templateEditPage = new PageModel(template.Name, typeof(TemplateEditPage), new object[] { templateManager, _technologiesManager, _branchManager });
+
+            NavigationService.SetPageInMainFrame(templateEditPage);
+
             _sideBar.Width = new GridLength(80);
         }
 
@@ -471,9 +493,14 @@ namespace TemplateEngine_v3.VM.Pages
         {
             _technologiesManager.CurrentTechnologies = new Technologies() { Name = "Новое ТП" };
 
-            var technologiesEditPage = new PageModel(_technologiesManager.CurrentTechnologies.Name, typeof(TechnologiesPage), new object[] { _technologiesManager });
+            var technologiesManager = _technologiesManager.DeepCopy();
 
-            MenuHistory.NextPage(technologiesEditPage, true);
+            NavigationService.RenameSelectedTab(_technologiesManager.CurrentTechnologies.Name);
+
+            var technologiesEditPage = new PageModel(technologiesManager.CurrentTechnologies.Name, typeof(TechnologiesPage), new object[] { technologiesManager });
+
+            NavigationService.SetPageInMainFrame(technologiesEditPage);
+
             _sideBar.Width = new GridLength(80);
         }
 
@@ -488,9 +515,14 @@ namespace TemplateEngine_v3.VM.Pages
                 Name = "Новый филиал"
             };
 
-            var branchCreatePage = new PageModel(newBranch.Name, typeof(BranchMainPage), new object[] { _branchManager, newBranch });
+            var branchManager = _branchManager.DeepCopy();
 
-            MenuHistory.NextPage(branchCreatePage, true);
+            NavigationService.RenameSelectedTab(newBranch.Name);
+
+            var branchCreatePage = new PageModel(newBranch.Name, typeof(BranchMainPage), new object[] { branchManager, newBranch });
+
+            NavigationService.SetPageInMainFrame(branchCreatePage);
+
             _sideBar.Width = new GridLength(80);
         }
     }

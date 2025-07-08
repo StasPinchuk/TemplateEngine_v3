@@ -80,7 +80,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         public ObservableCollection<ReferenceModelInfo> GetDraftTemplates()
         {
             EnsureTemplatesLoaded();
-            return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates.Where(template => template.Type.Equals(_draftTemplateType)));
+            return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates.Where(template => template.Type.Equals(_draftTemplateType)
+                                && !NavigationService.GetTabs().Any(tab => tab.Title.Equals(template.Name))));
         }
 
         /// <summary>
@@ -92,7 +93,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             EnsureTemplatesLoaded();
             return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates
                 .Where(template => template.Type.Equals(_readyTemplateType)
-                                && template.Name != "LogsObject (Не удалять)")
+                                && template.Name != "LogsObject (Не удалять)"
+                                && !NavigationService.GetTabs().Any(tab => tab.Title.Equals(template.Name)))
                 .OrderBy(template => template.Name)
                 .Reverse());
         }
@@ -105,7 +107,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             EnsureTemplatesLoaded();
             return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates
-                .Where(template => template.Type.Equals(_trashCanType))
+                .Where(template => template.Type.Equals(_trashCanType)
+                                && !NavigationService.GetTabs().Any(tab => tab.Title.Equals(template.Name)))
                 .OrderBy(template => template.Name));
         }
 
@@ -449,5 +452,34 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
             return markings;
         }
+
+        public TemplateManager Clone()
+        {
+            var clone = new TemplateManager(_referenceLoader, _templateInfo, MaterialManager, TableService)
+            {
+                MenuHelper = this.MenuHelper, // если MenuHelper можно шарить (в противном случае — создать новый)
+                SelectedTemplate = this.SelectedTemplate != null
+                    ? new JsonSerializer().Deserialize<Template>(
+                        new JsonSerializer().Serialize(this.SelectedTemplate))
+                    : null
+            };
+
+            // Копируем кэш, если нужно
+            if (_cachedTemplates != null)
+            {
+                clone._cachedTemplates = new ObservableCollection<ReferenceModelInfo>(
+                    _cachedTemplates.Select(template =>
+                        new ReferenceModelInfo
+                        {
+                            Id = template.Id,
+                            Name = template.Name,
+                            ObjectStruct = template.ObjectStruct,
+                            Type = template.Type
+                        }));
+            }
+
+            return clone;
+        }
+
     }
 }

@@ -30,12 +30,12 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <ItemsControl ItemsSource="{Binding PageCollection, UpdateSourceTrigger=PropertyChanged}"
+            <ItemsControl ItemsSource="{Binding VisibilitePageCollection, UpdateSourceTrigger=PropertyChanged}"
                           Background="#FFF"
                           Grid.Row="0">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Columns="{Binding PageCollection.Count, UpdateSourceTrigger=PropertyChanged}"/>
+                        <UniformGrid Columns="{Binding VisibilitePageCollection.Count, UpdateSourceTrigger=PropertyChanged}"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -45,7 +45,6 @@
                                      IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      GroupName="NodePages"
                                      Cursor="Hand"
-                                     Visibility="{Binding IsEnabled, Converter={StaticResource BoolToHiddenVis}, UpdateSourceTrigger=PropertyChanged}"
                                      Command="{Binding DataContext.NextPageCommand, ElementName=partsListPage}"
                                      CommandParameter="{Binding}">
                             <StackPanel Orientation="Vertical">

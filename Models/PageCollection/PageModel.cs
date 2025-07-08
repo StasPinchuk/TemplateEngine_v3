@@ -58,6 +58,14 @@ namespace TemplateEngine_v3.Models.PageCollection
         /// </summary>
         public object[] ConstructorParameters { get; set; }
 
+        private object _mainManager;
+
+        public object MainManager
+        {
+            get => _mainManager;
+            set => SetValue(ref _mainManager, value, nameof(MainManager));  
+        }
+
         private Page _modelPage;
         /// <summary>
         /// Экземпляр страницы, создается при первом обращении.
@@ -145,6 +153,7 @@ namespace TemplateEngine_v3.Models.PageCollection
         {
             Title = title;
             PageType = pageType;
+            MainManager = constructorParameters.First();
             ConstructorParameters = constructorParameters;
         }
 
@@ -155,6 +164,7 @@ namespace TemplateEngine_v3.Models.PageCollection
         {
             Title = title;
             PageType = pageType;
+            MainManager = constructorParameters.First();
             ConstructorParameters = constructorParameters;
             Icon = icon;
         }
@@ -167,6 +177,7 @@ namespace TemplateEngine_v3.Models.PageCollection
             Title = title;
             PageType = pageType;
             IsSelected = isSelected;
+            MainManager = constructorParameters.First();
             ConstructorParameters = constructorParameters;
             Icon = icon;
         }
@@ -180,6 +191,7 @@ namespace TemplateEngine_v3.Models.PageCollection
             PageType = pageType;
             IsSelected = isSelected;
             IsEnabled = isEnabled;
+            MainManager = constructorParameters.First();
             ConstructorParameters = constructorParameters;
         }
 

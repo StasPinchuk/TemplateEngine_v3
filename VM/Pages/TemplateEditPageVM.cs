@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
+using Microsoft.Xaml.Behaviors.Core;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -20,6 +21,8 @@ namespace TemplateEngine_v3.VM.Pages
     /// </summary>
     public class TemplateEditPageVM : BaseNotifyPropertyChanged
     {
+        private Frame _frame;
+
         private readonly ITemplateManager _templateManager;
         private readonly IBranchManager _branchManager;
 
@@ -52,38 +55,28 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="templateManager">Менеджер шаблонов.</param>
         /// <param name="branchManager">Менеджер филиалов.</param>
         /// <param name="frame">Фрейм для отображения страниц.</param>
-        public TemplateEditPageVM(ITechnologiesManager technologiesManager, ITemplateManager templateManager, IBranchManager branchManager, Frame frame)
+        public TemplateEditPageVM(ITemplateManager templateManager, ITechnologiesManager technologiesManager, IBranchManager branchManager, Frame frame)
         {
             _branchManager = branchManager;
-            string pageName = MenuHistory.PageHistory.First().Title;
             _templateManager = templateManager;
-            MenuHistory.SecondaryFrame = frame;
-            MenuHistory.UpdateHistory += SetPageHistory;
-            MenuHistory.Clear();
-            var mainTemplateInfo = new PageModel(pageName, typeof(MainTemplateInfoPage), new object[] { technologiesManager, _templateManager });
-            MenuHistory.NextPage(mainTemplateInfo);
+
+            NavigationService.UpdateHistory += UpdatePageHistory;
+            NavigationService.SetSecondaryFrame(frame);
+
+            PagesHistory = NavigationService.GetPageHistory();
+            if(_templateManager.GetSelectedTemplate() != null)
+            {
+                var mainTemplateInfo = new PageModel(_templateManager.GetSelectedTemplate().Name, typeof(MainTemplateInfoPage), new object[] { technologiesManager, _templateManager });
+
+                NavigationService.AddPageToPageHistory(mainTemplateInfo);
+                NavigationService.SetPageInSecondaryFrame();
+            }
 
             SaveCommand = new RelayCommand(Save);
             PreviewTemplateCommand = new RelayCommand(PreviewTemplate);
         }
 
         private bool _isUpdatingHistory;
-
-        /// <summary>
-        /// Обновляет коллекцию истории страниц для отображения в UI.
-        /// </summary>
-        private void SetPageHistory()
-        {
-            if (_isUpdatingHistory) return;
-            _isUpdatingHistory = true;
-            if (PagesHistory == null)
-                PagesHistory = new();
-            PagesHistory.Clear();
-            foreach (PageModel page in MenuHistory.VisiblePageHistory)
-                PagesHistory.Add(page);
-
-            _isUpdatingHistory = false;
-        }
 
         /// <summary>
         /// Асинхронно сохраняет текущий шаблон.
@@ -111,7 +104,14 @@ namespace TemplateEngine_v3.VM.Pages
         private void PreviewTemplate()
         {
             var mainTemplateInfo = new PageModel("Предварительный просмотр шаблона", typeof(TemplatePreviewPage), new object[] { _templateManager, _branchManager });
-            MenuHistory.NextPage(mainTemplateInfo);
+            NavigationService.AddPageToPageHistory(mainTemplateInfo);
+            NavigationService.SetPageInSecondaryFrame();
+        }
+
+        private void UpdatePageHistory()
+        {
+            PagesHistory = NavigationService.GetPageHistory();
+            OnPropertyChanged(nameof(PagesHistory));
         }
     }
 }

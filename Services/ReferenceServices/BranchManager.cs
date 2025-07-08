@@ -174,7 +174,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             {
                 return new ObservableCollection<ReferenceModelInfo>(
                     _referenceLoader.LoadReference(_branchInfo)
-                    .Where(branch => branch.Type.Equals(_branchClass))
+                    .Where(branch => branch.Type.Equals(_branchClass)
+                                && !NavigationService.GetTabs().Any(tab => tab.Title.Equals(branch.Name)))
                 );
             }
             catch (Exception ex)
@@ -211,24 +212,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
-        Task<bool> IBranchManager.RemoveBranch(ReferenceModelInfo branch)
+        public BranchManager DeepCopy()
         {
-            throw new NotImplementedException();
-        }
-
-        Task<bool> IBranchManager.AddBranch(Branch createBranch)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<bool> IBranchManager.EditBranch(Branch editBranchObj)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<bool> IBranchManager.CloneBranch(ReferenceModelInfo branch)
-        {
-            throw new NotImplementedException();
+            var json = new JsonSerializer().Serialize(this);
+            return new JsonSerializer().Deserialize<BranchManager>(json);
         }
     }
 }

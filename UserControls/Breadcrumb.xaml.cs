@@ -73,7 +73,6 @@ namespace TemplateEngine_v3.UserControls
         public Breadcrumb()
         {
             InitializeComponent();
-            MenuHistory.UpdateHistory += OnPageHistoryChanged;
             PrevSelectedPageCommand = new RelayCommand(PrevSelectedPage);
             PrevPageCommand = new RelayCommand(PrevPage);
 
@@ -83,25 +82,23 @@ namespace TemplateEngine_v3.UserControls
         {
             if(parameter is PageModel page)
             {
-                if (MenuHistory.PageHistory.Last() != page)
-                    MenuHistory.PrevPage(page);
+                var pageHistory = NavigationService.GetPageHistory();
+                if (pageHistory.Last() != page)
+                {
+                    int currentPageIndex = pageHistory.IndexOf(page);
+                    for (int i = pageHistory.Count-1; i > currentPageIndex; i--)
+                        NavigationService.RemovePageToPageHistory(pageHistory[i]);
+                    NavigationService.SetPageInSecondaryFrame();
+                }
             }
         }
 
         private void PrevPage(object parameter)
         {
-            int lastIndex = MenuHistory.PageHistory.Count - 1;
-            MenuHistory.PrevPage(MenuHistory.PageHistory[lastIndex-1]);
+            var lastPage = NavigationService.GetPageHistory().Last();
+            NavigationService.RemovePageToPageHistory(lastPage);
+            NavigationService.SetPageInSecondaryFrame();
         }
 
-        private void OnPageHistoryChanged()
-        {
-            ButtonVisibility = MenuHistory.VisiblePageHistory?.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
-            History.Clear();
-            foreach(PageModel page in MenuHistory.VisiblePageHistory)
-            {
-                History.Add(page);
-            }
-        }
     }
 }

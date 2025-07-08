@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Interfaces;
@@ -15,6 +16,7 @@ using TemplateEngine_v3.Services.UsersServices;
 using TemplateEngine_v3.UserControls;
 using TemplateEngine_v3.Views.Pages;
 using TemplateEngine_v3.VM.Pages;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace TemplateEngine_v3.VM.Windows
 {
@@ -23,9 +25,9 @@ namespace TemplateEngine_v3.VM.Windows
     /// </summary>
     public class MainWindowVM : BaseNotifyPropertyChanged
     {
-        private readonly ITemplateManager _templateManager;
-        private readonly IBranchManager _branchManager;
-        private readonly ITechnologiesManager _technologiesManager;
+        private ITemplateManager _templateManager;
+        private IBranchManager _branchManager;
+        private ITechnologiesManager _technologiesManager;
         private readonly UserManager _userManager;
         private readonly ColumnDefinition _sideBar;
         private readonly Frame _mainFrame;
@@ -42,6 +44,36 @@ namespace TemplateEngine_v3.VM.Windows
         /// Коллекция элементов меню для боковой панели.
         /// </summary>
         public ObservableCollection<PageModel> MenuItems { get; } = new();
+        public ObservableCollection<NavigationTabs> TabsItem { get; } = new();
+
+        private NavigationTabs _selectedTabs = new();
+
+        public NavigationTabs SelectedTab
+        {
+            get => _selectedTabs;
+            set
+            {
+
+                var tabs = NavigationService.GetTabs();
+
+                var tab = tabs.FirstOrDefault(tabPage => tabPage.Title.Equals(value.Title));
+
+                tab.Page.ClearPage();
+
+                SetValue(ref _selectedTabs, tab, nameof(SelectedTab));
+
+                NavigationService.SetSelectedTab(tab);
+
+                _mainFrame.Navigate(value.Page.ModelPage);
+                if (tab.PageHistory.Count > 0)
+                {
+                    NavigationService.SetPageInSecondaryFrame();
+                }
+
+                UpdateManagers(SelectedTab.Page);
+            }
+
+        }
 
         /// <summary>
         /// Команда открытия страницы.
@@ -68,6 +100,7 @@ namespace TemplateEngine_v3.VM.Windows
         /// </summary>
         public ICommand OpenSettingsCommand { get; set; }
         public ICommand OpenLogsCommand { get; set; }
+        public ICommand CloseTabCommand { get; set; }
 
         /// <summary>
         /// Конструктор ViewModel главного окна.
@@ -84,7 +117,9 @@ namespace TemplateEngine_v3.VM.Windows
             _userManager = userManager;
             _sideBar = sideBar;
             _mainFrame = mainFrame;
-            MenuHistory.MainFrame = mainFrame;
+            NavigationService.SetMainFrame(mainFrame);
+
+            TabsItem = NavigationService.GetTabs();
 
             var menuItems = new List<PageModel>
             {
@@ -150,6 +185,15 @@ namespace TemplateEngine_v3.VM.Windows
             mainFrame.Navigate(currentPage);
             currentPage = null;
 
+            TabsItem.Add(
+                    new NavigationTabs()
+                    {
+                        Title = MenuItems.First().Title,
+                        Page = MenuItems.First(),
+                        PageHistory = new()
+                    }
+                );
+
             InitializeCommand();
         }
 
@@ -164,6 +208,7 @@ namespace TemplateEngine_v3.VM.Windows
             DetailTypeListCommand = new RelayCommand(DetailTypeList);
             OpenSettingsCommand = new RelayCommand(OpenSettings);
             OpenLogsCommand = new RelayCommand(OpenLogs);
+            CloseTabCommand = new RelayCommand(CloseTab);
         }
 
         /// <summary>
@@ -175,16 +220,53 @@ namespace TemplateEngine_v3.VM.Windows
         {
             if (parameter is PageModel pageModel)
             {
-                if (MenuHistory.VisiblePageHistory.Count > 0)
+                /* if (MenuHistory.VisiblePageHistory.Count > 0)
+                     _sideBar.Width = GridLength.Auto;
+
+                 MenuHistory.Clear();
+                 pageModel.ClearPage();
+                 _mainFrame.Navigate(pageModel.ModelPage);
+
+                 _templateManager.ClearTemplate();
+                 _technologiesManager.CurrentTechnologies = null;*/
+
+                var findPage = TabsItem.FirstOrDefault(tab => tab.Title.Equals(pageModel.Title));
+
+                if (findPage != null)
+                {
+                    findPage.Page.ClearPage();
+                    SelectedTab = findPage;
                     _sideBar.Width = GridLength.Auto;
-
-                MenuHistory.Clear();
-                pageModel.ClearPage();
-                _mainFrame.Navigate(pageModel.ModelPage);
-
-                _templateManager.ClearTemplate();
-                _technologiesManager.CurrentTechnologies = null;
+                    UpdateManagers(findPage.Page);
+                }                    
+                else
+                {
+                    pageModel.ClearPage();
+                    TabsItem.Add(
+                            new NavigationTabs()
+                            {
+                                Title = pageModel.Title,
+                                Page = pageModel,
+                                PageHistory = new()
+                            }
+                        );
+                    SelectedTab = TabsItem.Last();
+                }
             }
+        }
+
+        private void UpdateManagers(PageModel page)
+        {
+            var findTemplateManager = page.ConstructorParameters.FirstOrDefault(param => param is ITemplateManager) as ITemplateManager;
+            var findTechnologiesManager = page.ConstructorParameters.FirstOrDefault(param => param is ITechnologiesManager) as ITechnologiesManager;
+            if (findTemplateManager != null)
+                _templateManager = findTemplateManager;
+
+            if (findTechnologiesManager != null)
+                _technologiesManager = findTechnologiesManager;
+
+            _templateManager.ClearTemplate();
+            _technologiesManager.CurrentTechnologies = null;
         }
 
         /// <summary>
@@ -243,6 +325,36 @@ namespace TemplateEngine_v3.VM.Windows
         {
             var dialog = new LogsChoiceDialog();
             await DialogHost.Show(dialog, "MainDialog");
+        }
+
+        private void CloseTab(object parameter)
+        {
+            if(parameter is NavigationTabs tabPanel)
+            {
+                var page = tabPanel.Page;
+
+                var findTemplateManager = page.ConstructorParameters.FirstOrDefault(param => param is ITemplateManager) as ITemplateManager;
+                var findTechnologiesManager = page.ConstructorParameters.FirstOrDefault(param => param is ITechnologiesManager) as ITechnologiesManager;
+                if (findTemplateManager != null)
+                    _templateManager = findTemplateManager;
+
+                if (findTechnologiesManager != null)
+                    _technologiesManager = findTechnologiesManager;
+
+                _templateManager.ClearTemplate();
+                _technologiesManager.CurrentTechnologies = null;
+                int tabIndex = TabsItem.IndexOf(tabPanel);
+
+                if(TabsItem.Count > 1)
+                {
+                    if(tabIndex != 0 && tabIndex <= TabsItem.Count)
+                        SelectedTab = TabsItem[tabIndex - 1];
+                    else
+                        SelectedTab = TabsItem[tabIndex + 1];
+                        tabPanel.PageHistory.Clear();
+                    TabsItem.Remove(tabPanel);
+                }
+            }
         }
     }
 }

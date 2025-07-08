@@ -13,6 +13,7 @@ using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.UserControls;
 using TemplateEngine_v3.Views.Pages;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace TemplateEngine_v3.VM.Pages
 {
@@ -30,11 +31,18 @@ namespace TemplateEngine_v3.VM.Pages
             set => SetValue(ref _nodes, value, nameof(Nodes));
         }
 
-        private ObservableCollection<PageModel> _pageCollection = new();
-        public ObservableCollection<PageModel> PageCollection
+        private List<PageModel> _pageCollection = new();
+        public List<PageModel> PageCollection
         {
             get => _pageCollection;
             set => SetValue(ref _pageCollection, value, nameof(PageCollection));
+        }
+
+        private ObservableCollection<PageModel> _visibilitePageCollection = new();
+        public ObservableCollection<PageModel> VisibilitePageCollection
+        {
+            get => _visibilitePageCollection;
+            set => SetValue(ref _visibilitePageCollection, value, nameof(VisibilitePageCollection));
         }
 
         private ObservableCollection<NodeGroup> _nodeGroups = new();
@@ -47,13 +55,6 @@ namespace TemplateEngine_v3.VM.Pages
         private HashSet<string> _expandedGroups = new();
 
         private PageModel _currentPage;
-
-        private int _columnCount = 4;
-        public int ColumnCount
-        {
-            get => _columnCount;
-            set => SetValue(ref _columnCount, value, nameof(ColumnCount));
-        }
 
         public Node SelectedNode
         {
@@ -150,7 +151,9 @@ namespace TemplateEngine_v3.VM.Pages
                 if (page.Title.Equals("Детали"))
                 {
                     PageCollection[0].IsSelected = true;
-                    MenuHistory.NextPage(page);
+
+                    NavigationService.AddPageToPageHistory(page);
+                    NavigationService.SetPageInSecondaryFrame();
                 }
                 else
                 {
@@ -226,31 +229,28 @@ namespace TemplateEngine_v3.VM.Pages
                     Nodes = SelectedNode.Nodes
                 };
 
+                VisibilitePageCollection.Clear();
+
                 if (isAssembly)
                 {
                     foreach(var page in PageCollection)
-                        page.IsEnabled = true;
+                        VisibilitePageCollection.Add(page);
                 }
 
                 if (isDetail)
                 {
-                    foreach(var page in PageCollection)
-                        page.IsEnabled = true;
-
-                    PageCollection.Last().IsEnabled = false;
+                    foreach(var page in PageCollection.Take(PageCollection.Count-1))
+                        VisibilitePageCollection.Add(page);
                 }
 
                 if (needParamsAndTech)
                 {
-                    foreach(var page in PageCollection.Skip(2))
-                        page.IsEnabled = false;
-
+                    foreach(var page in PageCollection.Take(2))
+                        VisibilitePageCollection.Add(page);
                 }
 
                 UpdatePage("Детали", isAssembly, typeof(PartsListPage), PackIconKind.Cube, new object[] { _technologiesManager, nodeManager, _templateManager });
             }
-
-            ColumnCount = PageCollection.Count;
 
             if (!PageCollection.Any(p => p.Title == _currentPage?.Title))
             {
@@ -276,6 +276,26 @@ namespace TemplateEngine_v3.VM.Pages
             PageCollection.Add(new PageModel("Параметры", typeof(ParametersPage), PackIconKind.Tune, new object[] { _nodeManager }));
             PageCollection.Add(new PageModel("Тех. процесс", typeof(TechnologiesPage), PackIconKind.Cogs, new object[] { _technologiesManager }));
             PageCollection.Add(new PageModel("Детали", typeof(PartsListPage), PackIconKind.Cube, new object[] { _technologiesManager, nodeManager, _templateManager }));
+
+            bool isDetail = SelectedNode?.Type == "Деталь";
+
+            if (isAssembly)
+            {
+                foreach (var page in PageCollection)
+                    VisibilitePageCollection.Add(page);
+            }
+
+            if (isDetail)
+            {
+                foreach (var page in PageCollection.Take(PageCollection.Count - 1))
+                    VisibilitePageCollection.Add(page);
+            }
+
+            if (needParamsAndTech)
+            {
+                foreach (var page in PageCollection.Take(2))
+                    VisibilitePageCollection.Add(page);
+            }
         }
 
         private void UpdatePage(string Title, bool required, Type typeofPage, PackIconKind icon, object[] parameters)
