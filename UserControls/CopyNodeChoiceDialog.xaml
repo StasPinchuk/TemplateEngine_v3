@@ -83,6 +83,14 @@
                             <LineBreak/>
                             <Run Text="{Binding UsageCondition}"/>
                         </TextBlock>
+                        <TextBlock TextWrapping="Wrap"
+                                   Visibility="{Binding NodeComment, Converter={StaticResource EmptyStringToVisibilityConverter}}"
+                                   MaxWidth="{Binding ElementName=Tree, Path=ActualWidth}">
+                            <Run Text="Комментарий:"
+                                 FontWeight="SemiBold"/>
+                            <LineBreak/>
+                            <Run Text="{Binding NodeComment}"/>
+                        </TextBlock>
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>

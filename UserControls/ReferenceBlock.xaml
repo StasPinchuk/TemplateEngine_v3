@@ -14,7 +14,6 @@
             BorderThickness="1"
             Padding="12"
             CornerRadius="8"
-            Visibility="{Binding BlockVisibility, RelativeSource={RelativeSource AncestorType=UserControl}}"
             MinWidth="500"
             MaxHeight="250">
         <Border.Effect>

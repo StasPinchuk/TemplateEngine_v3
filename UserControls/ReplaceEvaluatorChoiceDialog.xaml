@@ -1,0 +1,167 @@
+﻿<UserControl x:Class="TemplateEngine_v3.UserControls.ReplaceEvaluatorChoiceDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:model="clr-namespace:TemplateEngine_v3.Models"
+             xmlns:local="clr-namespace:TemplateEngine_v3.UserControls"
+             xmlns:conv="clr-namespace:TemplateEngine_v3.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+             mc:Ignorable="d" 
+             x:Name="replaceEvaluatorChoiceDialog"
+             Width="650"
+             Height="750"
+             MaxWidth="650">
+    <UserControl.Resources>
+        <conv:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
+
+        <Grid.RowDefinitions>
+
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="Auto" 
+                           MaxHeight="50"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="200"
+                           MaxHeight="100"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+
+        </Grid.RowDefinitions>
+
+        <Button Style="{StaticResource MaterialDesignIconButton}"
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                CommandParameter="cancel"
+                HorizontalAlignment="Right"
+                Width="30"
+                Height="30"
+                Grid.Row="0">
+            <materialDesign:PackIcon Kind="Close"
+                                     Foreground="Red"/>
+        </Button>
+
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="1">
+            <TextBlock Text="Параметр маркирорвки"
+               VerticalAlignment="Center"/>
+            <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                          Cursor="Hand"
+                          VerticalAlignment="Center"
+                          Checked="ToggleButton_CheckedChanged"
+                          Unchecked="ToggleButton_CheckedChanged"
+                          Margin="10,0"/>
+            <TextBlock Text="Формула/Условие"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ComboBox x:Name="AllEvaluatorsComboBox"
+                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                  materialDesign:HintAssist.Hint="Значение для замены"
+                  ItemsSource="{Binding AllEvaluators, ElementName=replaceEvaluatorChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding ExistingEvaluators, Mode=TwoWay, ElementName=replaceEvaluatorChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  DisplayMemberPath="Name"
+                  IsEditable="True"
+                  Visibility="Collapsed"
+                  Grid.Row="2"/>
+
+        <TextBox x:Name="AllEvaluatorsTextBox"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 materialDesign:HintAssist.Hint="Значение для замены"
+                 Grid.Row="2"/>
+
+        <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                  materialDesign:HintAssist.Hint="Формулы и условия"
+                  ItemsSource="{Binding AllEvaluators, ElementName=replaceEvaluatorChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding ReplacementEvaluator, Mode=TwoWay, ElementName=replaceEvaluatorChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                  Margin="0,10"                  
+                  DisplayMemberPath="Name"
+                  IsEditable="True"
+                  Grid.Row="3"/>
+
+        <StackPanel Orientation="Vertical" 
+                    Grid.Row="4">
+            <TextBlock Text="Выбранная деталь"
+                       FontWeight="SemiBold"
+                       FontSize="16"/>
+            <TextBlock Text="{Binding ExistingNode.Name, ElementName=replaceEvaluatorChoiceDialog, UpdateSourceTrigger=PropertyChanged}"
+                       FontSize="15"
+                       FontWeight="SemiBold"
+                       TextWrapping="Wrap"/>
+            <TextBlock TextWrapping="Wrap">
+                <Run Text="Тип:"
+                     FontWeight="SemiBold"/>
+                <Run Text="{Binding ExistingNode.Type, ElementName=replaceEvaluatorChoiceDialog, UpdateSourceTrigger=PropertyChanged}"/>   
+            </TextBlock>
+            <TextBlock TextWrapping="Wrap">
+                <Run Text="КД:"
+                     FontWeight="SemiBold"/>
+                <Run Text="{Binding ExistingNode.Designation, ElementName=replaceEvaluatorChoiceDialog, UpdateSourceTrigger=PropertyChanged}"/>
+            </TextBlock>
+            <TextBlock TextWrapping="Wrap"
+                       Visibility="{Binding ExistingNode.UsageCondition, ElementName=replaceEvaluatorChoiceDialog, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EmptyStringToVisibilityConverter}}">
+                <Run Text="Условия применения:"
+                     FontWeight="SemiBold"/>
+                <LineBreak/>
+                <Run Text="{Binding ExistingNode.UsageCondition, ElementName=replaceEvaluatorChoiceDialog, UpdateSourceTrigger=PropertyChanged}"/>
+            </TextBlock>
+            <TextBlock TextWrapping="Wrap"
+                       Visibility="{Binding ExistingNode.NodeComment, ElementName=replaceEvaluatorChoiceDialog, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EmptyStringToVisibilityConverter}}">
+                <Run Text="Комментарий:"
+                     FontWeight="SemiBold"/>
+                <LineBreak/>
+                <Run Text="{Binding ExistingNode.NodeComment, ElementName=replaceEvaluatorChoiceDialog, UpdateSourceTrigger=PropertyChanged}"/>
+            </TextBlock>
+        </StackPanel>
+        
+        <TreeView ItemsSource="{Binding Nodes, ElementName=replaceEvaluatorChoiceDialog}"
+                  x:Name="Tree"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  MouseDoubleClick="TreeView_OnMouseDoubleClick"
+                  Grid.Row="5">
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type model:Node}" ItemsSource="{Binding Nodes}">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding Name}"
+                                   FontSize="15"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap"
+                                   MaxWidth="{Binding ElementName=Tree, Path=ActualWidth}"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   MaxWidth="{Binding ElementName=Tree, Path=ActualWidth}">
+                            <Run Text="КД:"
+                                 FontWeight="SemiBold"/>
+                            <Run Text="{Binding Designation}"/>
+                        </TextBlock>
+                        <TextBlock TextWrapping="Wrap"
+                                   Visibility="{Binding UsageCondition, Converter={StaticResource EmptyStringToVisibilityConverter}}"
+                                   MaxWidth="{Binding ElementName=Tree, Path=ActualWidth}">
+                            <Run Text="Условия применения:"
+                                 FontWeight="SemiBold"/>
+                            <LineBreak/>
+                            <Run Text="{Binding UsageCondition}"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap"
+                                       Visibility="{Binding NodeComment, Converter={StaticResource EmptyStringToVisibilityConverter}}"
+                                       MaxWidth="{Binding ElementName=Tree, Path=ActualWidth}">
+                            <Run Text="Комментарий:"
+                                 FontWeight="SemiBold"/>
+                            <LineBreak/>
+                            <Run Text="{Binding NodeComment}"/>
+                        </TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.Resources>
+        </TreeView>
+
+
+        <Button Content="Заменить"
+                Background="Green"
+                BorderBrush="Green"
+                Grid.Row="6"
+                Click="Button_Click"/>
+
+    </Grid>
+</UserControl>

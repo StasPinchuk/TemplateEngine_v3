@@ -164,34 +164,55 @@
                     </TreeView.Resources>
                 </TreeView>
 
-                <materialDesign:PopupBox IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                                         PlacementMode="LeftAndAlignMiddles"
-                                         Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
-                                         ToolTipService.Placement="Top"
-                                         HorizontalAlignment="Right"
-                                         VerticalAlignment="Bottom"
-                                         Width="40"
-                                         Height="40"
-                                         Margin="0,0,10,0"
-                                         Grid.Row="2">
-                    <StackPanel Orientation="Horizontal">
-                        <Button ToolTip="Добавить новую деталь" 
-                                Command="{Binding AddNodeCommand}">
-                            <materialDesign:PackIcon Kind="NewBox"
-                                                     Foreground="#FFF"/>
-                        </Button>
-                        <Button ToolTip="Добавить существующую в данном шаблоне" 
-                                Command="{Binding CopyNodeCurrentTemplateCommand}">
-                            <materialDesign:PackIcon Kind="FolderArrowUp"
-                                                     Foreground="#FFF" />
-                        </Button>
-                        <Button ToolTip="Добавить деталь из другого шаблона"
-                                Command="{Binding CopyNodeAllTemplateCommand}">
-                            <materialDesign:PackIcon Kind="FolderDownload"
-                                                     Foreground="#FFF"/>
-                        </Button>
-                    </StackPanel>
-                </materialDesign:PopupBox>
+                <Grid Grid.Row="2">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="10"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <materialDesign:PopupBox IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                             PlacementMode="LeftAndAlignMiddles"
+                                             Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
+                                             ToolTipService.Placement="Top"
+                                             HorizontalAlignment="Right"
+                                             VerticalAlignment="Bottom"
+                                             Width="40"
+                                             Height="40"
+                                             Margin="0,0,10,0"
+                                             Grid.Column="0">
+                        <StackPanel Orientation="Horizontal">
+                            <Button ToolTip="Добавить новую деталь" 
+                                    Command="{Binding AddNodeCommand}">
+                                <materialDesign:PackIcon Kind="NewBox"
+                                                         Foreground="#FFF"/>
+                            </Button>
+                            <Button ToolTip="Добавить существующую в данном шаблоне" 
+                                    Command="{Binding CopyNodeCurrentTemplateCommand}">
+                                <materialDesign:PackIcon Kind="FolderArrowUp"
+                                                         Foreground="#FFF" />
+                            </Button>
+                            <Button ToolTip="Добавить деталь из другого шаблона"
+                                    Command="{Binding CopyNodeAllTemplateCommand}">
+                                <materialDesign:PackIcon Kind="FolderDownload"
+                                                         Foreground="#FFF"/>
+                            </Button>
+                        </StackPanel>
+                    </materialDesign:PopupBox>
+
+                    <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                            Width="40"
+                            Height="40"
+                            ToolTip="Замена параметра/условия/формулы в выбраной детали"
+                            Command="{Binding OpenReplaceEvaluatorInNodeCommand}"
+                            Grid.Column="2">
+                        <materialDesign:PackIcon Kind="FindReplace"
+                                                 Foreground="#FFF"/>
+                    </Button>
+                </Grid>
+                
             </Grid>
         </Border>
     </Grid>

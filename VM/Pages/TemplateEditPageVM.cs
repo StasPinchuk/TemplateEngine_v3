@@ -92,7 +92,7 @@ namespace TemplateEngine_v3.VM.Pages
             if (result is string choice)
             {
                 if (!choice.Equals("cancel"))
-                    isSave = await _templateManager.SaveTemplate(choice);
+                    isSave = await _templateManager.SaveTemplate(choice, _templateManager.SelectedTemplate);
             }
 
             var msg = isSave ? "Шаблон успешно сохранен!" : "Шаблон не сохранен!";

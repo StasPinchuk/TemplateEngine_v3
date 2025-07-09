@@ -175,7 +175,7 @@ namespace TemplateEngine_v3.VM.Pages
                 EvaluatorManager evaluatorManager = new EvaluatorManager(template, CurrentRelation);
 
                 _nodeManager.EvaluatorManager = evaluatorManager;
-
+                _templateManager.SetTemplateAsync(template);
                 nextPage.ClearPage();
 
                 NavigationService.AddPageToPageHistory(nextPage);

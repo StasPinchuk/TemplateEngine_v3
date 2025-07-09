@@ -425,18 +425,9 @@ namespace TemplateEngine_v3.VM.Pages
         }
 
         /// <summary>
-        /// Очищает список частей текущего Evaluator и обновляет дерево.
-        /// </summary>
-        private void ClearParts()
-        {
-            CurrentEvaluator.Parts.Clear();
-            CreatePartTree();
-        }
-
-        /// <summary>
         /// Создает дерево частей для текущего Evaluator.
         /// </summary>
-        private void CreatePartTree()
+        public void CreatePartTree()
         {
             Parts = BuildTreeEvaluator(CurrentEvaluator);
             OnPropertyChanged(nameof(Parts));

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Controls;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Services
 {
@@ -39,7 +40,16 @@ namespace TemplateEngine_v3.Services
 
         public static void AddPageToPageHistory(PageModel page) => _selectedTab.PageHistory.Add(page);
 
-        public static void RemovePageToPageHistory(PageModel page) => _selectedTab.PageHistory.Remove(page);
+        public static void RemovePageToPageHistory(PageModel page)
+        {
+            var nodeManager = page.ConstructorParameters.FirstOrDefault(param => param is NodeManager) as NodeManager;
+
+            if (nodeManager != null)
+                nodeManager.ClearAction();
+
+            var templateManager = page.ConstructorParameters.FirstOrDefault(param => param is TemplateManager) as TemplateManager;
+            _selectedTab.PageHistory.Remove(page);
+        }
 
         public static ObservableCollection<PageModel> GetPageHistory() => _selectedTab.PageHistory;
 
@@ -49,7 +59,6 @@ namespace TemplateEngine_v3.Services
                 _mainFrame?.Navigate(_selectedTab.PageHistory.Last().ModelPage);
             else
                 _mainFrame?.Navigate(_selectedTab.Page.ModelPage);
-
         }
 
         public static void SetPageInMainFrame(PageModel pageModel)

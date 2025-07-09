@@ -197,6 +197,7 @@
     <Compile Include="Mappers\ReferenceMapper.cs" />
     <Compile Include="Mappers\UserMapper.cs" />
     <Compile Include="Models\BaseNotifyPropertyChanged.cs" />
+    <Compile Include="Models\FormulaCompletionData.cs" />
     <Compile Include="Models\GroupNode.cs" />
     <Compile Include="Models\LogModels\DailyLog.cs" />
     <Compile Include="Models\LogModels\LogEntry.cs" />
@@ -267,6 +268,9 @@
     </Compile>
     <Compile Include="UserControls\ReplaceChoiceDialog.xaml.cs">
       <DependentUpon>ReplaceChoiceDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ReplaceEvaluatorChoiceDialog.xaml.cs">
+      <DependentUpon>ReplaceEvaluatorChoiceDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\SaveChoiceDialog.xaml.cs">
       <DependentUpon>SaveChoiceDialog.xaml</DependentUpon>
@@ -376,6 +380,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ReplaceChoiceDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ReplaceEvaluatorChoiceDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -103,7 +104,10 @@ namespace TemplateEngine_v3.UserControls
         public ReplaceChoiceDialog(TemplateManager templateManager)
         {
             InitializeComponent();
-            ReferencesList = templateManager.GetReadyTemplate();
+            List<ReferenceModelInfo> list = [];
+            //list.AddRange(templateManager.GetReadyTemplate());
+            list.AddRange(templateManager.GetDraftTemplates());
+            ReferencesList = new(list);
             TemplateManager = templateManager;
             SelectedReferencesList.Clear();
             ReplaceCommand = new RelayCommand(Replace, CanRepalce);

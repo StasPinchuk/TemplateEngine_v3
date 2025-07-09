@@ -27,7 +27,7 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                SetValue(ref _name, value, nameof(Name));
+                SetValue(ref _name, value.Trim(), nameof(Name));
             }
         }
 
@@ -40,7 +40,7 @@ namespace TemplateEngine_v3.Models
             get => _editName;
             set
             {
-                SetValue(ref _editName, value, nameof(EditName));
+                SetValue(ref _editName, value.Trim(), nameof(EditName));
             }
         }
 

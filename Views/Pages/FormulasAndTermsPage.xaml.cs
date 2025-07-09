@@ -1,18 +1,24 @@
-﻿using System;
+﻿using ICSharpCode.AvalonEdit.CodeCompletion;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.VM.Pages;
 
 namespace TemplateEngine_v3.Views.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для FormulasAndTermsPage.xaml
-    /// </summary>
     public partial class FormulasAndTermsPage : Page
     {
-        readonly FormulasAndTermsPageVM vm;
+        private CompletionWindow completionWindow;
+        private readonly FormulasAndTermsPageVM vm;
+
+        private readonly DispatcherTimer completionTimer;
+        private string lastPrefix = "";
 
         public FormulasAndTermsPage(NodeManager nodeManager)
         {
@@ -21,10 +27,17 @@ namespace TemplateEngine_v3.Views.Pages
             vm = new FormulasAndTermsPageVM(nodeManager);
             DataContext = vm;
 
+            completionTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(150) };
+            completionTimer.Tick += CompletionTimer_Tick;
+
+            Editor.TextArea.TextEntered += TextArea_TextEntered;
+            Editor.TextArea.TextEntering += TextArea_TextEntering;
+            Editor.TextChanged += Editor_TextChanged;
+
             Unloaded += FormulasAndTermsPage_Unloaded;
         }
 
-        private void SetCurrentEvaluatorCommand(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void SetCurrentEvaluatorCommand(object sender, MouseButtonEventArgs e)
         {
             if (sender is TextBlock tb && tb.DataContext is ConditionEvaluator eval)
             {
@@ -34,7 +47,7 @@ namespace TemplateEngine_v3.Views.Pages
             }
         }
 
-        private void SetMarkingCommand(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void SetMarkingCommand(object sender, MouseButtonEventArgs e)
         {
             if (sender is TextBlock tb && tb.DataContext is string eval)
             {
@@ -44,7 +57,7 @@ namespace TemplateEngine_v3.Views.Pages
             }
         }
 
-        private void SetSystemFormulaCommand(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void SetSystemFormulaCommand(object sender, MouseButtonEventArgs e)
         {
             if (sender is TextBlock tb && tb.DataContext is ConditionEvaluator eval)
             {
@@ -58,6 +71,122 @@ namespace TemplateEngine_v3.Views.Pages
         {
             if (vm is IDisposable disposable)
                 disposable.Dispose();
+        }
+
+        private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        {
+            completionTimer.Stop();
+            completionTimer.Start();
+        }
+
+        private void CompletionTimer_Tick(object sender, EventArgs e)
+        {
+            completionTimer.Stop();
+
+            string prefix = GetWordAfterBracket();
+
+            if (string.IsNullOrWhiteSpace(prefix) || prefix.Length < 2)
+            {
+                completionWindow?.Close();
+                lastPrefix = "";
+                return;
+            }
+
+            if (prefix == lastPrefix)
+            {
+                // Префикс не изменился — не обновляем подсказку
+                return;
+            }
+
+            lastPrefix = prefix;
+            ShowCompletion(prefix, vm.CurrentEvaluator);
+        }
+
+        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        {
+            if (completionWindow == null) return;
+
+            if (e.Text.Length > 0 && !char.IsLetterOrDigit(e.Text[0]))
+            {
+                // Закрываем подсказку, если введён не буквенно-цифровой символ (например, пробел, запятая и т.п.)
+                completionWindow.Close();
+            }
+        }
+
+        private void Editor_TextChanged(object sender, EventArgs e)
+        {
+            var currentWord = GetWordAfterBracket();
+            if (!string.IsNullOrWhiteSpace(currentWord))
+            {
+                ShowCompletion(currentWord, vm.CurrentEvaluator);
+            }
+        }
+
+        private string GetWordAfterBracket()
+        {
+            int offset = Editor.CaretOffset;
+            if (offset == 0) return null;
+
+            string text = Editor.Text.Substring(0, offset);
+
+            // Ищем ближайший слева '[' без пары ']'
+            for (int i = offset - 1; i >= 0; i--)
+            {
+                if (text[i] == ']')
+                    break; // Если встретили ], значит [ до него - закрытая скобка, дальше не смотрим
+
+                if (text[i] == '[')
+                {
+                    // Возвращаем все символы после [
+                    if (i + 1 < offset)
+                        return text.Substring(i + 1, offset - (i + 1));
+                    else
+                        return string.Empty;
+                }
+            }
+
+            return null;
+        }
+
+
+        private void ShowCompletion(string prefix, ConditionEvaluator currentFormula)
+        {
+            completionWindow?.Close();
+
+            var matches = vm.AllTemplateEvaluator
+                .Where(f => f.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (matches.Count == 0) return;
+
+            completionWindow = new CompletionWindow(Editor.TextArea);
+
+            completionWindow.MinWidth = 200; 
+            completionWindow.MaxWidth = 600; 
+            completionWindow.Width = 600; 
+
+            IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+
+            foreach (ConditionEvaluator eval in matches)
+                data.Add(new FormulaCompletionData(eval, currentFormula, vm.CreatePartTree));
+
+            var listBox = completionWindow.CompletionList.ListBox;
+
+            double maxWidth = 0;
+            foreach (var item in listBox.Items)
+            {
+                var container = listBox.ItemContainerGenerator.ContainerFromItem(item) as FrameworkElement;
+                if (container != null)
+                {
+                    container.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+                    if (container.DesiredSize.Width > maxWidth)
+                        maxWidth = container.DesiredSize.Width;
+                }
+            }
+            maxWidth += 20;
+            completionWindow.Width = maxWidth;
+
+            completionWindow.Show();
         }
     }
 }

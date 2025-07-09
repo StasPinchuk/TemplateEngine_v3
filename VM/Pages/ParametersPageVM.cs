@@ -364,7 +364,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <summary>
         /// Создание дерева из текущего оценщика для отображения в UI.
         /// </summary>
-        private void CreatePartTree()
+        public void CreatePartTree()
         {
             Parts = BuildTreeEvaluator(CurrentEvaluator);
             OnPropertyChanged(nameof(Parts));

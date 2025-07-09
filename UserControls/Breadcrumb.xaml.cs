@@ -88,6 +88,7 @@ namespace TemplateEngine_v3.UserControls
                     int currentPageIndex = pageHistory.IndexOf(page);
                     for (int i = pageHistory.Count-1; i > currentPageIndex; i--)
                         NavigationService.RemovePageToPageHistory(pageHistory[i]);
+                    pageHistory.Last().ClearPage();
                     NavigationService.SetPageInSecondaryFrame();
                 }
             }
@@ -96,6 +97,7 @@ namespace TemplateEngine_v3.UserControls
         private void PrevPage(object parameter)
         {
             var lastPage = NavigationService.GetPageHistory().Last();
+            lastPage.ClearPage();
             NavigationService.RemovePageToPageHistory(lastPage);
             NavigationService.SetPageInSecondaryFrame();
         }

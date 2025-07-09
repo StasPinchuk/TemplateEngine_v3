@@ -46,9 +46,9 @@ namespace TemplateEngine_v3.Models
             get => _unit;
             set
             {
-                if (ShouldLogChange(_unit, value))
-                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия детали с '{_unit}' на '{value}'");
-                SetValue(ref _unit, value, nameof(Unit));
+                if (ShouldLogChange(_unit, value.Trim()))
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия детали с '{_unit}' на '{value.Trim()}'");
+                SetValue(ref _unit, value.Trim(), nameof(Unit));
             }
         }
 

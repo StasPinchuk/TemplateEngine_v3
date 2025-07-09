@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TemplateEngine_v3.Interfaces;
+using System.Windows;
 using TemplateEngine_v3.Models;
 using TFlex.DOCs.Model;
+using TFlex.DOCs.Model.Diagnostics;
 using TFlex.PdmFramework.Resolve;
 
 namespace TemplateEngine_v3.Services.ServerServices
@@ -17,10 +18,8 @@ namespace TemplateEngine_v3.Services.ServerServices
         // Список возможных конфигураций для подключения (GUID'ы конфигураций)
         readonly List<Guid> configurationIds = new()
         {
-            new Guid("00000000-0000-0000-0000-000000000000"),
             new Guid("4117ec3f-910a-4ac8-8698-2fbb8485b44d"),
-            new Guid("85a43024-54a0-4b4a-9ae4-e46183ebc5d7"),
-            new Guid("469ba6ce-6438-4dd0-987b-cf4120c540ce")
+            new Guid("85a43024-54a0-4b4a-9ae4-e46183ebc5d7")
         };
 
         /// <summary>
@@ -46,14 +45,19 @@ namespace TemplateEngine_v3.Services.ServerServices
             }
             catch (Exception ex)
             {
-                // В случае ошибки подключения удаляем первую конфигурацию
-                // из списка (вероятно, чтобы попытаться с другой конфигурацией)
-                configurationIds.RemoveAt(0);
 
-                // Можно логировать ошибку, например:
-                // Debug.WriteLine($"Ошибка подключения: {ex.Message}");
+                if (ex is ServerNotFoundException exception)
+                {
+                    MessageBox.Show(exception.Message);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Application.Current.Shutdown();
+                    });
+                }
 
-                // Возвращаем null, так как подключение не удалось
+                if (configurationIds.Any())
+                    configurationIds.RemoveAt(0);
+
                 return null;
             }
         }

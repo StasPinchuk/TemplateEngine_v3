@@ -66,11 +66,13 @@ namespace TemplateEngine_v3.VM.Pages
                 {
                     _technologiesManager.CurrentTechnologies = value.Technologies;
                     SetPageCollection();
+                    _currentPage = _currentPage == null && PageCollection.Count != 0 ? PageCollection.First() : _currentPage;
+                    SetNodePage(_currentPage);
                 }
                 else
                 {
                     PageCollection.Clear();
-                    _currentPage = null;
+                    _currentPage = _currentPage == null && PageCollection.Count != 0 ? PageCollection.First() : _currentPage;
                     SetNodePage(_currentPage);
                 }
             }
@@ -94,6 +96,7 @@ namespace TemplateEngine_v3.VM.Pages
         public ICommand CopyNodeCurrentTemplateCommand { get; set; }
         public ICommand CopyNodeAllTemplateCommand { get; set; }
         public ICommand FilterNodeCommand { get; set; }
+        public ICommand OpenReplaceEvaluatorInNodeCommand { get; set; }
 
         public PartsListPageVM(TechnologiesManager technologiesManager, NodeManager nodeManager, TemplateManager templateManager, Frame nodePage)
         {
@@ -104,6 +107,7 @@ namespace TemplateEngine_v3.VM.Pages
             Nodes = _nodeManager.Nodes;
             _nodePage = nodePage;
 
+            _currentPage = null;
             SelectedNode = Nodes.FirstOrDefault();
             SetNodeGroup();
             SetNodePage(PageCollection.FirstOrDefault());
@@ -120,6 +124,7 @@ namespace TemplateEngine_v3.VM.Pages
             CopyNodeCurrentTemplateCommand = new RelayCommand(CopyNodeCurrentTemplate);
             CopyNodeAllTemplateCommand = new RelayCommand(CopyNodeAllTemplate);
             FilterNodeCommand = new RelayCommand(FilterNode);
+            OpenReplaceEvaluatorInNodeCommand = new RelayCommand(OpenReplaceEvaluatorInNode);
         }
 
         private void SetNodeGroup()
@@ -175,8 +180,12 @@ namespace TemplateEngine_v3.VM.Pages
                 var group = NodeGroups.FirstOrDefault(g => g.Key == node.Type);
                 group?.Nodes.Remove(removeNode);
                 if (group?.Nodes.Count == 0) NodeGroups.Remove(group);
-
-                SelectedNode = Nodes.FirstOrDefault();
+                if(Nodes.Count == 0)
+                {
+                    PageCollection.Clear();
+                }
+                else
+                    SelectedNode = Nodes.FirstOrDefault();
             }
         }
 
@@ -330,6 +339,12 @@ namespace TemplateEngine_v3.VM.Pages
                 ? new(_nodeManager.Nodes)
                 : new(_nodeManager.Nodes.Where(n => n.Name.Contains(FilterString)));
             SetNodeGroup();
+        }
+
+        private async void OpenReplaceEvaluatorInNode(object parameter)
+        {
+            var dialog = new ReplaceEvaluatorChoiceDialog(Nodes, _nodeManager.EvaluatorManager);
+            await DialogHost.Show(dialog, "MainDialog");
         }
     }
 }

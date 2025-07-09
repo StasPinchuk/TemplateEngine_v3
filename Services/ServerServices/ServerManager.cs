@@ -58,6 +58,9 @@ namespace TemplateEngine_v3.Services.ServerServices
                 while (_connection == null)
                     _connection = await _connectionService.ConnectAsync(CurrentCredentials);
 
+                _connection.ConnectionLost += ServerGatewayOnConnectionLost;
+                _connection.ConnectionRestored += _connection_ConnectionRestored;
+
                 if (_connection?.IsConnected == true)
                 {
                     _credentialsStorage.Save(CurrentCredentials);
@@ -86,6 +89,11 @@ namespace TemplateEngine_v3.Services.ServerServices
             }
         }
 
+        private void _connection_ConnectionRestored(object sender, EventArgs e)
+        {
+            MessageBox.Show("Внимание: соединения с сервером восстановлено");
+        }
+
         /// <summary>
         /// Проверяет, установлено ли соединение с сервером.
         /// </summary>
@@ -101,6 +109,11 @@ namespace TemplateEngine_v3.Services.ServerServices
         public void Disconnect()
         {
             _connection?.Close();
+        }
+
+        private static void ServerGatewayOnConnectionLost(object sender, ConnectionLostEventArgs connectionLostEventArgs)
+        {
+            MessageBox.Show("Внимание: потеря соединения с сервером");
         }
     }
 }

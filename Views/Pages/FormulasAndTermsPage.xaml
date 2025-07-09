@@ -170,7 +170,6 @@
                                  Height="25"
                                  Padding="10, 0">
                             <ListBox ItemsSource="{Binding NodeEvaluators}"
-                                     MaxHeight="300"
                                      ScrollViewer.CanContentScroll="True"
                                      VirtualizingStackPanel.IsVirtualizing="True"
                                      VirtualizingStackPanel.VirtualizationMode="Recycling"
@@ -257,15 +256,13 @@
                              Padding="5"
                              Grid.Row="0"/>
                     
-                    <TextBox FontSize="14"
-                             Margin="5"
-                             Grid.Row="1"
-                             HorizontalScrollBarVisibility="Disabled"
-                             VerticalScrollBarVisibility="Auto"
-                             TextWrapping="Wrap"
-                             Text="{Binding CurrentEvaluator.Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
-
-
+                    <avalonedit:TextEditor x:Name="Editor"
+                                           FontSize="14"
+                                           Margin="5"
+                                           Grid.Row="1"
+                                           HorizontalScrollBarVisibility="Disabled"
+                                           VerticalScrollBarVisibility="Auto"
+                                           help:AvalonEditHelper.BoundText="{Binding CurrentEvaluator.Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
                 </Grid>
 
                 <GridSplitter Background="#D9D9D9"

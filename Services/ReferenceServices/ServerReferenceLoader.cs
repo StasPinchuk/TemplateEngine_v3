@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using TemplateEngine_v3.Mappers;
@@ -41,12 +42,19 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <returns>Коллекция моделей справочных объектов.</returns>
         public ObservableCollection<ReferenceModelInfo> LoadReference(ReferenceInfo referenceInfo)
         {
-            ReferenceMapper.SetParameters(referenceInfo);
-            ReferenceMapper.Reference.Objects.Reload();
-            List<ReferenceObject> referenceObjects = ReferenceMapper.Reference.Objects
-                .Where(refs => !refs.ToString().Equals("LogList"))
-                .ToList();
-            return ReferenceMapper.FromTFlexReferenceObjectList(referenceObjects);
+            try
+            {
+                ReferenceMapper.SetParameters(referenceInfo);
+                ReferenceMapper.Reference.Objects.Reload();
+                List<ReferenceObject> referenceObjects = ReferenceMapper.Reference.Objects
+                    .Where(refs => !refs.ToString().Equals("LogList"))
+                    .ToList();
+                return ReferenceMapper.FromTFlexReferenceObjectList(referenceObjects);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

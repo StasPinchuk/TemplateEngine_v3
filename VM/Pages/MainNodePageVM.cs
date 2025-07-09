@@ -24,7 +24,7 @@ namespace TemplateEngine_v3.VM.Pages
         {
             get
             {
-                _lastNodeName = _nodeManager.CurrentNode.Name;
+                _lastNodeName = _nodeManager.CurrentNode?.Name;
                 return _nodeManager.CurrentNode;
             }
         }
@@ -56,8 +56,8 @@ namespace TemplateEngine_v3.VM.Pages
                     {
                         bool sameName = CurrentNode.Name.Equals(_lastNodeName);
 
-                        _updatePage?.Invoke();
                         CurrentNode.Type = value;
+                        _updatePage?.Invoke();
 
                         if (sameName)
                         {

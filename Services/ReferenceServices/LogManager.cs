@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using TemplateEngine_v3.Models.LogModels;
 using TemplateEngine_v3.Services.FileServices;
 using TFlex.DOCs.Model;
@@ -26,29 +27,36 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         public static void ReadLogs()
         {
-            if(_logReference == null)
+            try
             {
-                _logReference = LogReferenceInfo.CreateReference();
+                if(_logReference == null)
+                {
+                    _logReference = LogReferenceInfo.CreateReference();
 
-                if (_logReference == null)
+                    if (_logReference == null)
+                        return;
+                }
+
+                _objectStruc = _logReference.ParameterGroup.Parameters.FindByName("Структура файла");
+
+                _logReference.Objects.Reload();
+                _logReferenceObject = _logReference.Objects.FirstOrDefault(referenceObject => referenceObject.ToString().Equals("LogsObject (Не удалять)"));
+
+                if (_logReferenceObject == null)
                     return;
+
+                AllLogs = new JsonSerializer().Deserialize<List<DailyLog>>(_logReferenceObject[_objectStruc].Value.ToString());
+
+                if (AllLogs == null)
+                    AllLogs = [];
+                CurrentDailyLog = AllLogs.FirstOrDefault(dailyLog => dailyLog.Date.Equals(DateTime.Now.Date));
+                if (CurrentDailyLog == null)
+                    CreateDailyLog();
+
+            }catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
-
-            _objectStruc = _logReference.ParameterGroup.Parameters.FindByName("Структура файла");
-
-            _logReference.Objects.Reload();
-            _logReferenceObject = _logReference.Objects.FirstOrDefault(referenceObject => referenceObject.ToString().Equals("LogsObject (Не удалять)"));
-
-            if (_logReferenceObject == null)
-                return;
-
-            AllLogs = new JsonSerializer().Deserialize<List<DailyLog>>(_logReferenceObject[_objectStruc].Value.ToString());
-
-            if (AllLogs == null)
-                AllLogs = [];
-            CurrentDailyLog = AllLogs.FirstOrDefault(dailyLog => dailyLog.Date.Equals(DateTime.Now.Date));
-            if (CurrentDailyLog == null)
-                CreateDailyLog();
         }
 
         private static void CreateDailyLog()

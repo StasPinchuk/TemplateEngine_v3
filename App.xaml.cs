@@ -32,9 +32,6 @@ namespace TemplateEngine_v3
             {
                 bool connectionEstablished = await Task.Run(() => _serverManager.SetServerConnection());
 
-                if (!connectionEstablished)
-                    Application.Current.Shutdown();
-
                 Window windowToShow = connectionEstablished
                     ? new MainWindow(_serverManager)
                     : new SignInWindow(_serverManager);

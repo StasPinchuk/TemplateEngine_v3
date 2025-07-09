@@ -9,8 +9,8 @@
         mc:Ignorable="d"
         MinWidth="850"
         MinHeight="600"
+        Style="{DynamicResource MaterialDesignWindow}"
         WindowStartupLocation="CenterScreen"
-        Style="{StaticResource MaterialDesignWindow}"
         Title="Редактор шаблонов">
 
 
@@ -213,9 +213,9 @@
                                             <Button.Template>
                                                 <ControlTemplate>
                                                     <materialDesign:PackIcon Kind="Close"
-                                                                             VerticalAlignment="Center"
-                                                                             Foreground="Red"
-                                                                             Background="Transparent" />
+                                                                                VerticalAlignment="Center"
+                                                                                Foreground="Red"
+                                                                                Background="Transparent" />
                                                 </ControlTemplate>
                                             </Button.Template>
                                         </Button>

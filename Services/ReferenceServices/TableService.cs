@@ -1,9 +1,10 @@
 ﻿using Aspose.Cells;
+using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using TFlex.DOCs.Model;
 using TFlex.DOCs.Model.References.Files;
@@ -101,12 +102,28 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             var file = _fileReference.FindByRelativePath(@$"Генератор шаблонов\Таблицы\{tableName}") as FileObject;
 
-            if (file == null)
-                return string.Empty;
+            string newFilePath = $@"configs\Таблицы\{tableName}";
 
-            FileReference.GetHeadRevision(new[] { file });
+            if (!Directory.Exists(@"configs\Таблицы"))
+                Directory.CreateDirectory(@"configs\Таблицы");
 
-            return file.LocalPath;
+
+            if (File.Exists(newFilePath))
+                if (file.LastChangeDate != File.GetCreationTime(newFilePath))
+                {
+                    FileInfo fileInfo = new FileInfo(newFilePath);
+                    if (fileInfo.IsReadOnly)
+                        fileInfo.IsReadOnly = false;
+                    File.Delete(newFilePath);
+                }
+
+            File.Copy(file.LocalPath, newFilePath, true);
+
+            FileInfo fileInfo2 = new FileInfo(newFilePath);
+            if (fileInfo2.IsReadOnly)
+                fileInfo2.IsReadOnly = false;
+
+            return $@"configs\Таблицы\{tableName}";
         }
 
         public void SetCurrentWorkSheet(string worksheetName)
@@ -188,7 +205,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
             Dictionary<string, string> parametersValueDict = valueDict.Values.ToDictionary(value => value, value => string.Empty);
 
-            if (parameterValue != null)
+            if (parameterValue != null && parameterValue.Length != 0)
             {
                 var keys = parametersValueDict.Keys.ToList();
                 for (int i = 0; i < parameterValue.Length && i < keys.Count; i++)
@@ -230,20 +247,32 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <returns>Найденное значение или пустая строка.</returns>
         private string GetParameter(int columnNumber, int rowNumber, int columnsCount, int rowsCount, string width, string heigth)
         {
-            for (int i = columnNumber; i < columnsCount; i++)
-            {
-                if (int.TryParse(_currentWorksheet.Cells[0, i].Value?.ToString(), out int colVal) && colVal >= int.Parse(width))
+            if(int.TryParse(width, out int colValue) && colValue != 0)
+                for (int i = columnNumber; i < columnsCount; i++)
                 {
-                    for (int j = rowNumber; j < rowsCount; j++)
+                    if (int.TryParse(_currentWorksheet.Cells[0, i].Value?.ToString(), out int colVal) && colVal >= int.Parse(width))
                     {
-                        if (int.TryParse(_currentWorksheet.Cells[j, 2].Value?.ToString(), out int rowVal) && rowVal >= int.Parse(heigth))
+                        for (int j = rowNumber; j < rowsCount; j++)
                         {
-                            return _currentWorksheet.Cells[j, i].Value?.ToString() ?? string.Empty;
+                            if (int.TryParse(_currentWorksheet.Cells[j, 2].Value?.ToString(), out int rowVal) && rowVal >= int.Parse(heigth))
+                            {
+                                return _currentWorksheet.Cells[j, i].Value?.ToString() ?? string.Empty;
+                            }
                         }
                     }
                 }
-            }
-
+            else
+                for (int j = rowNumber; j < rowsCount; j++)
+                {
+                    if (int.TryParse(_currentWorksheet.Cells[j, 2].Value?.ToString(), out int rowVal) && rowVal >= int.Parse(heigth))
+                    {
+                        return _currentWorksheet.Cells[j, 3].Value?.ToString() ?? string.Empty;
+                    }
+                    if (_currentWorksheet.Cells[j, 2].Value?.ToString().Contains(heigth) == true)
+                    {
+                        return _currentWorksheet.Cells[j, 3].Value?.ToString() ?? string.Empty;
+                    }
+                }
             return string.Empty;
         }
 

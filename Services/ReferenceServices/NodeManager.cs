@@ -71,5 +71,11 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             EvaluatorChanged?.Invoke(); 
         }
+
+        public void ClearAction()
+        {
+            CurrentNodeChanged = null;
+            EvaluatorChanged = null;
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -70,19 +71,36 @@ namespace TemplateEngine_v3.VM.Windows
             Credentials.Password = _passwordBox.Password;
             _serverManager.CurrentCredentials = Credentials;
 
-            bool connected = await _serverManager.SetServerConnection();
+            var loadWindow = new LoadWindow();
+            _window.Hide();
+            loadWindow.Show();
+
+            // Дать UI возможность отрисовать окно и начать анимацию
+            await Task.Delay(100); // 100 мс достаточно для начала рендеринга и анимации
+
+            // Выполнить подключение в фоне
+            bool connected = await Task.Run(() => _serverManager.SetServerConnection().Result);
 
             if (connected)
             {
+                loadWindow.Close();
                 new MainWindow(_serverManager).Show();
                 _window.Close();
             }
             else
             {
-                System.Windows.MessageBox.Show("Не удалось подключиться к серверу. Проверьте введённые данные.", "Ошибка подключения", MessageBoxButton.OK, MessageBoxImage.Error);
-                System.Windows.Application.Current?.Dispatcher.Invoke(() => System.Windows.Application.Current.Shutdown());
+                loadWindow.Close();
+                System.Windows.MessageBox.Show(
+                    "Не удалось подключиться к серверу. Проверьте введённые данные.",
+                    "Ошибка подключения",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
+                _window.Show();
             }
         }
+
+
 
         /// <summary>
         /// Проверка возможности выполнения команды входа (валидность данных).

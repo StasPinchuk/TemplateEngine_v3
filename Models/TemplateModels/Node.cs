@@ -4,29 +4,16 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text.RegularExpressions;
-using System.Windows.Documents;
 using TemplateEngine_v3.Models.LogModels;
-using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
-using TFlex.DOCs.Model.References.Units;
 
 namespace TemplateEngine_v3.Models
 {
     public class Node : BaseNotifyPropertyChanged
     {
         [JsonIgnore] // Исключаем из JSON
-        private bool _parameterLoaded = false;
-        [JsonIgnore] // Исключаем из JSON
-        private Action _updateMenuHandler;
-        [JsonIgnore] // Исключаем из JSON
-        public Action UpdateMenuHandler
-        {
-            get => _updateMenuHandler;
-            set => SetValue(ref _updateMenuHandler, value, nameof(UpdateMenuHandler));
-        }
+        private readonly bool _parameterLoaded = false;
 
-        public event Action CurrentNodeChanged;
         /// <summary>
         /// Уникальный идентификатор узла.
         /// </summary>
@@ -41,12 +28,11 @@ namespace TemplateEngine_v3.Models
             get => _name;
             set
             {
-                if(_name != value)
+                if (_name != value)
                 {
                     if (ShouldLogChange(_name, value))
                         LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия детали с '{_name}' на '{value}'");
                     SetValue(ref _name, value, nameof(Name));
-                    UpdateMenuHandler?.Invoke();
                 }
             }
         }
@@ -79,12 +65,12 @@ namespace TemplateEngine_v3.Models
                 if (_type == value)
                     return;
 
-                if (value.Equals("Прочее изделие"))
-                    Parameters.Clear();
+                if (value != null)
+                    if (value.Equals("Прочее изделие"))
+                        Parameters.Clear();
                 if (ShouldLogChange(_type, value))
                     LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование типа детали с '{_type}' на '{value}'");
                 SetValue(ref _type, value, nameof(Type));
-                UpdateMenuHandler?.Invoke();
             }
 
         }
@@ -95,11 +81,7 @@ namespace TemplateEngine_v3.Models
         private ConditionEvaluator _amount = new();
         public ConditionEvaluator Amount
         {
-            get => _amount;
-            set
-            {
-                SetValue(ref _amount, value, nameof(Amount));
-            }
+            get => _amount; set => SetValue(ref _amount, value, nameof(Amount));
         }
 
         /// <summary>
@@ -108,11 +90,7 @@ namespace TemplateEngine_v3.Models
         private Technologies _technologies = new();
         public Technologies Technologies
         {
-            get => _technologies;
-            set
-            {
-                SetValue(ref _technologies, value, nameof(Technologies));
-            }
+            get => _technologies; set => SetValue(ref _technologies, value, nameof(Technologies));
         }
 
         /// <summary>
@@ -121,11 +99,7 @@ namespace TemplateEngine_v3.Models
         private ObservableCollection<ConditionEvaluator> _parameters = [];
         public ObservableCollection<ConditionEvaluator> Parameters
         {
-            get => _parameters;
-            set
-            {
-                SetValue(ref _parameters, value, nameof(Parameters));
-            }
+            get => _parameters; set => SetValue(ref _parameters, value, nameof(Parameters));
         }
 
 
@@ -140,11 +114,7 @@ namespace TemplateEngine_v3.Models
         private ExpressionRepository _expressionRepository = new();
         public ExpressionRepository ExpressionRepository
         {
-            get => _expressionRepository;
-            set
-            {
-                SetValue(ref _expressionRepository, value, nameof(ExpressionRepository));
-            }
+            get => _expressionRepository; set => SetValue(ref _expressionRepository, value, nameof(ExpressionRepository));
         }
 
         /// <summary>
@@ -161,7 +131,6 @@ namespace TemplateEngine_v3.Models
                     if (ShouldLogChange(_usageCondition, value))
                         LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения детали с '{_usageCondition}' на '{value}'");
                     SetValue(ref _usageCondition, value, nameof(UsageCondition));
-                    UpdateMenuHandler?.Invoke();
                 }
             }
         }
@@ -179,7 +148,6 @@ namespace TemplateEngine_v3.Models
                 {
                     _nodeComment = value;
                     OnPropertyChanged(nameof(NodeComment));
-                    UpdateMenuHandler?.Invoke();
                 }
             }
         }
@@ -240,7 +208,7 @@ namespace TemplateEngine_v3.Models
 
             // Словари для отслеживания замен Id
             Dictionary<string, string> idReplacements = [];
-            if(node.Parameters != null)
+            if (node.Parameters != null)
             {
                 // Замена Id для параметров
                 foreach (var parameter in node.Parameters)
@@ -272,7 +240,7 @@ namespace TemplateEngine_v3.Models
             foreach (var term in node.ExpressionRepository.Terms)
             {
                 string oldId = term.Id;
-                string newId =  Guid.NewGuid().ToString();
+                string newId = Guid.NewGuid().ToString();
                 idReplacements[oldId] = newId;
                 term.Id = newId;
 
@@ -316,7 +284,7 @@ namespace TemplateEngine_v3.Models
             {
                 ReplaceIdsInParts(term.Parts, idReplacements);
             }
-            if(node.Parameters != null)
+            if (node.Parameters != null)
                 foreach (var parameter in node.Parameters)
                 {
                     ReplaceIdsInParts(parameter.Parts, idReplacements);

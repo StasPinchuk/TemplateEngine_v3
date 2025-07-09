@@ -133,9 +133,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="evaluator">Корневое условие.</param>
         public void SetParts(ConditionEvaluator evaluator)
         {
-            if (!_evaluatorManager.AllTemplateEvaluator.Any(eval => eval.Id.Equals(evaluator.Id)))
-                return;
-
+            
             var root = BuildTreeEvaluator(evaluator);
             if (root != null)
             {

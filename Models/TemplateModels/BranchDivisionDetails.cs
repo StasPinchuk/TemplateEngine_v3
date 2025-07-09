@@ -40,9 +40,9 @@ namespace TemplateEngine_v3.Models
             get => _unitEquipment;
             set
             {
-                if (ShouldLogChange(_unitEquipment, value))
-                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия оборудования с '{_unitEquipment}' на '{value}'");
-                SetValue(ref _unitEquipment, value, nameof(UnitEquipment));
+                if (ShouldLogChange(_unitEquipment, value.Trim()))
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия оборудования с '{_unitEquipment}' на '{value.Trim()}'");
+                SetValue(ref _unitEquipment, value.Trim(), nameof(UnitEquipment));
             }
         }
 
@@ -55,9 +55,9 @@ namespace TemplateEngine_v3.Models
             get => _divisionCode;
             set
             {
-                if (ShouldLogChange(_divisionCode, value))
-                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование кода подразделения с '{_divisionCode}' на '{value}'");
-                SetValue(ref _divisionCode, value, nameof(DivisionCode));
+                if (ShouldLogChange(_divisionCode, value.Trim()))
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование кода подразделения с '{_divisionCode}' на '{value.Trim()}'");
+                SetValue(ref _divisionCode, value.Trim(), nameof(DivisionCode));
             }
         }
 
@@ -84,9 +84,9 @@ namespace TemplateEngine_v3.Models
             get => _usageCondition;
             set
             {
-                if (ShouldLogChange(_usageCondition, value))
-                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения с '{_usageCondition}' на '{value}'");
-                SetValue(ref _usageCondition, value, nameof(UsageCondition));
+                if (ShouldLogChange(_usageCondition, value.Trim()))
+                    LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование условий применения с '{_usageCondition}' на '{value.Trim()}'");
+                SetValue(ref _usageCondition, value.Trim(), nameof(UsageCondition));
             }
         }
 

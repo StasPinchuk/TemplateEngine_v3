@@ -230,7 +230,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 editReference[_objectStringParameter.Guid].Value = jsonString;
 
                 await editReference.EndChangesAsync();
-                await editReference.BeginChangesAsync();
 
                 return true;
             }
@@ -266,7 +265,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                     newTemplate[_objectStringParameter.Guid].Value = new JsonSerializer().Serialize(createTemplate);
 
                     newTemplate.EndChanges();
-                    await newTemplate.BeginChangesAsync();
 
                     return true;
                 }
@@ -289,14 +287,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
             if (findTemplate == null)
                 return false;
-
-            if (findTemplate.LockState != ReferenceObjectLockState.None && findTemplate.LockState != ReferenceObjectLockState.LockedByCurrentUser)
-            {
-                MessageBox.Show("Данный шаблон взят на редактирование другим пользователем", "Ошибка");
-                return false;
-            }
-
-            await findTemplate.BeginChangesAsync();
 
             Template template = new JsonSerializer().Deserialize<Template>(referenceModel.ObjectStruct);
 
@@ -328,12 +318,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
                 if (findTemplate != null)
                 {
-                    if (findTemplate.LockState != ReferenceObjectLockState.None && findTemplate.LockState != ReferenceObjectLockState.LockedByCurrentUser)
-                    {
-                        MessageBox.Show("Данный шаблон взят на редактирование другим пользователем", "Ошибка");
-                        return false;
-                    }
-                    await findTemplate.BeginChangesAsync();
                     template.ProductMarkingAttributes = SetMarkingAttributes(template.ExampleMarkings);
                 }
 
@@ -375,27 +359,32 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// </summary>
         /// <param name="type">Тип шаблона ("draft" или "ready").</param>
         /// <returns>True при успешном сохранении, иначе false.</returns>
-        public async Task<bool> SaveTemplate(string type)
+        public async Task<bool> SaveTemplate(string type, Template template = null)
         {
             try
             {
+
+                if (template == null)
+                    template = SelectedTemplate;
                 await _reference.Objects.ReloadAsync();
-                var findTemplate = await _reference.FindAsync(SelectedTemplate.Id);
-                if(findTemplate != null)
+                var findTemplate = await _reference.FindAsync(template.Id);
+                if(findTemplate != null && findTemplate.Changing)
                     await findTemplate.EndChangesAsync();
                 var currentList = type.Equals("draft") ? GetDraftTemplates() : GetReadyTemplate();
 
-                if (currentList.Any(temp => temp.Id.Equals(SelectedTemplate.Id)))
+                if (currentList.Any(temp => temp.Id.Equals(template.Id)))
                 {
-                    await LogManager.SaveLog();
-                    return await EditTemplateAsync(SelectedTemplate);
+                    bool isEdit = await EditTemplateAsync(template);
+                    if (isEdit)
+                        await LogManager.SaveLog();
+                    return isEdit;
                 }
                 else
                 {
                     ClassObject templateType = type.Equals("draft") ? _draftTemplateType : _readyTemplateType;
-                    bool isSave = await AddTemplateAsync(SelectedTemplate, templateType);
-
-                    await LogManager.SaveLog();
+                    bool isSave = await AddTemplateAsync(template, templateType);
+                    if(isSave) 
+                        await LogManager.SaveLog();
                     return isSave;
                 }
 
