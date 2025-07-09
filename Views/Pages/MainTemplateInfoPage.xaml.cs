@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using TemplateEngine_v3.Interfaces;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.VM.Pages;
 
 namespace TemplateEngine_v3.Views.Pages
@@ -17,7 +18,7 @@ namespace TemplateEngine_v3.Views.Pages
 
         MainTemplateInfoPageVM vm;
 
-        public MainTemplateInfoPage(ITechnologiesManager technologiesManager, ITemplateManager templateManager)
+        public MainTemplateInfoPage(TechnologiesManager technologiesManager, TemplateManager templateManager)
         {
             InitializeComponent();
             vm = new MainTemplateInfoPageVM(technologiesManager, templateManager);

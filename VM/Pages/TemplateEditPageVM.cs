@@ -10,6 +10,7 @@ using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
 using TemplateEngine_v3.Services;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.UserControls;
 using TemplateEngine_v3.Views.Pages;
 
@@ -23,8 +24,8 @@ namespace TemplateEngine_v3.VM.Pages
     {
         private Frame _frame;
 
-        private readonly ITemplateManager _templateManager;
-        private readonly IBranchManager _branchManager;
+        private readonly TemplateManager _templateManager;
+        private readonly BranchManager _branchManager;
 
         private ObservableCollection<PageModel> _pagesHistory = new();
 
@@ -55,7 +56,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="templateManager">Менеджер шаблонов.</param>
         /// <param name="branchManager">Менеджер филиалов.</param>
         /// <param name="frame">Фрейм для отображения страниц.</param>
-        public TemplateEditPageVM(ITemplateManager templateManager, ITechnologiesManager technologiesManager, IBranchManager branchManager, Frame frame)
+        public TemplateEditPageVM(TemplateManager templateManager, TechnologiesManager technologiesManager, BranchManager branchManager, Frame frame)
         {
             _branchManager = branchManager;
             _templateManager = templateManager;

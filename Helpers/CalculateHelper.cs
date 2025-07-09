@@ -35,7 +35,7 @@ namespace TemplateEngine_v3.Helpers
         /// Возвращает вычисленный шаблон <see cref="Template"/>, в котором отфильтрованы и обработаны отношения и узлы.
         /// Если шаблон не содержит указанной ветки, возвращается <c>null</c>.
         /// </returns>
-        public Template CalculateTemplate(ITemplateManager templateManager, string orderString, string branchString)
+        public Template CalculateTemplate(TemplateManager templateManager, string orderString, string branchString)
         {
             Clear();
             _tableService = templateManager.TableService;

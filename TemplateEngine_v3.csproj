@@ -193,16 +193,7 @@
     <Compile Include="Helpers\MarkingSpliter.cs" />
     <Compile Include="Helpers\Permissions.cs" />
     <Compile Include="Helpers\Updater.cs" />
-    <Compile Include="Interfaces\IBranchManager.cs" />
-    <Compile Include="Interfaces\IConnectionService.cs" />
-    <Compile Include="Interfaces\IEvaluatorManager.cs" />
-    <Compile Include="Interfaces\IManagerInitializer.cs" />
-    <Compile Include="Interfaces\INavigationItem.cs" />
-    <Compile Include="Interfaces\INodeManager.cs" />
     <Compile Include="Interfaces\IPermissions.cs" />
-    <Compile Include="Interfaces\IReferenceLoader.cs" />
-    <Compile Include="Interfaces\ITechnologiesManager.cs" />
-    <Compile Include="Interfaces\ITemplateManager.cs" />
     <Compile Include="Mappers\ReferenceMapper.cs" />
     <Compile Include="Mappers\UserMapper.cs" />
     <Compile Include="Models\BaseNotifyPropertyChanged.cs" />
@@ -490,7 +481,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\IUserCredentialsStorage.cs" />
     <Compile Include="Models\UserCredentials.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

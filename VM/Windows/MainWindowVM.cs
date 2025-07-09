@@ -12,6 +12,7 @@ using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
 using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.FileServices;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.Services.UsersServices;
 using TemplateEngine_v3.UserControls;
 using TemplateEngine_v3.Views.Pages;
@@ -25,9 +26,9 @@ namespace TemplateEngine_v3.VM.Windows
     /// </summary>
     public class MainWindowVM : BaseNotifyPropertyChanged
     {
-        private ITemplateManager _templateManager;
-        private IBranchManager _branchManager;
-        private ITechnologiesManager _technologiesManager;
+        private TemplateManager _templateManager;
+        private BranchManager _branchManager;
+        private TechnologiesManager _technologiesManager;
         private readonly UserManager _userManager;
         private readonly ColumnDefinition _sideBar;
         private readonly Frame _mainFrame;
@@ -180,11 +181,6 @@ namespace TemplateEngine_v3.VM.Windows
             foreach (var item in menuItems)
                 MenuItems.Add(item);
 
-            // Навигация на первую страницу меню по умолчанию
-            var currentPage = MenuItems.First().ModelPage;
-            mainFrame.Navigate(currentPage);
-            currentPage = null;
-
             TabsItem.Add(
                     new NavigationTabs()
                     {
@@ -193,6 +189,8 @@ namespace TemplateEngine_v3.VM.Windows
                         PageHistory = new()
                     }
                 );
+
+            SelectedTab = TabsItem.First();
 
             InitializeCommand();
         }
@@ -257,8 +255,8 @@ namespace TemplateEngine_v3.VM.Windows
 
         private void UpdateManagers(PageModel page)
         {
-            var findTemplateManager = page.ConstructorParameters.FirstOrDefault(param => param is ITemplateManager) as ITemplateManager;
-            var findTechnologiesManager = page.ConstructorParameters.FirstOrDefault(param => param is ITechnologiesManager) as ITechnologiesManager;
+            var findTemplateManager = page.ConstructorParameters.FirstOrDefault(param => param is TemplateManager) as TemplateManager;
+            var findTechnologiesManager = page.ConstructorParameters.FirstOrDefault(param => param is TechnologiesManager) as TechnologiesManager;
             if (findTemplateManager != null)
                 _templateManager = findTemplateManager;
 
@@ -333,16 +331,14 @@ namespace TemplateEngine_v3.VM.Windows
             {
                 var page = tabPanel.Page;
 
-                var findTemplateManager = page.ConstructorParameters.FirstOrDefault(param => param is ITemplateManager) as ITemplateManager;
-                var findTechnologiesManager = page.ConstructorParameters.FirstOrDefault(param => param is ITechnologiesManager) as ITechnologiesManager;
-                if (findTemplateManager != null)
-                    _templateManager = findTemplateManager;
+                var templateManager = page.ConstructorParameters.FirstOrDefault(param => param is TemplateManager) as TemplateManager;
+                var technologiesManager = page.ConstructorParameters.FirstOrDefault(param => param is TechnologiesManager) as TechnologiesManager;
+                if (templateManager != null)
+                    templateManager.ClearTemplate();
 
-                if (findTechnologiesManager != null)
-                    _technologiesManager = findTechnologiesManager;
+                if (technologiesManager != null)
+                    technologiesManager.CurrentTechnologies = null;
 
-                _templateManager.ClearTemplate();
-                _technologiesManager.CurrentTechnologies = null;
                 int tabIndex = TabsItem.IndexOf(tabPanel);
 
                 if(TabsItem.Count > 1)

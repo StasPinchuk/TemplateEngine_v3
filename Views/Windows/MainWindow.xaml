@@ -174,46 +174,64 @@
                 <Border Background="#FFF"
                         BorderBrush="#D5D7DA"
                         BorderThickness="0,0,0,2">
-                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                                  VerticalScrollBarVisibility="Disabled"
-                                  Grid.Row="0"
-                                  Height="60">
-                        <ListBox ItemsSource="{Binding TabsItem, UpdateSourceTrigger=PropertyChanged}"
-                                    SelectedItem="{Binding SelectedTab, UpdateSourceTrigger=PropertyChanged}"
-                                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                    Cursor="Hand"
-                                    Grid.Row="0">
+                    <Grid>
 
-                            <ListBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ListBox.ItemsPanel>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
 
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal"
-                                                MaxHeight="40">
-                                        <TextBlock Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" 
-                                                    VerticalAlignment="Center"
-                                                    Margin="0,0,10,0"/>
-                                        <Button Command="{Binding DataContext.CloseTabCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                CommandParameter="{Binding}">
-                                            <Button.Template>
-                                                <ControlTemplate>
-                                                    <materialDesign:PackIcon Kind="Close"
-                                                                                VerticalAlignment="Center"
-                                                                                Foreground="Red"
-                                                                                Background="Transparent" />
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </ScrollViewer>
+                        <ScrollViewer x:Name="TabScrollViewer"
+                                      HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Disabled"
+                                      Grid.Column="0"
+                                      Height="60">
+                            <ListBox x:Name="TabsListBox"
+                                     ItemsSource="{Binding TabsItem, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectedItem="{Binding SelectedTab, UpdateSourceTrigger=PropertyChanged}"
+                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     Cursor="Hand">
+
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal"
+                                                    MaxHeight="40">
+                                            <TextBlock Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" 
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,10,0"/>
+                                            <Button Command="{Binding DataContext.CloseTabCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}">
+                                                <Button.Template>
+                                                    <ControlTemplate>
+                                                        <materialDesign:PackIcon Kind="Close"
+                                                                                 VerticalAlignment="Center"
+                                                                                 Foreground="Red"
+                                                                                 Background="Transparent" />
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </ScrollViewer>
+
+                        <Button Grid.Column="1" Content="⟨"
+                                Width="30"
+                                Click="ScrollLeft_Click"/>
+
+                        <Button Grid.Column="2" Content="⟩"
+                                Width="30"
+                                Click="ScrollRight_Click"/>
+                    </Grid>
                 </Border>
                 
 

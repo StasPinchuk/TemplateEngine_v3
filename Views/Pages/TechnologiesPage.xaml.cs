@@ -6,6 +6,7 @@ using System.Windows.Media;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.VM.Pages;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Views.Pages
 {
@@ -17,7 +18,7 @@ namespace TemplateEngine_v3.Views.Pages
         private Point _dragStartPoint;
         private TechnologiesPageVM vm;
 
-        public TechnologiesPage(ITechnologiesManager technologiesManager)
+        public TechnologiesPage(TechnologiesManager technologiesManager)
         {
             InitializeComponent();
             vm = new TechnologiesPageVM(technologiesManager);

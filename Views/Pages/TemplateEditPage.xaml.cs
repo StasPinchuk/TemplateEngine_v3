@@ -9,7 +9,7 @@ namespace TemplateEngine_v3.Views.Pages
     /// </summary>
     public partial class TemplateEditPage : Page
     {
-        public TemplateEditPage(ITemplateManager templateManager, ITechnologiesManager technologiesManager, IBranchManager branchManager)
+        public TemplateEditPage(TemplateManager templateManager, TechnologiesManager technologiesManager, BranchManager branchManager)
         {
             InitializeComponent();
             DataContext = new TemplateEditPageVM(templateManager, technologiesManager, branchManager, TemplateFrame);

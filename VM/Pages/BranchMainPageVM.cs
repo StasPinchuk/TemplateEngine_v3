@@ -3,6 +3,7 @@ using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.VM.Pages
 {
@@ -11,7 +12,7 @@ namespace TemplateEngine_v3.VM.Pages
     /// </summary>
     public class BranchMainPageVM : BaseNotifyPropertyChanged
     {
-        private readonly IBranchManager _branchManager;
+        private readonly BranchManager _branchManager;
 
         private Branch _currentBranch = new();
 
@@ -45,7 +46,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// </summary>
         /// <param name="branchManager">Менеджер для работы с филиалами.</param>
         /// <param name="branch">Филиал, который необходимо редактировать. Если это новый филиал — будет создан новый объект.</param>
-        public BranchMainPageVM(IBranchManager branchManager, Branch branch = null)
+        public BranchMainPageVM(BranchManager branchManager, Branch branch = null)
         {
             _branchManager = branchManager;
             if (!branch.Name.Equals("Новый филиал"))

@@ -18,7 +18,7 @@ namespace TemplateEngine_v3.VM.Pages
     /// </summary>
     public class TechnologiesPageVM : BaseNotifyPropertyChanged
     {
-        private readonly ITechnologiesManager _technologiesManager;
+        private readonly TechnologiesManager _technologiesManager;
         private readonly OperationNamesManager _operationNamesManager;
         private Technologies _currentTechnologies;
 
@@ -136,7 +136,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// Конструктор ViewModel, инициализирует менеджеры и подписывается на события.
         /// </summary>
         /// <param name="technologiesManager">Менеджер работы с технологическими процессами.</param>
-        public TechnologiesPageVM(ITechnologiesManager technologiesManager)
+        public TechnologiesPageVM(TechnologiesManager technologiesManager)
         {
             _technologiesManager = technologiesManager;
             _operationNamesManager = _technologiesManager.GetOperationNamesManager();

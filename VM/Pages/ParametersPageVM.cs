@@ -8,14 +8,16 @@ using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TFlex.DOCs.Common;
+using TFlex.DOCs.Model.References.Macros;
 
 namespace TemplateEngine_v3.VM.Pages
 {
     /// <summary>
     /// ViewModel страницы параметров для управления условными оценщиками и их деревьями.
     /// </summary>
-    public class ParametersPageVM : BaseNotifyPropertyChanged
+    public class ParametersPageVM : BaseNotifyPropertyChanged, IDisposable
     {
         private ConditionEvaluator _selectedEvaluator = null;
 
@@ -69,8 +71,8 @@ namespace TemplateEngine_v3.VM.Pages
             get => _buttonText; set => SetValue(ref _buttonText, value, nameof(ButtonText));
         }
 
-        private readonly INodeManager _nodeManager;
-        private readonly IEvaluatorManager _evaluatorManager;
+        private readonly NodeManager _nodeManager;
+        private readonly EvaluatorManager _evaluatorManager;
 
         /// <summary>
         /// Коллекция условных оценщиков, привязанных к текущему узлу.
@@ -142,7 +144,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// Конструктор, инициализирующий VM и подписывающийся на события изменения узла и оценщиков.
         /// </summary>
         /// <param name="nodeManager">Менеджер узлов для получения текущего узла и его параметров.</param>
-        public ParametersPageVM(INodeManager nodeManager)
+        public ParametersPageVM(NodeManager nodeManager)
         {
             _nodeManager = nodeManager;
             Evaluator = nodeManager.CurrentNode.Parameters;
@@ -419,6 +421,12 @@ namespace TemplateEngine_v3.VM.Pages
             }
 
             return null;
+        }
+
+        public void Dispose()
+        {
+            _nodeManager.CurrentNodeChanged -= OnCurrentNodeChanged;
+            _nodeManager.EvaluatorChanged -= OnNodeChanged;
         }
     }
 }

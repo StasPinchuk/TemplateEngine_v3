@@ -8,6 +8,7 @@ using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.UserControls;
 using TFlex.DOCs.Common;
 
@@ -17,7 +18,7 @@ namespace TemplateEngine_v3.VM.Pages
     /// ViewModel для страницы работы с формулами и условиями.
     /// Управляет списками формул и условий, а также текущим выбранным и редактируемым элементом.
     /// </summary>
-    public class FormulasAndTermsPageVM : BaseNotifyPropertyChanged
+    public class FormulasAndTermsPageVM : BaseNotifyPropertyChanged, IDisposable
     {
         private Node _currentNode;
 
@@ -151,8 +152,8 @@ namespace TemplateEngine_v3.VM.Pages
             set => SetValue(ref _buttonText, value, nameof(ButtonText));
         }
 
-        private readonly INodeManager _nodeManager;
-        private readonly IEvaluatorManager _evaluatorManager;
+        private readonly NodeManager _nodeManager;
+        private readonly EvaluatorManager _evaluatorManager;
 
         private ObservableCollection<ConditionEvaluator> Formulas { get; set; } = new ObservableCollection<ConditionEvaluator>();
         private ObservableCollection<ConditionEvaluator> Terms { get; set; } = new ObservableCollection<ConditionEvaluator>();
@@ -181,7 +182,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// Инициализирует команды и начальные данные.
         /// </summary>
         /// <param name="nodeManager">Менеджер узлов</param>
-        public FormulasAndTermsPageVM(INodeManager nodeManager)
+        public FormulasAndTermsPageVM(NodeManager nodeManager)
         {
             _nodeManager = nodeManager;
             _evaluatorManager = _nodeManager.EvaluatorManager;
@@ -216,7 +217,6 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="node">Новый текущий узел</param>
         private void OnCurrentNodeChanged(Node node)
         {
-            _nodeManager.CurrentNodeChanged += OnCurrentNodeChanged;
             CurrentNode = node;
             _evaluatorManager.SetNodeEvaluators(node);
             OnPropertyChanged(nameof(CurrentNode));
@@ -494,6 +494,12 @@ namespace TemplateEngine_v3.VM.Pages
         {
             var dialog = new TableChoiceDialog(_nodeManager.TableManager, _nodeManager.MenuHelper, CurrentEvaluator);
             await DialogHost.Show(dialog, "MainDialog");
+        }
+
+        public void Dispose()
+        {
+            _nodeManager.CurrentNodeChanged -= OnCurrentNodeChanged;
+            _nodeManager.EvaluatorChanged -= OnNodeChanged;
         }
     }
 }

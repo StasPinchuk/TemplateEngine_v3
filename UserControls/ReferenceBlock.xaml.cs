@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services;
 
 namespace TemplateEngine_v3.UserControls
 {
@@ -97,6 +99,13 @@ namespace TemplateEngine_v3.UserControls
                 typeof(ReferenceBlock),
                 new PropertyMetadata("Изменить"));
 
+        public static readonly DependencyProperty BlockVisibilityProperty =
+            DependencyProperty.Register(
+                "BlockVisibility",
+                typeof(Visibility),
+                typeof(ReferenceBlock),
+                new PropertyMetadata(Visibility.Visible));
+
         public ReferenceModelInfo CurrentReferenceModel
         {
             get => (ReferenceModelInfo)GetValue(CurrentReferenceModelProperty);
@@ -169,6 +178,12 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(ButtonTextProperty, value);
         }
 
+        public Visibility BlockVisibility
+        {
+            get => (Visibility)GetValue(BlockVisibilityProperty);
+            set => SetValue(BlockVisibilityProperty, value);
+        }
+
         public ReferenceBlock()
         {
             InitializeComponent();
@@ -181,6 +196,10 @@ namespace TemplateEngine_v3.UserControls
             {
                 if (e.NewValue is ReferenceModelInfo reference)
                 {
+                    if(NavigationService.GetTabs().Any(tab => tab.Title.Equals(reference.Name)))
+                    {
+                        control.BlockVisibility = Visibility.Collapsed;
+                    }
                     if (reference.CreateDate.Date == DateTime.Now.Date)
                         control.NewIndicate = Visibility.Visible;
                     if (reference.LastEditDate.Date == DateTime.Now.Date && reference.LastEditDate != reference.CreateDate)

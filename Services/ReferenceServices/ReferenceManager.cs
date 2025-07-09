@@ -1,25 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TemplateEngine_v3.Interfaces;
+using TemplateEngine_v3.Services.FileServices;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TFlex.DOCs.Model;
 
 public class ReferenceManager
 {
-    private readonly IReferenceLoader _referenceLoader;
+    private readonly JsonReferenceLoader _referenceLoader;
     private OperationNamesManager _operationNamesManager;
 
     // Менеджеры для различных частей системы
-    public ITemplateManager TemplateManager;
-    public IBranchManager BranchManager;
-    public ITechnologiesManager TechnologiesManager;
+    public TemplateManager TemplateManager;
+    public BranchManager BranchManager;
+    public TechnologiesManager TechnologiesManager;
     public MaterialManager MaterialManager;
     public TableService TableService;
 
     // Словарь с маппингом ключей на ReferenceInfo
     public Dictionary<string, ReferenceInfo> ReferenceMappings { get; private set; }
 
-    public ReferenceManager(ServerConnection connection, IReferenceLoader referenceLoader)
+    public ReferenceManager(ServerConnection connection, JsonReferenceLoader referenceLoader)
     {
         _referenceLoader = referenceLoader;
         InitializeReferences(connection);

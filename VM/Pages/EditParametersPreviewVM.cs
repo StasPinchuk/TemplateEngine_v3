@@ -15,7 +15,7 @@ namespace TemplateEngine_v3.VM.Pages
     /// </summary>
     public class EditParametersPreviewVM : BaseNotifyPropertyChanged
     {
-        private readonly IEvaluatorManager _evaluatorManager;
+        private readonly EvaluatorManager _evaluatorManager;
         private readonly ConditionEvaluator _editEvaluator;
 
         private ConditionEvaluator _currentEvaluator = new();
@@ -112,7 +112,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="editEvaluator">Редактируемый Evaluator.</param>
         /// <param name="evaluatorManager">Менеджер Evaluator'ов.</param>
         /// <param name="drawerHost">Компонент DrawerHost (не используется напрямую).</param>
-        public EditParametersPreviewVM(ConditionEvaluator editEvaluator, IEvaluatorManager evaluatorManager, DrawerHost drawerHost)
+        public EditParametersPreviewVM(ConditionEvaluator editEvaluator, EvaluatorManager evaluatorManager, DrawerHost drawerHost)
         {
             _evaluatorManager = evaluatorManager;
 

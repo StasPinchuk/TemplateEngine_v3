@@ -7,6 +7,7 @@ using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.UserControls
 {
@@ -58,7 +59,7 @@ namespace TemplateEngine_v3.UserControls
         public static DependencyProperty TemplateManagerProperty =
             DependencyProperty.Register(
                 "TemplateManager",
-                typeof(ITemplateManager),
+                typeof(TemplateManager),
                 typeof(ReplaceChoiceDialog),
                 new PropertyMetadata(default)
             );
@@ -93,13 +94,13 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(ReplaceCommandProperty, value);
         }
 
-        public ITemplateManager TemplateManager
+        public TemplateManager TemplateManager
         {
-            get => (ITemplateManager)GetValue(TemplateManagerProperty);
+            get => (TemplateManager)GetValue(TemplateManagerProperty);
             set => SetValue(TemplateManagerProperty, value);
         }
 
-        public ReplaceChoiceDialog(ITemplateManager templateManager)
+        public ReplaceChoiceDialog(TemplateManager templateManager)
         {
             InitializeComponent();
             ReferencesList = templateManager.GetReadyTemplate();

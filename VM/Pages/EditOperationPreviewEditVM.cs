@@ -8,6 +8,7 @@ using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.VM.Pages
 {
@@ -17,8 +18,8 @@ namespace TemplateEngine_v3.VM.Pages
     public class EditOperationPreviewEditVM : BaseNotifyPropertyChanged
     {
         private readonly Operation _editOperation;
-        private readonly IEvaluatorManager _evaluatorManager;
-        private readonly IBranchManager _branchManager;
+        private readonly EvaluatorManager _evaluatorManager;
+        private readonly BranchManager _branchManager;
         private readonly DrawerHost _drawer;
         private readonly ContextMenuHelper _contextMenuHelper;
 
@@ -66,7 +67,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="evaluatorManager">Менеджер условий.</param>
         /// <param name="contextMenuHelper">Помощник контекстного меню.</param>
         /// <param name="drawer">DrawerHost, в котором происходит редактирование.</param>
-        public EditOperationPreviewEditVM(Operation operation, IEvaluatorManager evaluatorManager, ContextMenuHelper contextMenuHelper, DrawerHost drawer)
+        public EditOperationPreviewEditVM(Operation operation, EvaluatorManager evaluatorManager, ContextMenuHelper contextMenuHelper, DrawerHost drawer)
         {
             _editOperation = operation;
             BranchDivision = operation.Copy().BranchDivisionDetails;

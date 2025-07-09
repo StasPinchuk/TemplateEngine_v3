@@ -39,9 +39,9 @@ namespace TemplateEngine_v3.VM.Pages
         /// </summary>
         public ObservableCollection<ReferenceModelInfo> ReferencesList { get; set; } = new();
 
-        private readonly ITemplateManager _templateManager;
-        private readonly IBranchManager _branchManager;
-        private readonly ITechnologiesManager _technologiesManager;
+        private readonly TemplateManager _templateManager;
+        private readonly BranchManager _branchManager;
+        private readonly TechnologiesManager _technologiesManager;
         private readonly TemplateClass _templateClass;
         private readonly ColumnDefinition _sideBar;
 
@@ -87,7 +87,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <summary>
         /// Конструктор для страницы с шаблонами (без технологий).
         /// </summary>
-        public ReferencePageVM(ITemplateManager templateManager, IBranchManager branchManager, UserManager userManager, TemplateClass templateClass, ColumnDefinition sideBar)
+        public ReferencePageVM(TemplateManager templateManager, BranchManager branchManager, UserManager userManager, TemplateClass templateClass, ColumnDefinition sideBar)
         {
             _templateManager = templateManager;
             _templateClass = templateClass;
@@ -106,7 +106,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <summary>
         /// Конструктор для страницы с шаблонами и технологиями.
         /// </summary>
-        public ReferencePageVM(ITemplateManager templateManager, ITechnologiesManager technologiesManager, IBranchManager branchManager, UserManager userManager, TemplateClass templateClass, ColumnDefinition sideBar)
+        public ReferencePageVM(TemplateManager templateManager, TechnologiesManager technologiesManager, BranchManager branchManager, UserManager userManager, TemplateClass templateClass, ColumnDefinition sideBar)
         {
             _templateManager = templateManager;
             _technologiesManager = technologiesManager;
@@ -137,7 +137,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <summary>
         /// Конструктор для страницы с филиалами.
         /// </summary>
-        public ReferencePageVM(IBranchManager branchManager, UserManager userManager, ColumnDefinition sideBar)
+        public ReferencePageVM(BranchManager branchManager, UserManager userManager, ColumnDefinition sideBar)
         {
             _branchManager = branchManager;
             _sideBar = sideBar;
@@ -164,7 +164,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <summary>
         /// Конструктор для страницы с технологиями.
         /// </summary>
-        public ReferencePageVM(ITechnologiesManager technologiesManager, UserManager userManager, ColumnDefinition sideBar)
+        public ReferencePageVM(TechnologiesManager technologiesManager, UserManager userManager, ColumnDefinition sideBar)
         {
             _technologiesManager = technologiesManager;
             _sideBar = sideBar;
@@ -398,17 +398,16 @@ namespace TemplateEngine_v3.VM.Pages
                 
                 LogManager.CreateLogObjectGroup(referenceModel.Name, "Шаблоны");
 
-                var isSetTemplate = await _templateManager.SetTemplateAsync(referenceModel);
+                var templateManager = _templateManager.Clone();
+                
+                var isSetTemplate = await templateManager.SetTemplateAsync(referenceModel);
 
                 if (!isSetTemplate)
                 {
                     return;
                 }
 
-                var templateManager = _templateManager.Clone();
-
                 NavigationService.RenameSelectedTab(referenceModel.Name);
-
 
                 var templateEditPage = new PageModel(referenceModel.Name, typeof(TemplateEditPage), new object[] { templateManager, _technologiesManager, _branchManager });
 
@@ -472,9 +471,9 @@ namespace TemplateEngine_v3.VM.Pages
             LogManager.CreateLogObjectGroup("Новый шаблон", "Шаблоны");
             var template = new Template() { Name = "Новый шаблон" };
 
-            _templateManager.SetTemplateAsync(template);
-
             var templateManager = _templateManager.Clone();
+
+            templateManager.SetTemplateAsync(template);
 
             NavigationService.RenameSelectedTab(template.Name);
 

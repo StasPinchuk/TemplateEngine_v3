@@ -8,7 +8,7 @@ namespace TemplateEngine_v3.Services.FileServices
     /// Класс для загрузки и сохранения справочников в формате JSON.
     /// Реализует интерфейс <see cref="IReferenceLoader"/>.
     /// </summary>
-    public class JsonReferenceLoader : IReferenceLoader
+    public class JsonReferenceLoader
     {
         /// <summary>
         /// Менеджер для работы с JSON файлами.

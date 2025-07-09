@@ -18,7 +18,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
     /// <summary>
     /// Менеджер для работы с технологиями (ТП).
     /// </summary>
-    public class TechnologiesManager : ITechnologiesManager
+    public class TechnologiesManager : BaseNotifyPropertyChanged
     {
         /// <summary>
         /// Событие, вызываемое при изменении текущей технологии.
@@ -77,7 +77,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <param name="technologiesInfo">Информация о справочнике технологий.</param>
         /// <param name="branchManager">Менеджер филиалов.</param>
         /// <param name="operationNamesManager">Менеджер названий операций.</param>
-        public TechnologiesManager(ServerReferenceLoader referenceLoader, ReferenceInfo technologiesInfo, IBranchManager branchManager, OperationNamesManager operationNamesManager)
+        public TechnologiesManager(ServerReferenceLoader referenceLoader, ReferenceInfo technologiesInfo, BranchManager branchManager, OperationNamesManager operationNamesManager)
         {
             _referenceLoader = referenceLoader;
             _technologiesInfo = technologiesInfo;

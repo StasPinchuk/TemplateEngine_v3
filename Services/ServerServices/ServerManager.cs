@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using TemplateEngine_v3.Helpers;
-using TemplateEngine_v3.Interfaces;
-using TemplateEngine_v3.Mappers;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.FileServices;
 using TemplateEngine_v3.Services.UsersServices;
@@ -20,9 +17,9 @@ namespace TemplateEngine_v3.Services.ServerServices
     {
         public ServerManager() { }
 
-        private readonly IUserCredentialsStorage _credentialsStorage = new UserCredentialsStorage();
-        private readonly IConnectionService _connectionService = new DefaultConnectionService();
-        private readonly IManagerInitializer _managerInitializer = new DefaultManagerInitializer();
+        private readonly UserCredentialsStorage _credentialsStorage = new UserCredentialsStorage();
+        private readonly DefaultConnectionService _connectionService = new DefaultConnectionService();
+        private readonly DefaultManagerInitializer _managerInitializer = new DefaultManagerInitializer();
 
         private ServerConnection _connection;
 
@@ -58,7 +55,7 @@ namespace TemplateEngine_v3.Services.ServerServices
                     CurrentCredentials = creds;
                 }
 
-                while (_connection == null) 
+                while (_connection == null)
                     _connection = await _connectionService.ConnectAsync(CurrentCredentials);
 
                 if (_connection?.IsConnected == true)

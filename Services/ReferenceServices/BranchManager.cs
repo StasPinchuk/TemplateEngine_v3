@@ -17,7 +17,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
     /// Менеджер для работы с филиалами (Branches) через объекты Reference.
     /// Предоставляет методы для добавления, редактирования, клонирования, получения списка и удаления филиалов.
     /// </summary>
-    public class BranchManager : IBranchManager
+    public class BranchManager : BaseNotifyPropertyChanged
     {
         private readonly ServerReferenceLoader _referenceLoader;
         private readonly ReferenceInfo _branchInfo;

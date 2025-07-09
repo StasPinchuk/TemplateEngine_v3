@@ -9,7 +9,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
     /// Менеджер для работы с ConditionEvaluator (условными вычислителями).
     /// Содержит список системных вычислителей и методы для сбора вычислителей из шаблонных узлов.
     /// </summary>
-    public class EvaluatorManager : IEvaluatorManager
+    public class EvaluatorManager : BaseNotifyPropertyChanged
     {
         private TemplateRelations _relations;
 

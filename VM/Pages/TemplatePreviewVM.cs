@@ -18,11 +18,11 @@ namespace TemplateEngine_v3.VM.Pages
 {
     public class TemplatePreviewVM : BaseNotifyPropertyChanged
     {
-        private readonly ITemplateManager _templateManager;
-        private readonly IBranchManager _branchManager;
+        private readonly TemplateManager _templateManager;
+        private readonly BranchManager _branchManager;
         private readonly DrawerHost _drawerHost;
         private readonly Frame _frame;
-        private IEvaluatorManager _evaluatorManager;
+        private EvaluatorManager _evaluatorManager;
         private TemplateRelations _editRelation;
         private string _orderString;
 
@@ -121,7 +121,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="branchManager">Менеджер филиалов</param>
         /// <param name="drawerHost">Контейнер DrawerHost.</param>
         /// <param name="frame">Фрейм для навигации между страницами.</param>
-        public TemplatePreviewVM(ITemplateManager templateManager, IBranchManager branchManager, DrawerHost drawerHost, Frame frame)
+        public TemplatePreviewVM(TemplateManager templateManager, BranchManager branchManager, DrawerHost drawerHost, Frame frame)
         {
             _templateManager = templateManager;
             _branchManager = branchManager;

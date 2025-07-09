@@ -8,6 +8,7 @@ using System.Windows.Media.Animation;
 using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.VM.Pages;
 
 namespace TemplateEngine_v3.Views.Pages
@@ -18,12 +19,12 @@ namespace TemplateEngine_v3.Views.Pages
     public partial class EditOperationPreviewPage : Page
     {
         private Frame _frame;
-        private IEvaluatorManager _evaluatorManager;
+        private EvaluatorManager _evaluatorManager;
         private ContextMenuHelper _contextMenuHelper;
         private DrawerHost _drawerHost;
 
         EditOperationPreviewEditVM viewModel;
-        public EditOperationPreviewPage(Operation operation, IEvaluatorManager evaluatorManager, ContextMenuHelper contextMenuHelper, DrawerHost drawerHost, Frame frame)
+        public EditOperationPreviewPage(Operation operation, EvaluatorManager evaluatorManager, ContextMenuHelper contextMenuHelper, DrawerHost drawerHost, Frame frame)
         {
             InitializeComponent();
             _frame = frame;

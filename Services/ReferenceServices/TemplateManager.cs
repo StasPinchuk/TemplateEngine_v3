@@ -19,7 +19,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
     /// <summary>
     /// Менеджер шаблонов изделий для генератора.
     /// </summary>
-    public class TemplateManager : ITemplateManager
+    public class TemplateManager : BaseNotifyPropertyChanged
     {
         private readonly ServerReferenceLoader _referenceLoader;
         private readonly ReferenceInfo _templateInfo;
@@ -80,8 +80,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         public ObservableCollection<ReferenceModelInfo> GetDraftTemplates()
         {
             EnsureTemplatesLoaded();
-            return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates.Where(template => template.Type.Equals(_draftTemplateType)
-                                && !NavigationService.GetTabs().Any(tab => tab.Title.Equals(template.Name))));
+            return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates.Where(template => template.Type.Equals(_draftTemplateType)));
         }
 
         /// <summary>
@@ -93,8 +92,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             EnsureTemplatesLoaded();
             return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates
                 .Where(template => template.Type.Equals(_readyTemplateType)
-                                && template.Name != "LogsObject (Не удалять)"
-                                && !NavigationService.GetTabs().Any(tab => tab.Title.Equals(template.Name)))
+                                && template.Name != "LogsObject (Не удалять)")
                 .OrderBy(template => template.Name)
                 .Reverse());
         }
@@ -107,8 +105,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             EnsureTemplatesLoaded();
             return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates
-                .Where(template => template.Type.Equals(_trashCanType)
-                                && !NavigationService.GetTabs().Any(tab => tab.Title.Equals(template.Name)))
+                .Where(template => template.Type.Equals(_trashCanType))
                 .OrderBy(template => template.Name));
         }
 

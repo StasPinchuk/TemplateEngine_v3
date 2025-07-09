@@ -12,7 +12,7 @@ namespace TemplateEngine_v3.Services.ServerServices
     /// <summary>
     /// Сервис для подключения к серверу T-Flex PDM с использованием списка конфигураций.
     /// </summary>
-    public class DefaultConnectionService : IConnectionService
+    public class DefaultConnectionService : BaseNotifyPropertyChanged
     {
         // Список возможных конфигураций для подключения (GUID'ы конфигураций)
         readonly List<Guid> configurationIds = new()

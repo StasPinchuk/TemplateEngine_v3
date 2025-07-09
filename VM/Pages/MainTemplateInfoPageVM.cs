@@ -22,9 +22,9 @@ namespace TemplateEngine_v3.VM.Pages
     /// </summary>
     public class MainTemplateInfoPageVM : BaseNotifyPropertyChanged
     {
-        private readonly ITechnologiesManager _technologiesManager;
-        private readonly INodeManager _nodeManager;
-        private readonly ITemplateManager _templateManager;
+        private readonly TechnologiesManager _technologiesManager;
+        private readonly NodeManager _nodeManager;
+        private readonly TemplateManager _templateManager;
 
         private Template _currentTemplate;
 
@@ -102,7 +102,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// </summary>
         /// <param name="technologiesManager">Менеджер технологий.</param>
         /// <param name="templateManager">Менеджер шаблонов.</param>
-        public MainTemplateInfoPageVM(ITechnologiesManager technologiesManager, ITemplateManager templateManager)
+        public MainTemplateInfoPageVM(TechnologiesManager technologiesManager, TemplateManager templateManager)
         {
             _technologiesManager = technologiesManager;
             _templateManager = templateManager;
@@ -169,7 +169,7 @@ namespace TemplateEngine_v3.VM.Pages
             {
                 _technologiesManager.CurrentTechnologies = CurrentRelation.Technologies;
                 _nodeManager.Nodes = CurrentRelation.Nodes;
-                IEvaluatorManager evaluatorManager = new EvaluatorManager(_templateManager.GetSelectedTemplate(), CurrentRelation);
+                EvaluatorManager evaluatorManager = new EvaluatorManager(_templateManager.GetSelectedTemplate(), CurrentRelation);
 
                 _nodeManager.EvaluatorManager = evaluatorManager;
 

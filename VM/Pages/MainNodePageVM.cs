@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
@@ -11,7 +12,8 @@ namespace TemplateEngine_v3.VM.Pages
     /// ViewModel для страницы с основной информацией узла.
     /// Управляет текущим узлом, его типом и связанными действиями.
     /// </summary>
-    public class MainNodePageVM : BaseNotifyPropertyChanged
+    public class MainNodePageVM : BaseNotifyPropertyChanged, IDisposable
+
     {
         private string _lastNodeName = string.Empty;
 
@@ -35,7 +37,7 @@ namespace TemplateEngine_v3.VM.Pages
 
         private readonly Action _updatePage;
         private readonly Action _updateNodeGroup;
-        private readonly INodeManager _nodeManager;
+        private readonly NodeManager _nodeManager;
 
         private string _nodeType = string.Empty;
 
@@ -69,22 +71,13 @@ namespace TemplateEngine_v3.VM.Pages
             }
         }
 
-
-        /// <summary>
-        /// Контекстное меню для текстового поля, предоставленное менеджером узлов.
-        /// </summary>
-        public ContextMenu TextBoxMenu => _nodeManager.MenuHelper.GetContextMenu();
-        public ContextMenu DesignationMenu => _nodeManager.MenuHelper.GetContextMenu();
-        public ContextMenu AmountMenu => _nodeManager.MenuHelper.GetContextMenu();
-        public ContextMenu UsageConditionMenu => _nodeManager.MenuHelper.GetContextMenu();
-
         /// <summary>
         /// Конструктор ViewModel страницы основного узла.
         /// </summary>
         /// <param name="nodeManager">Менеджер узлов, управляющий текущим состоянием.</param>
         /// <param name="updatePage">Действие, вызываемое при необходимости обновления страницы.</param>
         /// <param name="updateNodeGroup">Действие, вызываемое при необходимости обновления группы узлов.</param>
-        public MainNodePageVM(INodeManager nodeManager, Action updatePage, Action updateNodeGroup)
+        public MainNodePageVM(NodeManager nodeManager, Action updatePage, Action updateNodeGroup)
         {
             _nodeManager = nodeManager;
             _updatePage = updatePage;
@@ -105,6 +98,17 @@ namespace TemplateEngine_v3.VM.Pages
         {
             OnPropertyChanged(nameof(CurrentNode));
             NodeType = node?.Type ?? string.Empty;
+        }
+
+        public void Dispose()
+        {
+            _nodeManager.CurrentNodeChanged -= OnCurrentNodeChanged;
+        }
+
+        public async Task<ContextMenu> GetContextMenu()
+        {
+            await _nodeManager.MenuHelper.UpdateContextMenuAsync();
+            return _nodeManager.GetContextMenu();
         }
     }
 }

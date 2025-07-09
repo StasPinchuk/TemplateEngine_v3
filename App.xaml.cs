@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Services;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.Services.ServerServices;
 using TemplateEngine_v3.Views.Windows;
 
@@ -59,7 +60,7 @@ namespace TemplateEngine_v3
 
                 foreach (var tab in tabs)
                 {
-                    var templateManager = tab.Page.ConstructorParameters.FirstOrDefault(param => param is ITemplateManager) as ITemplateManager;
+                    var templateManager = tab.Page.ConstructorParameters.FirstOrDefault(param => param is TemplateManager) as TemplateManager;
                     if (templateManager != null)
                         templateManager.ClearTemplate();
 

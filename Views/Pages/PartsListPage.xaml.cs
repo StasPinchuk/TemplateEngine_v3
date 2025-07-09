@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.VM.Pages;
 
 namespace TemplateEngine_v3.Views.Pages
@@ -12,7 +13,7 @@ namespace TemplateEngine_v3.Views.Pages
     public partial class PartsListPage : Page
     {
         private readonly PartsListPageVM vm;
-        public PartsListPage(ITechnologiesManager technologiesManager, INodeManager nodeManager, ITemplateManager templateManager)
+        public PartsListPage(TechnologiesManager technologiesManager, NodeManager nodeManager, TemplateManager templateManager)
         {
             InitializeComponent();
             vm = new PartsListPageVM(technologiesManager, nodeManager, templateManager, NodePage);

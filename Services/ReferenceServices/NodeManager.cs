@@ -11,12 +11,12 @@ namespace TemplateEngine_v3.Services.ReferenceServices
     /// Менеджер для работы с узлами (Node) шаблона.
     /// Управляет текущим выбранным узлом и коллекцией узлов, а также связывает с EvaluatorManager и ContextMenuHelper.
     /// </summary>
-    public class NodeManager : INodeManager
+    public class NodeManager : BaseNotifyPropertyChanged
     {
         /// <summary>
         /// Менеджер вычислителей, связанный с текущим узлом.
         /// </summary>
-        public IEvaluatorManager EvaluatorManager { get; set; }
+        public EvaluatorManager EvaluatorManager { get; set; }
 
         public TableService TableManager { get; set; }
 

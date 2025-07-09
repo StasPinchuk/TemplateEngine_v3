@@ -9,7 +9,7 @@ namespace TemplateEngine_v3.Storage
     /// <summary>
     /// Класс для хранения и загрузки учетных данных пользователя из локального JSON-файла.
     /// </summary>
-    public class UserCredentialsStorage : IUserCredentialsStorage
+    public class UserCredentialsStorage
     {
         private readonly string _filePath;
 

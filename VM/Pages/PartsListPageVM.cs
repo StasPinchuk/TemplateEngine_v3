@@ -20,9 +20,9 @@ namespace TemplateEngine_v3.VM.Pages
     public class PartsListPageVM : BaseNotifyPropertyChanged
     {
         private readonly Frame _nodePage;
-        private readonly INodeManager _nodeManager;
-        private readonly ITechnologiesManager _technologiesManager;
-        private readonly ITemplateManager _templateManager;
+        private readonly NodeManager _nodeManager;
+        private readonly TechnologiesManager _technologiesManager;
+        private readonly TemplateManager _templateManager;
 
         private ObservableCollection<Node> _nodes;
         public ObservableCollection<Node> Nodes
@@ -95,16 +95,15 @@ namespace TemplateEngine_v3.VM.Pages
         public ICommand CopyNodeAllTemplateCommand { get; set; }
         public ICommand FilterNodeCommand { get; set; }
 
-        public PartsListPageVM(ITechnologiesManager technologiesManager, INodeManager nodeManager, ITemplateManager templateManager, Frame nodePage)
+        public PartsListPageVM(TechnologiesManager technologiesManager, NodeManager nodeManager, TemplateManager templateManager, Frame nodePage)
         {
             _nodeManager = nodeManager;
             _technologiesManager = technologiesManager;
             _templateManager = templateManager;
             _technologiesManager.MenuHelper = _nodeManager.MenuHelper;
-            Nodes = new(_nodeManager.Nodes);
+            Nodes = _nodeManager.Nodes;
             _nodePage = nodePage;
 
-            _nodeManager.Nodes = Nodes;
             SelectedNode = Nodes.FirstOrDefault();
             SetNodeGroup();
             SetNodePage(PageCollection.FirstOrDefault());
@@ -302,7 +301,7 @@ namespace TemplateEngine_v3.VM.Pages
         {
             var page = PageCollection.Last();
 
-            if (page.ConstructorParameters.FirstOrDefault(p => p is INodeManager) is INodeManager nodeManager)
+            if (page.ConstructorParameters.FirstOrDefault(p => p is NodeManager) is NodeManager nodeManager)
             {
                 nodeManager.CurrentNode = SelectedNode;
                 nodeManager.Nodes = SelectedNode.Nodes;

@@ -18,12 +18,12 @@ namespace TemplateEngine_v3.Views.Pages
     public partial class EditNodePreviewPage : Page
     {
         private Frame _frame;
-        private IEvaluatorManager _evaluatorManager;
+        private EvaluatorManager _evaluatorManager;
         private DrawerHost _drawerHost;
 
         EditNodePreviewVM viewModel;
 
-        public EditNodePreviewPage(Node node, IEvaluatorManager evaluatorManager, ContextMenuHelper contextMenuHelper, DrawerHost drawerHost, Frame frame)
+        public EditNodePreviewPage(Node node, EvaluatorManager evaluatorManager, ContextMenuHelper contextMenuHelper, DrawerHost drawerHost, Frame frame)
         {
             InitializeComponent();
             _frame = frame;

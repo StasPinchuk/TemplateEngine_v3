@@ -7,7 +7,7 @@ namespace TemplateEngine_v3.Models.PageCollection
     /// <summary>
     /// Класс, представляющий элемент навигации с заголовком, страницей, иконкой и состоянием выбора.
     /// </summary>
-    public class NavigationItem : INavigationItem
+    public class NavigationItem : BaseNotifyPropertyChanged
     {
         /// <summary>
         /// Заголовок навигационного элемента.

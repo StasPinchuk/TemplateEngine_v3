@@ -1,13 +1,11 @@
-﻿using Antlr.Runtime.Tree;
-using MaterialDesignThemes.Wpf;
+﻿using MaterialDesignThemes.Wpf;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.VM.Pages;
 
 namespace TemplateEngine_v3.Views.Pages
@@ -17,10 +15,10 @@ namespace TemplateEngine_v3.Views.Pages
     /// </summary>
     public partial class TemplatePreviewPage : Page
     {
-        TemplatePreviewVM viewModel;
+        readonly TemplatePreviewVM viewModel;
 
 
-        public TemplatePreviewPage(ITemplateManager templateManager, IBranchManager branchManager)
+        public TemplatePreviewPage(TemplateManager templateManager, BranchManager branchManager)
         {
             InitializeComponent();
             viewModel = new TemplatePreviewVM(templateManager, branchManager, DrawerHost, RightDrawerContext);
@@ -42,8 +40,8 @@ namespace TemplateEngine_v3.Views.Pages
 
                 if (container.DataContext is ConditionEvaluator item)
                 {
-                    var menuItemEdit = new MenuItem 
-                    { 
+                    var menuItemEdit = new MenuItem
+                    {
                         Header = "Изменить параметр",
                         Command = viewModel.EditParameterCommand,
                         CommandParameter = new object[] { item, DrawerHost }
@@ -51,11 +49,11 @@ namespace TemplateEngine_v3.Views.Pages
 
                     contextMenu.Items.Add(menuItemEdit);
 
-                    var menuItemDelete = new MenuItem 
-                    { 
+                    var menuItemDelete = new MenuItem
+                    {
                         Header = "Удалить параметр",
                         Command = viewModel.DeleteParameterCommand,
-                        CommandParameter = item 
+                        CommandParameter = item
                     };
 
                     contextMenu.Items.Add(menuItemDelete);
@@ -82,16 +80,16 @@ namespace TemplateEngine_v3.Views.Pages
                 }
                 else if (container.DataContext is Node node)
                 {
-                    var menuItemEdit = new MenuItem 
-                    { 
+                    var menuItemEdit = new MenuItem
+                    {
                         Header = "Изменить деталь",
                         Command = viewModel.EditNodeCommand,
                         CommandParameter = new object[] { node, DrawerHost }
                     };
                     contextMenu.Items.Add(menuItemEdit);
 
-                    var menuItemDelete = new MenuItem 
-                    { 
+                    var menuItemDelete = new MenuItem
+                    {
                         Header = "Удалить деталь",
                         Command = viewModel.DeleteNodeCommand,
                         CommandParameter = new object[] { node, DrawerHost }
@@ -122,7 +120,8 @@ namespace TemplateEngine_v3.Views.Pages
                 }
 
                 return null;
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return null;
             }

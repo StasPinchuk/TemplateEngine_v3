@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.VM.Pages;
 
 namespace TemplateEngine_v3.Views.Pages
@@ -12,7 +13,7 @@ namespace TemplateEngine_v3.Views.Pages
     /// </summary>
     public partial class EditParametersPreviewPage : Page
     {
-        public EditParametersPreviewPage(ConditionEvaluator evaluator, IEvaluatorManager evaluatorManager, DrawerHost drawerHost)
+        public EditParametersPreviewPage(ConditionEvaluator evaluator, EvaluatorManager evaluatorManager, DrawerHost drawerHost)
         {
             InitializeComponent();
             DataContext = new EditParametersPreviewVM(evaluator, evaluatorManager, drawerHost);

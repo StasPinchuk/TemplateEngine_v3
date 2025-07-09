@@ -1,4 +1,4 @@
-﻿using TemplateEngine_v3.Interfaces;
+﻿using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.FileServices;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.Services.UsersServices;
@@ -10,7 +10,7 @@ namespace TemplateEngine_v3.Services.ServerServices
     /// Класс инициализирует менеджеры пользователей и справочников,
     /// обеспечивая их создание с нужными зависимостями и параметрами подключения к серверу.
     /// </summary>
-    public class DefaultManagerInitializer : IManagerInitializer
+    public class DefaultManagerInitializer : BaseNotifyPropertyChanged
     {
         /// <summary>
         /// Инициализирует и возвращает менеджер пользователей.

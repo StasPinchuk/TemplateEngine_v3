@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
-using TemplateEngine_v3.Interfaces;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.VM.Pages;
 
 namespace TemplateEngine_v3.Views.Pages
@@ -10,18 +12,31 @@ namespace TemplateEngine_v3.Views.Pages
     /// </summary>
     public partial class MainNodePage : Page
     {
-        public MainNodePage(INodeManager nodeManager, Action updatePage, Action updateNodeGroup)
+        private readonly MainNodePageVM _vm;
+
+        public MainNodePage(NodeManager nodeManager, Action updatePage, Action updateNodeGroup)
         {
             InitializeComponent();
-            DataContext = new MainNodePageVM(nodeManager, updatePage, updateNodeGroup);
+            _vm = new MainNodePageVM(nodeManager, updatePage, updateNodeGroup);
+            DataContext = _vm;
+
+            Unloaded += MainNodePage_Unloaded;
+
         }
 
-        private void TextBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        private async void TextBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             if (sender is TextBox tb && tb.ContextMenu != null)
             {
+                tb.ContextMenu = await _vm.GetContextMenu();
                 tb.ContextMenu.PlacementTarget = tb;
             }
+        }
+
+        private void MainNodePage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (_vm is IDisposable disposable)
+                disposable.Dispose();
         }
     }
 }

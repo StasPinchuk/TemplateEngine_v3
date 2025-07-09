@@ -18,8 +18,8 @@ namespace TemplateEngine_v3.VM.Pages
     public class EditNodePreviewVM : BaseNotifyPropertyChanged
     {
         private readonly Operation _editOperation;
-        private readonly IEvaluatorManager _evaluatorManager;
-        private readonly IBranchManager _branchManager;
+        private readonly EvaluatorManager _evaluatorManager;
+        private readonly BranchManager _branchManager;
         private readonly DrawerHost _drawer;
         private readonly ContextMenuHelper _contextMenuHelper;
 
@@ -83,7 +83,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="evaluatorManager">Менеджер условий и выражений.</param>
         /// <param name="contextMenuHelper">Помощник для создания контекстного меню.</param>
         /// <param name="drawerHost">DrawerHost для закрытия окна редактирования.</param>
-        public EditNodePreviewVM(Node node, IEvaluatorManager evaluatorManager, ContextMenuHelper contextMenuHelper, DrawerHost drawerHost)
+        public EditNodePreviewVM(Node node, EvaluatorManager evaluatorManager, ContextMenuHelper contextMenuHelper, DrawerHost drawerHost)
         {
             _editNode = node;
             CurrentNode = node.Copy();
