@@ -22,6 +22,7 @@ namespace TemplateEngine_v3.VM.Pages
     /// </summary>
     public class MainTemplateInfoPageVM : BaseNotifyPropertyChanged
     {
+        private readonly Template _template;
         private readonly TechnologiesManager _technologiesManager;
         private readonly NodeManager _nodeManager;
         private readonly TemplateManager _templateManager;
@@ -105,6 +106,7 @@ namespace TemplateEngine_v3.VM.Pages
         public MainTemplateInfoPageVM(TechnologiesManager technologiesManager, TemplateManager templateManager)
         {
             _technologiesManager = technologiesManager;
+            _template = templateManager.GetSelectedTemplate();
             _templateManager = templateManager;
             _nodeManager = new NodeManager()
             {
@@ -167,11 +169,14 @@ namespace TemplateEngine_v3.VM.Pages
         {
             if (parameters is PageModel nextPage)
             {
+                var template = _templateManager.GetSelectedTemplate() != null ? _templateManager.GetSelectedTemplate() : _template;
                 _technologiesManager.CurrentTechnologies = CurrentRelation.Technologies;
                 _nodeManager.Nodes = CurrentRelation.Nodes;
-                EvaluatorManager evaluatorManager = new EvaluatorManager(_templateManager.GetSelectedTemplate(), CurrentRelation);
+                EvaluatorManager evaluatorManager = new EvaluatorManager(template, CurrentRelation);
 
                 _nodeManager.EvaluatorManager = evaluatorManager;
+
+                nextPage.ClearPage();
 
                 NavigationService.AddPageToPageHistory(nextPage);
                 NavigationService.SetPageInSecondaryFrame();

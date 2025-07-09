@@ -113,7 +113,6 @@
                             <!-- BranchDivisionDetails -->
                             <HierarchicalDataTemplate DataType="{x:Type model:BranchDivisionDetails}">
                                 <StackPanel Visibility="{Binding UnitEquipment, Converter={StaticResource EmptyStringToVisibilityConverter}}">
-                                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
                                     <TextBlock Visibility="{Binding Branch.Name, Converter={StaticResource EmptyStringToVisibilityConverter}}">
                                                 <Run Text="Филиал: "
                                                         FontWeight="Bold"/>

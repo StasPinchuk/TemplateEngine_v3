@@ -270,14 +270,25 @@ namespace TemplateEngine_v3.Helpers
         {
             var operations = technologies.Operations;
 
+            List<Operation> removeOperations = [];
+
             foreach (Operation operation in operations)
             {
+
                 var branchDivision = operation.BranchDivisionDetails
                     .FirstOrDefault(division => division?.Branch != null &&
                                                 division.Branch.Name.Equals(BranchName));
 
                 if (branchDivision != null && branchDivision?.Materials != null)
                 {
+                    branchDivision.UsageCondition = Calculate(branchDivision.UsageCondition)?.ToString();
+
+                    if(bool.TryParse(branchDivision.UsageCondition, out bool usage) && !usage)
+                    {
+                        removeOperations.Add(operation);
+                        continue;
+                    }
+
                     branchDivision.IsLoggingEnabled = false;
                     var material = branchDivision.Materials;
                     material.IsLoggingEnabled = false;
@@ -288,8 +299,12 @@ namespace TemplateEngine_v3.Helpers
                     if (material.Consumption.Parts.Count > 0)
                         Materials.Add(material.Consumption);
 
-                    branchDivision.UsageCondition = Calculate(branchDivision.UsageCondition)?.ToString();
                 }
+            }
+
+            foreach(var removeOperation in removeOperations)
+            {
+                operations.Remove(removeOperation);
             }
         }
 

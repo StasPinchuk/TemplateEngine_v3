@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -331,18 +332,17 @@ namespace TemplateEngine_v3.VM.Windows
             {
                 var page = tabPanel.Page;
 
-                var templateManager = page.ConstructorParameters.FirstOrDefault(param => param is TemplateManager) as TemplateManager;
-                var technologiesManager = page.ConstructorParameters.FirstOrDefault(param => param is TechnologiesManager) as TechnologiesManager;
-                if (templateManager != null)
-                    templateManager.ClearTemplate();
-
-                if (technologiesManager != null)
-                    technologiesManager.CurrentTechnologies = null;
-
                 int tabIndex = TabsItem.IndexOf(tabPanel);
 
                 if(TabsItem.Count > 1)
                 {
+                    var templateManager = page.ConstructorParameters.FirstOrDefault(param => param is TemplateManager) as TemplateManager;
+                    var technologiesManager = page.ConstructorParameters.FirstOrDefault(param => param is TechnologiesManager) as TechnologiesManager;
+                    if (templateManager != null)
+                        templateManager.ClearTemplate();
+
+                    if (technologiesManager != null)
+                        technologiesManager.CurrentTechnologies = null;
                     if(tabIndex != 0 && tabIndex <= TabsItem.Count)
                         SelectedTab = TabsItem[tabIndex - 1];
                     else

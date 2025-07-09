@@ -147,6 +147,8 @@ namespace TemplateEngine_v3.VM.Pages
         {
             if (parameter is PageModel page)
             {
+                page.ClearPage();
+
                 if (page.Title.Equals("Детали"))
                 {
                     PageCollection[0].IsSelected = true;
