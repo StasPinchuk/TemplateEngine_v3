@@ -219,16 +219,6 @@ namespace TemplateEngine_v3.VM.Windows
         {
             if (parameter is PageModel pageModel)
             {
-                /* if (MenuHistory.VisiblePageHistory.Count > 0)
-                     _sideBar.Width = GridLength.Auto;
-
-                 MenuHistory.Clear();
-                 pageModel.ClearPage();
-                 _mainFrame.Navigate(pageModel.ModelPage);
-
-                 _templateManager.ClearTemplate();
-                 _technologiesManager.CurrentTechnologies = null;*/
-
                 var findPage = TabsItem.FirstOrDefault(tab => tab.Title.Equals(pageModel.Title));
 
                 if (findPage != null)

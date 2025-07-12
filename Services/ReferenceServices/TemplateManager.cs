@@ -59,7 +59,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
             _nameParameter = _reference.ParameterGroup.Parameters.FindByName("Наименование");
             _objectStringParameter = _reference.ParameterGroup.Parameters.FindByName("Структура файла");
-            _readyTemplateType = _templateInfo.Classes.Find("Изделия для генератора");
+            _readyTemplateType = _templateInfo.Classes.Find("Шаблоны");
             _draftTemplateType = _templateInfo.Classes.Find("Незавершённые изделия для генератора");
             _trashCanType = _templateInfo.Classes.Find("Корзина");
             TableService = tableService;

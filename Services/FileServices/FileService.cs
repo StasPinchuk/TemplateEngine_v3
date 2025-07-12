@@ -92,8 +92,6 @@ namespace TemplateEngine_v3.Services.FileServices
         /// </summary>
         public static void WriteToFolder<T>(string folderPath, IEnumerable<T> items, Func<T, string> getName, Func<T, string> getContent)
         {
-            Directory.CreateDirectory(folderPath); // создаем, если нет
-
             foreach (var item in items)
             {
                 string filePath = Path.Combine(folderPath, getName(item));
