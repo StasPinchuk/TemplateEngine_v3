@@ -1,0 +1,70 @@
+﻿<UserControl x:Class="TemplateEngine_v3.UserControls.TemplateStageChoiceDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TemplateEngine_v3.UserControls"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Width="450"
+             Height="450">
+
+    <Grid Margin="16">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Button Style="{StaticResource MaterialDesignIconButton}"
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                CommandParameter="cancel"
+                HorizontalAlignment="Right"
+                Width="30"
+                Height="30"
+                Grid.Row="0">
+            <materialDesign:PackIcon Kind="Close"
+                             Foreground="Red"/>
+        </Button>
+        <!-- Список статусов -->
+        <ListBox ItemsSource="{Binding Statuses}"
+             SelectedItem="{Binding SelectedStatus}"
+             DisplayMemberPath="Name"
+             Width="200" />
+
+        <!-- Панель редактирования -->
+        <StackPanel Grid.Column="2" Orientation="Vertical" VerticalAlignment="Top">
+
+            <TextBlock Text="Название статуса" FontWeight="Bold"/>
+            <TextBox Text="{Binding SelectedStatus.Name}" />
+
+            <TextBlock Text="Цвет статуса" FontWeight="Bold"/>
+            <Button Background="{Binding SelectedStatus.Color}" Width="40" Height="40"
+                Command="{Binding OpenColorPickerCommand}" />
+
+            <TextBlock Text="Иконка" FontWeight="Bold"/>
+            <Button Width="40" Height="40">
+                <materialDesign:PackIcon Kind="{Binding SelectedStatus.Icon}" />
+            </Button>
+
+            <TextBlock Text="Цвет иконки" FontWeight="Bold"/>
+            <Button Background="{Binding SelectedStatus.IconColor}" Width="40" Height="40" />
+
+        </StackPanel>
+
+        <!-- Кнопки -->
+        <StackPanel Grid.Column="4" Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+            <Button Content="Отмена" 
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"/>
+            <Button Content="Создать"
+                Background="DodgerBlue"
+                Command="{Binding CreateStatusCommand}" />
+        </StackPanel>
+    </Grid>
+
+</UserControl>

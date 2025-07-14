@@ -55,19 +55,17 @@ namespace TemplateEngine_v3.VM.Windows
             get => _selectedTabs;
             set
             {
+                if(value != null && MenuItems.Any(item => item.Title.Equals(value.Title)))
+                    _sideBar.Width = GridLength.Auto;
 
-                var tabs = NavigationService.GetTabs();
+                value.Page.ClearPage();
 
-                var tab = tabs.FirstOrDefault(tabPage => tabPage.Title.Equals(value.Title));
+                SetValue(ref _selectedTabs, value, nameof(SelectedTab));
 
-                tab.Page.ClearPage();
-
-                SetValue(ref _selectedTabs, tab, nameof(SelectedTab));
-
-                NavigationService.SetSelectedTab(tab);
+                NavigationService.SetSelectedTab(value);
 
                 _mainFrame.Navigate(value.Page.ModelPage);
-                if (tab.PageHistory.Count > 0)
+                if (value.PageHistory.Count > 0)
                 {
                     NavigationService.SetPageInSecondaryFrame();
                 }
@@ -103,6 +101,7 @@ namespace TemplateEngine_v3.VM.Windows
         public ICommand OpenSettingsCommand { get; set; }
         public ICommand OpenLogsCommand { get; set; }
         public ICommand CloseTabCommand { get; set; }
+        public ICommand OpenTemplateStagesCommand { get; set; }
 
         /// <summary>
         /// Конструктор ViewModel главного окна.
@@ -208,6 +207,7 @@ namespace TemplateEngine_v3.VM.Windows
             OpenSettingsCommand = new RelayCommand(OpenSettings);
             OpenLogsCommand = new RelayCommand(OpenLogs);
             CloseTabCommand = new RelayCommand(CloseTab);
+            OpenTemplateStagesCommand = new RelayCommand(OpenTemplateStages);
         }
 
         /// <summary>
@@ -316,31 +316,58 @@ namespace TemplateEngine_v3.VM.Windows
             await DialogHost.Show(dialog, "MainDialog");
         }
 
+        private async void OpenTemplateStages(object parameter)
+        {
+            var dialog = new TemplateStageChoiceDialog();
+            await DialogHost.Show(dialog, "MainDialog");
+        }
+
         private void CloseTab(object parameter)
         {
-            if(parameter is NavigationTabs tabPanel)
+            if (parameter is NavigationTabs tabPanel)
             {
                 var page = tabPanel.Page;
 
                 int tabIndex = TabsItem.IndexOf(tabPanel);
+                if (tabIndex == -1)
+                    return; // защита от некорректного элемента
 
-                if(TabsItem.Count > 1)
+                // Очистка ресурсов страницы
+                var templateManager = page.ConstructorParameters
+                    .OfType<TemplateManager>()
+                    .FirstOrDefault();
+                templateManager?.ClearTemplate();
+
+                var technologiesManager = page.ConstructorParameters
+                    .OfType<TechnologiesManager>()
+                    .FirstOrDefault();
+                if (technologiesManager != null)
+                    technologiesManager.CurrentTechnologies = null;
+
+                // Выбор новой активной вкладки до удаления
+                if (TabsItem.Count == 1)
                 {
-                    var templateManager = page.ConstructorParameters.FirstOrDefault(param => param is TemplateManager) as TemplateManager;
-                    var technologiesManager = page.ConstructorParameters.FirstOrDefault(param => param is TechnologiesManager) as TechnologiesManager;
-                    if (templateManager != null)
-                        templateManager.ClearTemplate();
-
-                    if (technologiesManager != null)
-                        technologiesManager.CurrentTechnologies = null;
-                    if(tabIndex != 0 && tabIndex <= TabsItem.Count)
-                        SelectedTab = TabsItem[tabIndex - 1];
-                    else
-                        SelectedTab = TabsItem[tabIndex + 1];
-                        tabPanel.PageHistory.Clear();
-                    TabsItem.Remove(tabPanel);
+                    // Удаляем последнюю вкладку, создаём новую
+                    TabsItem.Add(new NavigationTabs
+                    {
+                        Title = MenuItems.First().Title,
+                        Page = MenuItems.First(),
+                        PageHistory = new()
+                    });
+                    SelectedTab = TabsItem.Last();
                 }
+                else
+                {
+                    // Выбираем соседнюю вкладку
+                    int newIndex = tabIndex > 0 ? tabIndex - 1 : 1;
+                    SelectedTab = TabsItem[newIndex];
+                }
+
+                // Очистка истории и удаление вкладки
+                tabPanel.PageHistory.Clear();
+                TabsItem.Remove(tabPanel);
             }
+
         }
     }
 }

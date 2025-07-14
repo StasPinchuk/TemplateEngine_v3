@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,20 +29,6 @@ namespace TemplateEngine_v3.UserControls
                     typeof(ReferenceBlock),
                     new PropertyMetadata(null, OnSetCurrentPermission)
                 );
-
-        public static readonly DependencyProperty NewIndicateProperty =
-            DependencyProperty.Register(
-                "NewIndicate",
-                typeof(Visibility),
-                typeof(ReferenceBlock),
-                new PropertyMetadata(Visibility.Hidden));
-
-        public static readonly DependencyProperty EditIndicateProperty =
-            DependencyProperty.Register(
-                "EditIndicate",
-                typeof(Visibility),
-                typeof(ReferenceBlock),
-                new PropertyMetadata(Visibility.Hidden));
 
         public static readonly DependencyProperty RemoveCommandProperty =
             DependencyProperty.Register(
@@ -92,9 +79,16 @@ namespace TemplateEngine_v3.UserControls
                 typeof(ReferenceBlock),
                 new PropertyMetadata(false));
 
-        public static readonly DependencyProperty ButtonTextProperty =
+        public static readonly DependencyProperty ButtonIconProperty =
             DependencyProperty.Register(
-                "ButtonText",
+                "ButtonIcon",
+                typeof(PackIconKind),
+                typeof(ReferenceBlock),
+                new PropertyMetadata(PackIconKind.Edit));
+
+        public static readonly DependencyProperty ButtonToolTipProperty =
+            DependencyProperty.Register(
+                "ButtonToolTip",
                 typeof(string),
                 typeof(ReferenceBlock),
                 new PropertyMetadata("Изменить"));
@@ -116,18 +110,6 @@ namespace TemplateEngine_v3.UserControls
         {
             get => (object)GetValue(CurrentPermissionProperty);
             set => SetValue(CurrentPermissionProperty, value);
-        }
-
-        public Visibility NewIndicate
-        {
-            get => (Visibility)GetValue(NewIndicateProperty);
-            set => SetValue(NewIndicateProperty, value);
-        }
-
-        public Visibility EditIndicate
-        {
-            get => (Visibility)GetValue(EditIndicateProperty);
-            set => SetValue(EditIndicateProperty, value);
         }
 
         public ICommand RemoveCommand
@@ -172,10 +154,16 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(IsLockedProperty, value);
         }
 
-        public string ButtonText
+        public PackIconKind ButtonIcon
         {
-            get => (string)GetValue(ButtonTextProperty);
-            set => SetValue(ButtonTextProperty, value);
+            get => (PackIconKind)GetValue(ButtonIconProperty);
+            set => SetValue(ButtonIconProperty, value);
+        }
+
+        public string ButtonToolTip
+        {
+            get => (string)GetValue(ButtonToolTipProperty);
+            set => SetValue(ButtonToolTipProperty, value);
         }
 
         public Visibility BlockVisibility
@@ -200,18 +188,15 @@ namespace TemplateEngine_v3.UserControls
                     {
                         control.BlockVisibility = Visibility.Collapsed;
                     }
-                    if (reference.CreateDate.Date == DateTime.Now.Date)
-                        control.NewIndicate = Visibility.Visible;
-                    if (reference.LastEditDate.Date == DateTime.Now.Date && reference.LastEditDate != reference.CreateDate)
-                        control.EditIndicate = Visibility.Visible;
 
                     if (reference.Type.Name.Equals("Корзина"))
-                        control.ButtonText = "Восстановить";
+                    {
+                        control.ButtonIcon = PackIconKind.BackupRestore;
+                        control.ButtonToolTip = "Восстановить";
+                    }
 
                     control.IsLocked = reference.IsLocked;
                 }
-                else
-                    control.NewIndicate = Visibility.Collapsed;
             }
         }
 

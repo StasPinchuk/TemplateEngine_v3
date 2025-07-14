@@ -5,17 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:TemplateEngine_v3.UserControls"
-             mc:Ignorable="d" 
-             Width="500"
-             Height="155"
-             MaxHeight="250">
+             mc:Ignorable="d"
+             Width="250">
+    
     <Border Background="#FFF"
             BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
             BorderThickness="1"
-            Padding="12"
-            CornerRadius="8"
-            MinWidth="500"
-            MaxHeight="250">
+            Padding="20, 24"
+            CornerRadius="8">
         <Border.Effect>
             <DropShadowEffect Color="Black" 
                               BlurRadius="3" 
@@ -27,28 +24,14 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="15"/>
-                <RowDefinition Height="25"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="50"/>
                 <RowDefinition Height="15"/>
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Новый"
-                       Foreground="Green"
-                       FontWeight="Bold"
-                       HorizontalAlignment="Right"
-                       VerticalAlignment="Top"
-                       Visibility="{Binding NewIndicate, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-
-            <TextBlock Text="Изменен"
-                       Foreground="Red"
-                       FontWeight="Bold"
-                       HorizontalAlignment="Right"
-                       VerticalAlignment="Top"
-                       Margin="0,10,0,0"
-                       Visibility="{Binding EditIndicate, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-
-            <Viewbox Grid.Row="0"
-                     Margin="0,0,60,0">
+            <Viewbox Grid.Row="0">
                 <TextBlock Text="{Binding CurrentReferenceModel.Name, FallbackValue='Нет данных', RelativeSource={RelativeSource AncestorType=UserControl}}"
                            FontSize="24"
                            TextWrapping="Wrap"
@@ -57,14 +40,35 @@
                            TextAlignment="Center"/>
             </Viewbox>
 
-            <DockPanel Grid.Row="2"
+            <Border CornerRadius="15"
+                    Background="LightGray"
+                    HorizontalAlignment="Center"
+                    Padding="10,5"
+                    Grid.Row="2">
+
+                <StackPanel Orientation="Horizontal"
+                            VerticalAlignment="Center">
+                    
+                    <materialDesign:PackIcon Kind="Edit"
+                                             VerticalAlignment="Center"
+                                             Margin="0,0,10,0"/>
+
+                    <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}" 
+                               Text="Черновик"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"/>
+
+                </StackPanel>
+                
+            </Border>
+
+            <DockPanel Grid.Row="4"
                        LastChildFill="False">
 
-                
                 <TextBlock FontSize="16"
                            FontWeight="Regular"
                            TextAlignment="Center"
-                           DockPanel.Dock="Left">
+                           DockPanel.Dock="Top">
                     <Run Text="Создан: "
                          FontWeight="SemiBold"/>
                     <Run Text="{Binding CurrentReferenceModel.CreateDate, StringFormat={}{0:dd.MM.yyyy}, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
@@ -73,7 +77,7 @@
                 <TextBlock FontSize="16"
                            FontWeight="Regular"
                            TextAlignment="Center"
-                           DockPanel.Dock="Right">
+                           DockPanel.Dock="Bottom">
                     <Run Text="Изменен: "
                          FontWeight="SemiBold"/>
                     <Run Text="{Binding CurrentReferenceModel.LastEditDate, StringFormat={}{0:dd.MM.yyyy}, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
@@ -81,34 +85,61 @@
 
             </DockPanel>
 
-            <UniformGrid Grid.Row="5"
-                         Rows="1">
-                
+            <UniformGrid Grid.Row="6"
+                         Columns="3">
+
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
                         Background="Red"
+                        ToolTip="Удалить"
+                        Width="45"
+                        Height="40"
+                        Padding="0"
                         IsEnabled="{Binding CanRemove, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                         BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
                         Command="{Binding RemoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        Content="Удалить"/>
-                
+                        CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}">
+
+                    <materialDesign:PackIcon Kind="TrashCan"
+                                             Width="25"
+                                             Height="25"/>
+
+                </Button>
+
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                        BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
-                        Background="#1C212E"
+                        ToolTip="Копировать"
+                        Width="45"
+                        Height="40"
+                        Padding="0"
+                        Background="LightGray"
+                        BorderBrush="LightGray"
                         IsEnabled="{Binding CanCopy, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                         Command="{Binding CloneCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        Content="Копировать"
-                        Margin="10,0"/>
-                
+                        CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}">
+
+                    <materialDesign:PackIcon Kind="ContentCopy"
+                                             Width="25"
+                                             Height="25"
+                                             Foreground="Black"/>
+
+                </Button>
+
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
                         Background="Green"
                         BorderBrush="Green"
+                        Width="45"
+                        Height="40"
+                        Padding="0"
+                        ToolTip="{Binding ButtonToolTip, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         IsEnabled="{Binding CanEdit, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                         Command="{Binding EditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        Content="{Binding ButtonText, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-                
+                        CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}">
+
+                    <materialDesign:PackIcon Kind="{Binding ButtonIcon, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                             Width="25"
+                                             Height="25"/>
+
+                </Button>
+
             </UniformGrid>
         </Grid>
         

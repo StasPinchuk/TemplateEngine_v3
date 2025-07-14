@@ -95,7 +95,7 @@ namespace TemplateEngine_v3.Helpers
             catch (ArgumentException ex)
             {
             }
-            ReplaceParametersOrMaterialValue(Parameters);
+            ReplaceParametersOrMaterialValue(Parameters, true);
             ReplaceParametersOrMaterialValue(Materials);
             foreach (var node in Nodes)
             {
@@ -150,7 +150,7 @@ namespace TemplateEngine_v3.Helpers
             value = ReplaceMarkingParameter(value);
             value = ReplaceFunction(value);
 
-            if (!string.IsNullOrEmpty(value) && !HasNoOperators(value))
+            if (!string.IsNullOrEmpty(value) && !HasNoOperators(value) && !value.StartsWith("-0"))
             {
                 try
                 {
@@ -181,6 +181,9 @@ namespace TemplateEngine_v3.Helpers
                     // Игнорируем ошибки вычисления и возвращаем исходное значение
                 }
             }
+
+            if (value.StartsWith("-0"))
+                return $"'{value}'";
 
             return value;
         }
@@ -405,7 +408,7 @@ namespace TemplateEngine_v3.Helpers
         /// обновляя UsageCondition, значения и части с учетом маркировок и вычислений.
         /// </summary>
         /// <param name="evaluators">Список ConditionEvaluator для обработки.</param>
-        private static void ReplaceParametersOrMaterialValue(List<ConditionEvaluator> evaluators)
+        private static void ReplaceParametersOrMaterialValue(List<ConditionEvaluator> evaluators, bool replaceDot = false)
         {
             foreach (var evaluator in evaluators)
             {
@@ -422,7 +425,7 @@ namespace TemplateEngine_v3.Helpers
                     var parts = new ObservableCollection<string>(evaluator.Parts);
                     foreach (var part in parts)
                     {
-                        ReplaceEvaluatorValue(evaluator, part);
+                        ReplaceEvaluatorValue(evaluator, part, replaceDot);
                     }
                 }
                 else
@@ -447,7 +450,7 @@ namespace TemplateEngine_v3.Helpers
                             idProcessingCount[replaceEvaluator.Id] = 1;
                         }
 
-                        ReplaceEvaluatorValue(evaluator, replaceEvaluator.Id);
+                        ReplaceEvaluatorValue(evaluator, replaceEvaluator.Id, replaceDot);
                     }
                 }
 
@@ -461,17 +464,32 @@ namespace TemplateEngine_v3.Helpers
         /// </summary>
         /// <param name="evaluator">Объект ConditionEvaluator, в котором происходит замена.</param>
         /// <param name="part">Идентификатор (Id) подстановочного элемента для замены.</param>
-        private static void ReplaceEvaluatorValue(ConditionEvaluator evaluator, string part)
+        private static void ReplaceEvaluatorValue(ConditionEvaluator evaluator, string part, bool replaceDot = false)
         {
             var replaceEvaluator = FormulasAndTerms.FirstOrDefault(eval => eval.Id.Equals(part));
             if (replaceEvaluator == null) return;
 
-            string replacement = replaceEvaluator.Value.All(char.IsDigit)
-                ? replaceEvaluator.Value
-                : replaceEvaluator.Value.Replace("[", "").Replace("]", "").Replace("'", "");
+            // Удаляем лишние символы, такие как [ ] и '
+            string rawValue = replaceEvaluator.Value
+                .Replace("[", "")
+                .Replace("]", "")
+                .Replace("'", "");
 
-            evaluator.Value = evaluator.Value.Replace($"[{replaceEvaluator.Name}]", replacement);
+            // Пробуем распарсить как double (учитываем, что вход может быть с запятой)
+            if(rawValue.StartsWith("-0"))
+                evaluator.Value = evaluator.Value.Replace($"[{replaceEvaluator.Name}]", rawValue);
+            else if (double.TryParse(rawValue.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double parsedValue) && replaceDot)
+            {
+                // Если парсинг успешен — используем строку с точкой
+                evaluator.Value = evaluator.Value.Replace($"[{replaceEvaluator.Name}]", parsedValue.ToString().Replace(".", ","));
+            }
+            else
+            {
+                // Иначе просто подставляем строку "как есть"
+                evaluator.Value = evaluator.Value.Replace($"[{replaceEvaluator.Name}]", rawValue);
+            }
         }
+
 
         /// <summary>
         /// Выполняет замену параметров и формул в строке <paramref name="value"/> на их значения из словаря маркировок и списка формул.

@@ -36,6 +36,7 @@
                         <RowDefinition MaxHeight="35"/>
                         <RowDefinition MaxHeight="35"/>
                         <RowDefinition MaxHeight="35"/>
+                        <RowDefinition MaxHeight="35"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
@@ -136,12 +137,31 @@
                         </StackPanel>
                     </Button>
                     <Button Style="{StaticResource MaterialDesignFlatButton}"
+                            Command="{Binding OpenTemplateStagesCommand}"
+                            HorizontalContentAlignment="Left"
+                            Foreground="#FFF"
+                            Visibility="{Binding IsAdminVisibility, UpdateSourceTrigger=PropertyChanged}"
+                            Grid.Row="6">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Width="24"
+                                                     Height="24"
+                                                     Kind="ListStatus"
+                                                     Foreground="#FFF"
+                                                     VerticalAlignment="Center" />
+
+                            <TextBlock Text="Стадии шаблонов"
+                                       TextWrapping="Wrap"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,0,0" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"
                             HorizontalContentAlignment="Left"
                             Foreground="#FFF"
                             VerticalAlignment="Bottom"
                             Visibility="{Binding IsAdminVisibility, UpdateSourceTrigger=PropertyChanged}"
                             Command="{Binding OpenSettingsCommand}"
-                            Grid.Row="6">
+                            Grid.Row="7">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Width="24"
                                                      Height="24"

@@ -61,6 +61,11 @@
                                         MaxWidth="{Binding ElementName=Trees, Path=ActualWidth}"
                                         Margin="4">
 
+                                <TextBox Text="{Binding ConditionEvaluator.Id}"
+                                           FontSize="14"
+                                           FontWeight="Bold"
+                                           TextWrapping="Wrap" />
+
                                 <TextBlock Text="{Binding ConditionEvaluator.Name}"
                                            FontSize="14"
                                            FontWeight="Bold"
