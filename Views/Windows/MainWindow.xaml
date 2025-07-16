@@ -7,7 +7,7 @@
         xmlns:control="clr-namespace:TemplateEngine_v3.UserControls"
         xmlns:local="clr-namespace:TemplateEngine_v3"
         mc:Ignorable="d"
-        MinWidth="850"
+        MinWidth="950"
         MinHeight="600"
         Style="{DynamicResource MaterialDesignWindow}"
         WindowStartupLocation="CenterScreen"

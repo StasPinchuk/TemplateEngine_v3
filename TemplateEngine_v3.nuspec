@@ -13,3 +13,4 @@
     <file src="TemplateEngine_v3\bin\Release\net6.0-windows\win-x64\*.*" target="lib\net6.0-windows" />
   </files>
 </package>
+

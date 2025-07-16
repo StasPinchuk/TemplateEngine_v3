@@ -105,8 +105,8 @@ namespace TemplateEngine_v3.UserControls
         {
             InitializeComponent();
             List<ReferenceModelInfo> list = [];
-            //list.AddRange(templateManager.GetReadyTemplate());
-            list.AddRange(templateManager.GetDraftTemplates());
+            list.AddRange(templateManager.GetReadyTemplate());
+            //list.AddRange(templateManager.GetDraftTemplates());
             ReferencesList = new(list);
             TemplateManager = templateManager;
             SelectedReferencesList.Clear();

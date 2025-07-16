@@ -426,6 +426,8 @@ namespace TemplateEngine_v3.Helpers
                     foreach (var part in parts)
                     {
                         ReplaceEvaluatorValue(evaluator, part, replaceDot);
+                        if (double.TryParse(evaluator.Value.Replace(".", ","), out double value))
+                            evaluator.Value = value.ToString().Replace('.', ',');
                     }
                 }
                 else
@@ -451,10 +453,14 @@ namespace TemplateEngine_v3.Helpers
                         }
 
                         ReplaceEvaluatorValue(evaluator, replaceEvaluator.Id, replaceDot);
+
+                        if (double.TryParse(evaluator.Value.Replace(".", ","), out double value))
+                            evaluator.Value = value.ToString().Replace('.', ',');
+
                     }
                 }
 
-                evaluator.Value = ReplaceMarkingParameter(evaluator.Value.Replace("'", ""));
+                evaluator.Value = ReplaceMarkingParameter(evaluator.Value.Replace("'", "")).Replace("'", "");
                 evaluator.IsLoggingEnabled = true;
             }
         }
@@ -478,10 +484,10 @@ namespace TemplateEngine_v3.Helpers
             // Пробуем распарсить как double (учитываем, что вход может быть с запятой)
             if(rawValue.StartsWith("-0"))
                 evaluator.Value = evaluator.Value.Replace($"[{replaceEvaluator.Name}]", rawValue);
-            else if (double.TryParse(rawValue.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out double parsedValue) && replaceDot)
+            else if (double.TryParse(rawValue.Replace(",", "."), out double parsedValue) && replaceDot)
             {
                 // Если парсинг успешен — используем строку с точкой
-                evaluator.Value = evaluator.Value.Replace($"[{replaceEvaluator.Name}]", parsedValue.ToString().Replace(".", ","));
+                evaluator.Value = evaluator.Value.Replace($"[{replaceEvaluator.Name}]", rawValue.ToString().Trim('\'').Replace(".", ","));
             }
             else
             {

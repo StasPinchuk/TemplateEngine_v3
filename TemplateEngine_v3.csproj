@@ -217,6 +217,7 @@
     <Compile Include="Models\LogModels\DailyLog.cs" />
     <Compile Include="Models\LogModels\LogEntry.cs" />
     <Compile Include="Models\NavigationTabs.cs" />
+    <Compile Include="Models\StageModel.cs" />
     <Compile Include="Models\TemplateModels\ExampleMarking.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\ReferenceServices\LogManager.cs" />
