@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -177,6 +178,7 @@ namespace TemplateEngine_v3.VM.Pages
         public ReferencePageVM(TechnologiesManager technologiesManager, UserManager userManager, TemplateStageService stageService, ColumnDefinition sideBar)
         {
             _technologiesManager = technologiesManager;
+            StageService = stageService;
             _sideBar = sideBar;
             InitializeTechnologiesCommand();
 
@@ -280,9 +282,13 @@ namespace TemplateEngine_v3.VM.Pages
 
                 if (result == MessageBoxResult.Yes)
                 {
+                    var archiveStage = _stageService.StageList.FirstOrDefault(stage => stage.StageType == StatusType.Archive);
+                    await _templateManager.SetTemplateAsync(referenceModel);
+                    _templateManager.SelectedTemplate.Stage = archiveStage.ID;
                     bool isRemove = await _templateManager.RemoveTemplateAsync(referenceModel);
                     if (isRemove)
                     {
+                        _templateManager.ClearTemplate();
                         SetReferenceList();
                     }
                 }
@@ -419,7 +425,7 @@ namespace TemplateEngine_v3.VM.Pages
 
                 NavigationService.RenameSelectedTab(referenceModel.Name);
 
-                var templateEditPage = new PageModel(referenceModel.Name, typeof(TemplateEditPage), new object[] { templateManager, _technologiesManager, _branchManager });
+                var templateEditPage = new PageModel(referenceModel.Name, typeof(TemplateEditPage), new object[] { templateManager, _technologiesManager, _branchManager, StageService });
 
                 NavigationService.SetPageInMainFrame(templateEditPage);
 
@@ -487,7 +493,7 @@ namespace TemplateEngine_v3.VM.Pages
 
             NavigationService.RenameSelectedTab(template.Name);
 
-            var templateEditPage = new PageModel(template.Name, typeof(TemplateEditPage), new object[] { templateManager, _technologiesManager, _branchManager });
+            var templateEditPage = new PageModel(template.Name, typeof(TemplateEditPage), new object[] { templateManager, _technologiesManager, _branchManager, StageService });
 
             NavigationService.SetPageInMainFrame(templateEditPage);
 

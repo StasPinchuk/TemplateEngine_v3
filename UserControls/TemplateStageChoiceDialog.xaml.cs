@@ -1,6 +1,8 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -68,6 +70,14 @@ namespace TemplateEngine_v3.UserControls
                 new PropertyMetadata(Colors.Black)
             );
 
+        public static readonly DependencyProperty SelectedTextColorProperty =
+            DependencyProperty.Register(
+                "SelectedTextColor",
+                typeof(Color),
+                typeof(TemplateStageChoiceDialog),
+                new PropertyMetadata(Colors.Black)
+            );
+
         public static readonly DependencyProperty StageIconsListProperty =
             DependencyProperty.Register(
                 "StageIconsList",
@@ -90,6 +100,22 @@ namespace TemplateEngine_v3.UserControls
                 typeof(string),
                 typeof(TemplateStageChoiceDialog),
                 new PropertyMetadata("Добавить статус")
+            );
+
+        public static readonly DependencyProperty StatusTypeStringProperty =
+            DependencyProperty.Register(
+                "StatusTypeString",
+                typeof(string),
+                typeof(TemplateStageChoiceDialog),
+                new PropertyMetadata(string.Empty)
+            );
+
+        public static readonly DependencyProperty StatusTypeListProperty =
+            DependencyProperty.Register(
+                "StatusTypeList",
+                typeof(List<string>),
+                typeof(TemplateStageChoiceDialog),
+                new PropertyMetadata(new List<string>())
             );
 
         public StageModel CurrentStage
@@ -122,11 +148,16 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(SelectedColorProperty, value);
         }
 
-
         public Color SelectedIconColor
         {
             get => (Color)GetValue(SelectedIconColorProperty);
             set => SetValue(SelectedIconColorProperty, value);
+        }
+
+        public Color SelectedTextColor
+        {
+            get => (Color)GetValue(SelectedTextColorProperty);
+            set => SetValue(SelectedTextColorProperty, value);
         }
 
         public ObservableCollection<PackIconKind> StageIconsList
@@ -135,7 +166,7 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(StageIconsListProperty, value);
         }
 
-        public TemplateStageService TemplateStageService
+        public TemplateStageService StageService
         {
             get => (TemplateStageService)GetValue(TemplateStageServiceProperty);
             set => SetValue(TemplateStageServiceProperty, value);
@@ -147,10 +178,23 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(ButtonTextProperty, value);
         }
 
+        public string StatusTypeString
+        {
+            get => (string)GetValue(StatusTypeStringProperty);
+            set => SetValue(StatusTypeStringProperty, value);
+        }
+
+        public List<string> StatusTypeList
+        {
+            get => (List<string>)GetValue(StatusTypeListProperty);
+            set => SetValue(StatusTypeListProperty, value);
+        }
+
         private bool isEdit = false;
 
         public ICommand ModifyStageCommand { get; set; }
         public ICommand RemoveStageCommand { get; set; }
+        public ICommand CancelStageCommand { get; set; }
 
         public TemplateStageChoiceDialog(TemplateStageService templateStageService)
         {
@@ -162,18 +206,21 @@ namespace TemplateEngine_v3.UserControls
 
             ModifyStageCommand = new RelayCommand(ModifyStage, CanModifyStage);
             RemoveStageCommand = new RelayCommand(RemoveStage);
+            CancelStageCommand = new RelayCommand(CancelStage);
         }
 
 
         private void InitializeCollections(TemplateStageService templateStageService)
         {
-            TemplateStageService = templateStageService;
-            TemplateStageService.SetStageList();
+            StageService = templateStageService;
+            StageService.SetStageList();
             StageList = templateStageService.StageList;
+            StatusTypeList = templateStageService.GetStatusTypeList();
             CurrentStage = new();
             StageIconsList = new(Enum.GetValues(typeof(PackIconKind)).Cast<PackIconKind>().ToList());
             Items = new ObservableCollection<Button>();
             IconColors = new ObservableCollection<Button>();
+            SetBackgroundAndIconColors();
         }
 
         private void InitializeVisibility()
@@ -182,16 +229,29 @@ namespace TemplateEngine_v3.UserControls
             IconColorPickerPanel.Visibility = Visibility.Collapsed;
         }
 
-        private void CreateBackgroundColorButton()
+        private void SetBackgroundAndIconColors()
         {
+            foreach(var stage in StageList)
+            {
+                CreateBackgroundColorButton(stage.BackgroundStageColor, stage.BackgroundStageColor, stage.TextStageColor, "");
+                CreateIconColorButton(stage.BackgroundStageColor, stage.BackgroundStageColor, stage.TextStageColor, "");
+            }
+        }
+
+        private void CreateBackgroundColorButton(Brush background = null, Brush border = null, Brush foreground = null, string content = "+")
+        {
+            background ??= new SolidColorBrush(Colors.White);
+            border ??= new SolidColorBrush(Colors.LightGray);
+            foreground ??= new SolidColorBrush(Colors.Black);
+
             var btnBgList = new Button
             {
-                Content = "+",
+                Content = content,
                 Width = 35,
                 Height = 35,
-                Background = new SolidColorBrush(Colors.White),
-                BorderBrush = new SolidColorBrush(Colors.LightGray),
-                Foreground = new SolidColorBrush(Colors.Black),
+                Background = background,
+                BorderBrush = border,
+                Foreground = foreground,
                 FontSize = 30,
                 Padding = new Thickness(0)
             };
@@ -200,16 +260,20 @@ namespace TemplateEngine_v3.UserControls
             Items.Add(btnBgList);
         }
 
-        private void CreateIconColorButton()
+        private void CreateIconColorButton(Brush background = null, Brush border = null, Brush foreground = null, string content = "+")
         {
+            background ??= new SolidColorBrush(Colors.White);
+            border ??= new SolidColorBrush(Colors.LightGray);
+            foreground ??= new SolidColorBrush(Colors.Black);
+
             var btnIconsList = new Button
             {
-                Content = "+",
+                Content = content,
                 Width = 35,
                 Height = 35,
-                Background = new SolidColorBrush(Colors.White),
-                BorderBrush = new SolidColorBrush(Colors.LightGray),
-                Foreground = new SolidColorBrush(Colors.Black),
+                Background = background,
+                BorderBrush = border,
+                Foreground = foreground,
                 FontSize = 30,
                 Padding = new Thickness(0)
             };
@@ -324,9 +388,9 @@ namespace TemplateEngine_v3.UserControls
         private void ModifyStage(object parameter)
         {
             if(isEdit)
-                TemplateStageService.EditStage(CurrentStage);
+                StageService.EditStage(CurrentStage);
             else
-                TemplateStageService.AddStage(CurrentStage);
+                StageService.AddStage(CurrentStage);
 
             StageListBox.SelectedItem = null;
 
@@ -348,7 +412,15 @@ namespace TemplateEngine_v3.UserControls
                 else
                     CurrentStage = new();
 
-                TemplateStageService.RemoveStage(stage);
+                StageService.RemoveStage(stage);
+            }
+        }
+
+        private void CancelStage(object parameter)
+        {
+            if(parameter is StageModel stage)
+            {
+                CurrentStage = new();
             }
         }
 
@@ -357,9 +429,27 @@ namespace TemplateEngine_v3.UserControls
             if (StageListBox.SelectedItem is StageModel)
             {
                 isEdit = true;
+
+                StatusTypeString = StageService.GetEnumDescription(CurrentStage.StageType);
+                SelectedTextColor = ((SolidColorBrush)CurrentStage.TextStageColor).Color;
+                SelectedColor = ((SolidColorBrush)CurrentStage.BackgroundStageColor).Color;
+                SelectedIconColor = ((SolidColorBrush)CurrentStage.IconStageColor).Color;
+
                 ButtonText = "Изменить статус";
             }
 
         }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox.SelectedItem is string selectedStatus)
+            {
+                StatusType? result = StageService.GetEnumValueByDescription<StatusType>(selectedStatus);
+
+                if (result.HasValue)
+                    CurrentStage.StageType = result.Value;
+            }
+        }        
+
     }
 }

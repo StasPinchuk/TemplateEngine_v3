@@ -26,7 +26,7 @@
                 <RowDefinition Height="15"/>
                 <RowDefinition Height="35"/>
                 <RowDefinition Height="15"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="40"/>
                 <RowDefinition Height="15"/>
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
@@ -35,7 +35,7 @@
                 <TextBlock Text="{Binding CurrentReferenceModel.Name, FallbackValue='Нет данных', RelativeSource={RelativeSource AncestorType=UserControl}}"
                            FontSize="24"
                            TextWrapping="Wrap"
-                           MaxWidth="1000"
+                           MaxWidth="450"
                            FontWeight="SemiBold"
                            TextAlignment="Center"/>
             </Viewbox>
@@ -61,31 +61,44 @@
                                FontWeight="SemiBold"/>
 
                 </StackPanel>
-                
+
             </Border>
 
-            <DockPanel Grid.Row="4"
-                       LastChildFill="False">
+            <Grid Grid.Row="4"
+                  HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition Width="70"/>
+                </Grid.ColumnDefinitions>
 
-                <TextBlock FontSize="16"
-                           FontWeight="Regular"
-                           TextAlignment="Center"
-                           DockPanel.Dock="Top">
-                    <Run Text="Создан: "
-                         FontWeight="SemiBold"/>
-                    <Run Text="{Binding CurrentReferenceModel.CreateDate, StringFormat={}{0:dd.MM.yyyy}, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-                </TextBlock>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                </Grid.RowDefinitions>
 
-                <TextBlock FontSize="16"
-                           FontWeight="Regular"
-                           TextAlignment="Center"
-                           DockPanel.Dock="Bottom">
-                    <Run Text="Изменен: "
-                         FontWeight="SemiBold"/>
-                    <Run Text="{Binding CurrentReferenceModel.LastEditDate, StringFormat={}{0:dd.MM.yyyy}, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-                </TextBlock>
+                <TextBlock Text="Создан: "
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Grid.Column="0"
+                           Grid.Row="0"/>
+                <TextBlock Text="{Binding CurrentReferenceModel.CreateDate, StringFormat={}{0:dd.MM.yyyy}, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Grid.Column="1"
+                           Grid.Row="0"/>
 
-            </DockPanel>
+                <TextBlock Text="Изменен: "
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Grid.Column="0"
+                           Grid.Row="1"/>
+                <TextBlock Text="{Binding CurrentReferenceModel.LastEditDate, StringFormat={}{0:dd.MM.yyyy}, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Grid.Column="1"
+                           Grid.Row="1"/>
+
+            </Grid>
 
             <UniformGrid Grid.Row="6"
                          Columns="3">

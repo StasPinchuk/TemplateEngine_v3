@@ -370,7 +370,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 var findTemplate = await _reference.FindAsync(template.Id);
                 if(findTemplate != null && findTemplate.Changing)
                     await findTemplate.EndChangesAsync();
-                var currentList = type.Equals("draft") ? GetDraftTemplates() : GetReadyTemplate();
+                var currentList = type.Equals("Final") ? GetReadyTemplate() : GetDraftTemplates();
 
                 if (currentList.Any(temp => temp.Id.Equals(template.Id)))
                 {
@@ -381,7 +381,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 }
                 else
                 {
-                    ClassObject templateType = type.Equals("draft") ? _draftTemplateType : _readyTemplateType;
+                    ClassObject templateType = type.Equals("Final") ? _readyTemplateType : _draftTemplateType;
                     bool isSave = await AddTemplateAsync(template, templateType);
                     if(isSave) 
                         await LogManager.SaveLog();

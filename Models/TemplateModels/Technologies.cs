@@ -31,6 +31,13 @@ namespace TemplateEngine_v3.Models
             }
         }
 
+        private Guid _stage;
+        public Guid Stage
+        {
+            get => _stage;
+            set => SetValue(ref _stage, value, nameof(Stage));
+        }
+
         /// <summary>
         /// Name of the technology.
         /// </summary>

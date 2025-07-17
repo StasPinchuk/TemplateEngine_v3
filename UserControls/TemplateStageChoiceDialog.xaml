@@ -109,6 +109,7 @@
                                 
                                 <TextBlock Text="{Binding StageName, UpdateSourceTrigger=PropertyChanged}"
                                            VerticalAlignment="Center"
+                                           Margin="10 0 0 0"
                                            Grid.Column="0"/>
                                 
                                 <Button Style="{StaticResource MaterialDesignIconButton}"
@@ -133,6 +134,7 @@
 
                 <Border Background="{Binding CurrentStage.BackgroundStageColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ElementName=templateStageChoiceDialog}"
                         CornerRadius="15"
+                        HorizontalAlignment="Center"
                         Padding="10,5">
 
                     <StackPanel Orientation="Horizontal">
@@ -159,21 +161,30 @@
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Text="{Binding CurrentStage.StageName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ElementName=templateStageChoiceDialog}"
                          MaxLength="16"
-                         Margin="0,10"/>
-                
-                <StackPanel Orientation="Vertical">
+                         Padding="10"
+                         Margin="0,20"/>
+
+                <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                          materialDesign:HintAssist.Hint="Тип статуса"
+                          ItemsSource="{Binding StatusTypeList, ElementName=templateStageChoiceDialog}"
+                          SelectedItem="{Binding StatusTypeString, ElementName=templateStageChoiceDialog}"
+                          Padding="10"
+                          SelectionChanged="ComboBox_SelectionChanged"/>
+
+                <StackPanel Orientation="Vertical"
+                            Margin="0,10">
                     <TextBlock Text="Цвет текста"
                                FontWeight="SemiBold"
                                FontSize="18"
                                VerticalAlignment="Center"/>
 
                     <xctk:ColorPicker SelectedColorChanged="SelectedTextColor_SelectedColorChanged"
+                                      SelectedColor="{Binding SelectedTextColor, UpdateSourceTrigger=PropertyChanged, ElementName=templateStageChoiceDialog}"
                                       UsingAlphaChannel="False"
                                       DisplayColorAndName="False"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Vertical"
-                            Margin="0,10,0,0">
+                <StackPanel Orientation="Vertical">
                     <TextBlock Text="Цвет статуса"
                                FontWeight="SemiBold"
                                FontSize="18"
@@ -207,7 +218,8 @@
                     </StackPanel>
                 </StackPanel>
 
-                <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical"
+                            Margin="0,10">
                     <TextBlock Text="Иконка"
                                FontWeight="SemiBold"
                                FontSize="18"
@@ -216,13 +228,20 @@
                     <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}"
                               ItemsSource="{Binding StageIconsList, RelativeSource={RelativeSource AncestorType=UserControl}}"
                               SelectedItem="{Binding CurrentStage.StageIcon, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=UserControl}}"    
+                              Cursor="Hand"
+                              IsEditable="True"
                               Height="30"
                               Padding="10, 0"
                               Margin="0,10">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Margin="2">
-                                    <materialDesign:PackIcon Kind="{Binding}" Width="20" Height="20" Margin="0,0,5,0"/>
+                                <StackPanel Orientation="Horizontal" 
+                                            Cursor="Hand"
+                                            Margin="2">
+                                    <materialDesign:PackIcon Kind="{Binding}" 
+                                                             Width="20" 
+                                                             Height="20" 
+                                                             Margin="0,0,5,0"/>
                                     <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </DataTemplate>
@@ -230,8 +249,7 @@
                     </ComboBox>
                 </StackPanel>
 
-                <StackPanel Orientation="Vertical"
-                            Margin="0,10,0,0">
+                <StackPanel Orientation="Vertical">
                     <TextBlock Text="Цвет иконки"
                                FontWeight="SemiBold"
                                FontSize="18"
@@ -267,6 +285,12 @@
 
                 <Button Content="{Binding ButtonText, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         Command="{Binding ModifyStageCommand, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Margin="0,10,0,0"/>
+
+                <Button Content="Отмена"
+                        Command="{Binding CancelStageCommand, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Background="Red"
+                        BorderBrush="Red"
                         Margin="0,10,0,0"/>
 
             </StackPanel>

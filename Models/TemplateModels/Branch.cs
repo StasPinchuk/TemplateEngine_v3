@@ -35,6 +35,13 @@ namespace TemplateEngine_v3.Models
             }
         }
 
+        private Guid _stage;
+        public Guid Stage
+        {
+            get => _stage;
+            set => SetValue(ref _stage, value, nameof(Stage));
+        }
+
         private string _editName = string.Empty;
 
         /// <summary>

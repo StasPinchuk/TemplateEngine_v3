@@ -1,4 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.FileServices;
@@ -24,10 +28,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             _structParameter = _reference.ParameterGroup.Parameters.FindByName("Структура файла");
         }
 
-        public async void SetStageList()
+        public void SetStageList()
         {
             StageList.Clear();
-            await _reference.Objects.ReloadAsync();
+            _reference.Objects.Reload();
 
             foreach(var stage in _reference.Objects)
             {
@@ -76,6 +80,35 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 await removeStage.DeleteAsync();
                 StageList.Remove(stage);
             }
+        }
+
+        public List<string> GetStatusTypeList()
+        {
+            return Enum.GetValues(typeof(StatusType))
+                    .Cast<StatusType>()
+                    .Select(e => GetEnumDescription(e))
+                    .ToList();
+        }
+
+        public string GetEnumDescription(Enum value)
+        {
+            var field = value.GetType().GetField(value.ToString());
+            var attr = (DescriptionAttribute)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
+            return attr?.Description ?? value.ToString();
+        }
+
+        public TEnum? GetEnumValueByDescription<TEnum>(string description) where TEnum : struct, Enum
+        {
+            foreach (var field in typeof(TEnum).GetFields())
+            {
+                var attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+                if (attr != null && attr.Description == description)
+                {
+                    return (TEnum)field.GetValue(null);
+                }
+            }
+
+            return null;
         }
     }
 }

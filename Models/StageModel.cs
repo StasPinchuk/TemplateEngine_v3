@@ -1,9 +1,29 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.ComponentModel;
 using System.Windows.Media;
 
 namespace TemplateEngine_v3.Models
 {
+
+    public enum StatusType
+    {
+        [Description("Черновик")]
+        Draft,
+
+        [Description("Проверка")]
+        Verification,
+
+        [Description("Завершён")]
+        Final,
+
+        [Description("Отклонён")]
+        Rejected,
+
+        [Description("Архив")]
+        Archive
+    }
+
     public class StageModel : BaseNotifyPropertyChanged
     {
         private Guid _id;
@@ -18,6 +38,13 @@ namespace TemplateEngine_v3.Models
         {
             get => _stageName;
             set => SetValue(ref _stageName, value, nameof(StageName));
+        }
+
+        private StatusType _stageType;
+        public StatusType StageType
+        {
+            get => _stageType;
+            set => SetValue(ref _stageType, value, nameof(StageType));
         }
 
         private PackIconKind _stageIcon = PackIconKind.Abacus;

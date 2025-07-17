@@ -25,6 +25,7 @@ namespace TemplateEngine_v3.VM.Pages
         private Frame _frame;
 
         private readonly TemplateManager _templateManager;
+        private readonly TemplateStageService _stageService;
         private readonly BranchManager _branchManager;
 
         private ObservableCollection<PageModel> _pagesHistory = new();
@@ -56,10 +57,11 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="templateManager">Менеджер шаблонов.</param>
         /// <param name="branchManager">Менеджер филиалов.</param>
         /// <param name="frame">Фрейм для отображения страниц.</param>
-        public TemplateEditPageVM(TemplateManager templateManager, TechnologiesManager technologiesManager, BranchManager branchManager, Frame frame)
+        public TemplateEditPageVM(TemplateManager templateManager, TechnologiesManager technologiesManager, BranchManager branchManager, TemplateStageService stageService, Frame frame)
         {
             _branchManager = branchManager;
             _templateManager = templateManager;
+            _stageService = stageService;
 
             NavigationService.UpdateHistory += UpdatePageHistory;
             NavigationService.SetSecondaryFrame(frame);
@@ -85,7 +87,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// </summary>
         private async void Save()
         {
-            var dialog = new SaveChoiceDialog();
+            var dialog = new SaveChoiceDialog(_templateManager, _stageService);
             var result = await DialogHost.Show(dialog, "RootDialog");
             bool isSave = false;
 

@@ -159,9 +159,6 @@
                             <!-- Parameter -->
                             <DataTemplate DataType="{x:Type model:ConditionEvaluator}">
                                 <StackPanel Orientation="Vertical">
-                                    <TextBox Text="{Binding Id}"
-                                                FontWeight="Bold"
-                                                FontSize="14"/>
                                     <TextBlock Text="{Binding Name}"
                                                 FontWeight="Bold"
                                                 FontSize="14"/>
