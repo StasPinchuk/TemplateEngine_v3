@@ -63,7 +63,8 @@
                     Grid.Column="0">
                 <ListBox x:Name="StageListBox"
                          ItemsSource="{Binding StageList, UpdateSourceTrigger=PropertyChanged, ElementName=templateStageChoiceDialog}"
-                         SelectedItem="{Binding CurrentStage, UpdateSourceTrigger=PropertyChanged, ElementName=templateStageChoiceDialog}">
+                         SelectedItem="{Binding CurrentStage, UpdateSourceTrigger=PropertyChanged, ElementName=templateStageChoiceDialog}"
+                         SelectionChanged="StageListBox_SelectionChanged">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Foreground" Value="Black"/>
@@ -195,8 +196,7 @@
 
                         <StackPanel x:Name="ColorPickerPanel"
                                     Orientation="Vertical">
-                            <xctk:ColorPicker x:Name="MyColorPicker"
-                                              SelectedColor="{Binding SelectedColor, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            <xctk:ColorPicker SelectedColor="{Binding SelectedColor, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                               UsingAlphaChannel="False"
                                               DisplayColorAndName="False"
                                               Margin="16"/>
@@ -265,8 +265,8 @@
                     </StackPanel>
                 </StackPanel>
 
-                <Button Content="Добавить статус"
-                        Command="{Binding AddStageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                <Button Content="{Binding ButtonText, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Command="{Binding ModifyStageCommand, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         Margin="0,10,0,0"/>
 
             </StackPanel>

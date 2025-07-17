@@ -41,21 +41,23 @@
             </Viewbox>
 
             <Border CornerRadius="15"
-                    Background="LightGray"
+                    Background="{Binding Stage.BackgroundStageColor, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     HorizontalAlignment="Center"
                     Padding="10,5"
                     Grid.Row="2">
 
                 <StackPanel Orientation="Horizontal"
                             VerticalAlignment="Center">
-                    
-                    <materialDesign:PackIcon Kind="Edit"
+
+                    <materialDesign:PackIcon Kind="{Binding Stage.StageIcon, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                              VerticalAlignment="Center"
+                                             Foreground="{Binding Stage.IconStageColor, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                              Margin="0,0,10,0"/>
 
                     <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}" 
-                               Text="Черновик"
+                               Text="{Binding Stage.StageName, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                VerticalAlignment="Center"
+                               Foreground="{Binding Stage.TextStageColor, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                FontWeight="SemiBold"/>
 
                 </StackPanel>

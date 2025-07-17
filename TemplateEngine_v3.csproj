@@ -257,6 +257,7 @@
     <Compile Include="Services\ReferenceServices\TableService.cs" />
     <Compile Include="Services\ReferenceServices\TechnologiesManager.cs" />
     <Compile Include="Services\ReferenceServices\TemplateManager.cs" />
+    <Compile Include="Services\ReferenceServices\TemplateStageService.cs" />
     <Compile Include="Services\ServerServices\DefaultConnectionService.cs" />
     <Compile Include="Services\ServerServices\DefaultManagerInitializer.cs" />
     <Compile Include="Services\ServerServices\ServerManager.cs" />

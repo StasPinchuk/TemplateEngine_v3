@@ -4,8 +4,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services;
+using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.UserControls
 {
@@ -93,12 +95,26 @@ namespace TemplateEngine_v3.UserControls
                 typeof(ReferenceBlock),
                 new PropertyMetadata("Изменить"));
 
+        public static readonly DependencyProperty StageServiceProperty =
+            DependencyProperty.Register(
+                "StageService",
+                typeof(TemplateStageService),
+                typeof(ReferenceBlock),
+                new PropertyMetadata(null, OnSetStageService));
+
         public static readonly DependencyProperty BlockVisibilityProperty =
             DependencyProperty.Register(
                 "BlockVisibility",
                 typeof(Visibility),
                 typeof(ReferenceBlock),
                 new PropertyMetadata(Visibility.Visible));
+
+        public static readonly DependencyProperty StageProperty =
+            DependencyProperty.Register(
+                "Stage",
+                typeof(StageModel),
+                typeof(ReferenceBlock),
+                new PropertyMetadata(null));
 
         public ReferenceModelInfo CurrentReferenceModel
         {
@@ -172,6 +188,18 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(BlockVisibilityProperty, value);
         }
 
+        public TemplateStageService StageService
+        {
+            get => (TemplateStageService)GetValue(StageServiceProperty);
+            set => SetValue(StageServiceProperty, value);
+        }
+
+        public StageModel Stage
+        {
+            get => (StageModel)GetValue(StageProperty);
+            set => SetValue(StageProperty, value);
+        }
+
         public ReferenceBlock()
         {
             InitializeComponent();
@@ -222,6 +250,37 @@ namespace TemplateEngine_v3.UserControls
                     control.CanCopy = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Copy)) && !control.IsLocked;
                     control.CanEdit = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Edit)) && !control.IsLocked;
                     control.CanRemove = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Delete)) && !control.IsLocked;
+                }
+            }
+        }
+
+        private static void OnSetStageService(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (ReferenceBlock)d;
+            if (control != null)
+            {
+                if(e.NewValue != null)
+                {
+                    TemplateStageService stageService = e.NewValue as TemplateStageService;
+
+                    var stageId = control.CurrentReferenceModel.Stage;
+                    var stage = stageService.StageList.FirstOrDefault(st => st.ID.Equals(stageId));
+
+                    if (stage != null)
+                    {
+                        control.Stage = stage;
+                    }
+                    else
+                    {
+                        control.Stage = new()
+                        {
+                            StageName = "Завершен",
+                            StageIcon = PackIconKind.Check,
+                            TextStageColor = new SolidColorBrush(Colors.White),
+                            IconStageColor = new SolidColorBrush(Colors.White),
+                            BackgroundStageColor = new SolidColorBrush(Colors.Green),
+                        };
+                    }
                 }
             }
         }

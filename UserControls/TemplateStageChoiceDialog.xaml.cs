@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TFlex.DOCs.Model.Stages;
 using Xceed.Wpf.Toolkit;
 
@@ -75,6 +76,22 @@ namespace TemplateEngine_v3.UserControls
                 new PropertyMetadata(new ObservableCollection<PackIconKind>())
             );
 
+        public static readonly DependencyProperty TemplateStageServiceProperty =
+            DependencyProperty.Register(
+                "TemplateStageService",
+                typeof(TemplateStageService),
+                typeof(TemplateStageChoiceDialog),
+                new PropertyMetadata(null)
+            );
+
+        public static readonly DependencyProperty ButtonTextProperty =
+            DependencyProperty.Register(
+                "ButtonText",
+                typeof(string),
+                typeof(TemplateStageChoiceDialog),
+                new PropertyMetadata("Добавить статус")
+            );
+
         public StageModel CurrentStage
         {
             get => (StageModel)GetValue(CurrentStageProperty);
@@ -118,25 +135,41 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(StageIconsListProperty, value);
         }
 
-        public ICommand AddStageCommand { get; set; }
+        public TemplateStageService TemplateStageService
+        {
+            get => (TemplateStageService)GetValue(TemplateStageServiceProperty);
+            set => SetValue(TemplateStageServiceProperty, value);
+        }
+
+        public string ButtonText
+        {
+            get => (string)GetValue(ButtonTextProperty);
+            set => SetValue(ButtonTextProperty, value);
+        }
+
+        private bool isEdit = false;
+
+        public ICommand ModifyStageCommand { get; set; }
         public ICommand RemoveStageCommand { get; set; }
 
-        public TemplateStageChoiceDialog()
+        public TemplateStageChoiceDialog(TemplateStageService templateStageService)
         {
             InitializeComponent();
-            InitializeCollections();
+            InitializeCollections(templateStageService);
             InitializeVisibility();
             CreateBackgroundColorButton();
             CreateIconColorButton();
 
-            AddStageCommand = new RelayCommand(AddStage, CanAddStage);
+            ModifyStageCommand = new RelayCommand(ModifyStage, CanModifyStage);
             RemoveStageCommand = new RelayCommand(RemoveStage);
         }
 
 
-        private void InitializeCollections()
+        private void InitializeCollections(TemplateStageService templateStageService)
         {
-            StageList = new();
+            TemplateStageService = templateStageService;
+            TemplateStageService.SetStageList();
+            StageList = templateStageService.StageList;
             CurrentStage = new();
             StageIconsList = new(Enum.GetValues(typeof(PackIconKind)).Cast<PackIconKind>().ToList());
             Items = new ObservableCollection<Button>();
@@ -282,17 +315,23 @@ namespace TemplateEngine_v3.UserControls
                 CurrentStage.TextStageColor = new SolidColorBrush(e.NewValue.Value);
         }
 
-        private bool CanAddStage(object parameter)
+        private bool CanModifyStage(object parameter)
         {
             return !string.IsNullOrEmpty(CurrentStage?.StageName)
                    && !(CurrentStage?.StageName.Equals("Название статуса") ?? false);
         }
 
-        private void AddStage(object parameter)
+        private void ModifyStage(object parameter)
         {
-            StageList.Add(CurrentStage);
+            if(isEdit)
+                TemplateStageService.EditStage(CurrentStage);
+            else
+                TemplateStageService.AddStage(CurrentStage);
 
-            CurrentStage = null;
+            StageListBox.SelectedItem = null;
+
+            isEdit = false;
+            ButtonText = "Добавить статус";
 
             CurrentStage = new();
         }
@@ -308,8 +347,19 @@ namespace TemplateEngine_v3.UserControls
                     CurrentStage = StageList[stageIndex - 1];
                 else
                     CurrentStage = new();
-                StageList.Remove(stage);
+
+                TemplateStageService.RemoveStage(stage);
             }
+        }
+
+        private void StageListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (StageListBox.SelectedItem is StageModel)
+            {
+                isEdit = true;
+                ButtonText = "Изменить статус";
+            }
+
         }
     }
 }

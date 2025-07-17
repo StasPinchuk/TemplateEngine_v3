@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services.ReferenceServices;
 using TFlex.DOCs.Model;
 using TFlex.DOCs.Model.References;
 
@@ -44,6 +46,7 @@ namespace TemplateEngine_v3.Mappers
                 _structObjectParameterGuid = Reference.ParameterGroup.Parameters.FindByName("Структура файла").Guid;
             if (_lockedParameterGuid == Guid.Empty)
                 _lockedParameterGuid = Reference.ParameterGroup.Parameters.FindByName("Заблокирован").Guid;
+
         }
 
         /// <summary>
@@ -58,10 +61,22 @@ namespace TemplateEngine_v3.Mappers
                 if (reference == null)
                     return null;
 
+                string structObject = reference[_structObjectParameterGuid].ToString();
+                Guid stageId = Guid.Empty;
+
+                var match = Regex.Match(structObject, @"""Stage""\s*:\s*""([^""]+)""");
+
+                if (match.Success)
+                {
+                    stageId = new Guid(match.Groups[1].Value);
+                }
+
+
                 return new ReferenceModelInfo
                 {
                     Id = reference.Guid,
                     Name = reference[_titleParameterGuid].ToString(),
+                    Stage = stageId,
                     Type = reference.Class,
                     LastEditDate = Convert.ToDateTime(reference[_lastEditParameterGuid].ToString()),
                     CreateDate = Convert.ToDateTime(reference[_createDateParameterGuid].ToString()),

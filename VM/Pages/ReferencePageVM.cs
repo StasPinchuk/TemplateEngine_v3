@@ -64,6 +64,13 @@ namespace TemplateEngine_v3.VM.Pages
             set => SetValue(ref _canCreate, value, nameof(CanCreate));
         }
 
+        private TemplateStageService _stageService;
+        public TemplateStageService StageService
+        {
+            get => _stageService;
+            set => SetValue(ref _stageService, value, nameof(StageService));
+        }
+
         /// <summary>
         /// Команда удаления элемента.
         /// </summary>
@@ -87,11 +94,12 @@ namespace TemplateEngine_v3.VM.Pages
         /// <summary>
         /// Конструктор для страницы с шаблонами (без технологий).
         /// </summary>
-        public ReferencePageVM(TemplateManager templateManager, BranchManager branchManager, UserManager userManager, TemplateClass templateClass, ColumnDefinition sideBar)
+        public ReferencePageVM(TemplateManager templateManager, BranchManager branchManager, UserManager userManager, TemplateClass templateClass, TemplateStageService stageService, ColumnDefinition sideBar)
         {
             _templateManager = templateManager;
             _templateClass = templateClass;
             _branchManager = branchManager;
+            StageService = stageService;
             _sideBar = sideBar;
 
             Permission = userManager.CurrentUser.TemplatePermission;
@@ -106,12 +114,13 @@ namespace TemplateEngine_v3.VM.Pages
         /// <summary>
         /// Конструктор для страницы с шаблонами и технологиями.
         /// </summary>
-        public ReferencePageVM(TemplateManager templateManager, TechnologiesManager technologiesManager, BranchManager branchManager, UserManager userManager, TemplateClass templateClass, ColumnDefinition sideBar)
+        public ReferencePageVM(TemplateManager templateManager, TechnologiesManager technologiesManager, BranchManager branchManager, UserManager userManager, TemplateClass templateClass, TemplateStageService stageService, ColumnDefinition sideBar)
         {
             _templateManager = templateManager;
             _technologiesManager = technologiesManager;
             _templateClass = templateClass;
             _branchManager = branchManager;
+            StageService = stageService;
             _sideBar = sideBar;
 
             Permission = userManager.CurrentUser.TemplatePermission;
@@ -137,9 +146,10 @@ namespace TemplateEngine_v3.VM.Pages
         /// <summary>
         /// Конструктор для страницы с филиалами.
         /// </summary>
-        public ReferencePageVM(BranchManager branchManager, UserManager userManager, ColumnDefinition sideBar)
+        public ReferencePageVM(BranchManager branchManager, UserManager userManager, TemplateStageService stageService, ColumnDefinition sideBar)
         {
             _branchManager = branchManager;
+            StageService = stageService;
             _sideBar = sideBar;
             InitializeBranchCommand();
 
@@ -164,7 +174,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <summary>
         /// Конструктор для страницы с технологиями.
         /// </summary>
-        public ReferencePageVM(TechnologiesManager technologiesManager, UserManager userManager, ColumnDefinition sideBar)
+        public ReferencePageVM(TechnologiesManager technologiesManager, UserManager userManager, TemplateStageService stageService, ColumnDefinition sideBar)
         {
             _technologiesManager = technologiesManager;
             _sideBar = sideBar;

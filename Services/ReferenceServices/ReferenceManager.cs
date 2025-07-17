@@ -16,6 +16,7 @@ public class ReferenceManager
     public TechnologiesManager TechnologiesManager;
     public MaterialManager MaterialManager;
     public TableService TableService;
+    public TemplateStageService TemplateStageService;
 
     // Словарь с маппингом ключей на ReferenceInfo
     public Dictionary<string, ReferenceInfo> ReferenceMappings { get; private set; }
@@ -68,6 +69,9 @@ public class ReferenceManager
         // Менеджер названий операций
         if (ReferenceMappings.TryGetValue("Названия операций для ТП", out var operationInfo))
             _operationNamesManager = new OperationNamesManager(operationInfo);
+
+        if (ReferenceMappings.TryGetValue("Стадии шаблонов", out var templateStage))
+            TemplateStageService = new TemplateStageService(templateStage);
 
         // Менеджер типов изделий (статический)
         if (ReferenceMappings.TryGetValue("Типы изделий", out var nodeTypes))

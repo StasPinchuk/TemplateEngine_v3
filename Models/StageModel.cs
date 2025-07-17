@@ -1,10 +1,18 @@
 ﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Windows.Media;
 
 namespace TemplateEngine_v3.Models
 {
     public class StageModel : BaseNotifyPropertyChanged
     {
+        private Guid _id;
+        public Guid ID
+        {
+            get => _id;
+            set => SetValue(ref _id, value, nameof(ID));
+        }
+
         private string _stageName = "Название статуса";
         public string StageName
         {

@@ -30,6 +30,7 @@ namespace TemplateEngine_v3.VM.Windows
         private TemplateManager _templateManager;
         private BranchManager _branchManager;
         private TechnologiesManager _technologiesManager;
+        private TemplateStageService _stageService;
         private readonly UserManager _userManager;
         private readonly ColumnDefinition _sideBar;
         private readonly Frame _mainFrame;
@@ -115,10 +116,13 @@ namespace TemplateEngine_v3.VM.Windows
             _templateManager = referenceManager.TemplateManager;
             _branchManager = referenceManager.BranchManager;
             _technologiesManager = referenceManager.TechnologiesManager;
+            _stageService = referenceManager.TemplateStageService;
             _userManager = userManager;
             _sideBar = sideBar;
             _mainFrame = mainFrame;
             NavigationService.SetMainFrame(mainFrame);
+
+            _stageService.SetStageList();
 
             TabsItem = NavigationService.GetTabs();
 
@@ -131,7 +135,7 @@ namespace TemplateEngine_v3.VM.Windows
                     PageType = typeof(ReferencePage),
                     IsSelected = true,
                     GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _templateManager, _technologiesManager, _branchManager, _userManager, TemplateClass.Ready, sideBar }
+                    ConstructorParameters = new object[] { _templateManager, _technologiesManager, _branchManager, _userManager, _stageService, TemplateClass.Ready, sideBar }
                 },
                 new PageModel
                 {
@@ -139,7 +143,7 @@ namespace TemplateEngine_v3.VM.Windows
                     Icon = PackIconKind.Draft,
                     PageType = typeof(ReferencePage),
                     GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _templateManager, _technologiesManager, _branchManager, _userManager, TemplateClass.Draft, sideBar }
+                    ConstructorParameters = new object[] { _templateManager, _technologiesManager, _branchManager, _userManager, _stageService, TemplateClass.Draft, sideBar }
                 },
                 new PageModel
                 {
@@ -147,7 +151,7 @@ namespace TemplateEngine_v3.VM.Windows
                     Icon = PackIconKind.TrashCan,
                     PageType = typeof(ReferencePage),
                     GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _templateManager, _branchManager, _userManager, TemplateClass.TrashCan, sideBar }
+                    ConstructorParameters = new object[] { _templateManager, _branchManager, _userManager, _stageService, TemplateClass.TrashCan, sideBar }
                 },
                 new PageModel
                 {
@@ -155,7 +159,7 @@ namespace TemplateEngine_v3.VM.Windows
                     Icon = PackIconKind.Wrench,
                     PageType = typeof(ReferencePage),
                     GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _technologiesManager, _userManager, sideBar }
+                    ConstructorParameters = new object[] { _technologiesManager, _userManager, _stageService, sideBar }
                 },
                 new PageModel
                 {
@@ -163,7 +167,7 @@ namespace TemplateEngine_v3.VM.Windows
                     Icon = PackIconKind.SourceBranch,
                     PageType = typeof(ReferencePage),
                     GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _branchManager, _userManager, sideBar }
+                    ConstructorParameters = new object[] { _branchManager, _userManager, _stageService, sideBar }
                 },
                 new PageModel
                 {
@@ -318,7 +322,7 @@ namespace TemplateEngine_v3.VM.Windows
 
         private async void OpenTemplateStages(object parameter)
         {
-            var dialog = new TemplateStageChoiceDialog();
+            var dialog = new TemplateStageChoiceDialog(_stageService);
             await DialogHost.Show(dialog, "MainDialog");
         }
 

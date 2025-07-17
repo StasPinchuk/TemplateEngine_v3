@@ -14,31 +14,31 @@ namespace TemplateEngine_v3.Views.Pages
     {
         private ReferencePageVM vm;
 
-        public ReferencePage(BranchManager branchManager, UserManager userManager, ColumnDefinition sideBar)
+        public ReferencePage(BranchManager branchManager, UserManager userManager, TemplateStageService stageService, ColumnDefinition sideBar)
         {
             InitializeComponent();
-            vm = new ReferencePageVM(branchManager, userManager, sideBar);
+            vm = new ReferencePageVM(branchManager, userManager, stageService, sideBar);
             DataContext = vm;
         }
 
-        public ReferencePage(TechnologiesManager technologiesManager, UserManager userManager, ColumnDefinition sideBar)
+        public ReferencePage(TechnologiesManager technologiesManager, UserManager userManager, TemplateStageService stageService, ColumnDefinition sideBar)
         {
             InitializeComponent();
-            vm = new ReferencePageVM(technologiesManager, userManager, sideBar);
+            vm = new ReferencePageVM(technologiesManager, userManager, stageService, sideBar);
             DataContext = vm;
         }
 
-        public ReferencePage(TemplateManager templateManager, BranchManager branchManager, UserManager userManager, TemplateClass templateClass, ColumnDefinition sideBar)
+        public ReferencePage(TemplateManager templateManager, BranchManager branchManager, UserManager userManager, TemplateStageService stageService, TemplateClass templateClass, ColumnDefinition sideBar)
         {
             InitializeComponent();
-            vm = new ReferencePageVM(templateManager, branchManager, userManager, templateClass, sideBar);
+            vm = new ReferencePageVM(templateManager, branchManager, userManager, templateClass, stageService, sideBar);
             DataContext = vm;
         }
 
-        public ReferencePage(TemplateManager templateManager, TechnologiesManager technologiesManager, BranchManager branchManager, UserManager userManager, TemplateClass templateClass, ColumnDefinition sideBar)
+        public ReferencePage(TemplateManager templateManager, TechnologiesManager technologiesManager, BranchManager branchManager, UserManager userManager, TemplateStageService stageService, TemplateClass templateClass, ColumnDefinition sideBar)
         {
             InitializeComponent();
-            vm = new ReferencePageVM(templateManager, technologiesManager, branchManager, userManager, templateClass, sideBar);
+            vm = new ReferencePageVM(templateManager, technologiesManager, branchManager, userManager, templateClass, stageService, sideBar);
             DataContext = vm;
         }
     }

@@ -19,6 +19,7 @@ namespace TemplateEngine_v3.Models
     public class ReferenceModelInfo : BaseNotifyPropertyChanged
     {
         private Guid _id;
+        private Guid _stage;
         private string _name = string.Empty;
         private ClassObject _type;
         private DateTime _createDate = DateTime.MinValue;
@@ -33,6 +34,12 @@ namespace TemplateEngine_v3.Models
         {
             get => _id;
             set => SetValue(ref _id, value, nameof(Id));
+        }
+
+        public Guid Stage
+        {
+            get => _stage;
+            set => SetValue(ref _stage, value, nameof(Stage));
         }
 
         /// <summary>
