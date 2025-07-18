@@ -211,9 +211,6 @@ namespace TemplateEngine_v3.VM.Pages
                 case TemplateClass.Ready:
                     SetReadyTemplateList();
                     break;
-                case TemplateClass.Draft:
-                    SetDraftTemplateList();
-                    break;
                 case TemplateClass.TrashCan:
                     SetTrashCanTemplateList();
                     break;
@@ -228,15 +225,6 @@ namespace TemplateEngine_v3.VM.Pages
         private void SetReadyTemplateList()
         {
             ReferencesList = _templateManager.GetReadyTemplate();
-            OnPropertyChanged(nameof(ReferencesList));
-        }
-
-        /// <summary>
-        /// Загружает список шаблонов-черновиков.
-        /// </summary>
-        private void SetDraftTemplateList()
-        {
-            ReferencesList = _templateManager.GetDraftTemplates();
             OnPropertyChanged(nameof(ReferencesList));
         }
 

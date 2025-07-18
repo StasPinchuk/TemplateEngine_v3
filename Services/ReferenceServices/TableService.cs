@@ -227,10 +227,12 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             {
                 _currentWorksheet.Cells[0, 1].PutValue(findValue);
                 _workbook.CalculateFormula();
+                _workbook = null;
                 return _currentWorksheet.Cells[1, 1].Value?.ToString() ?? string.Empty;
             }
             else
             {
+                _workbook = null;
                 return findValue;
             }
         }

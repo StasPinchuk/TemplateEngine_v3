@@ -201,6 +201,7 @@ namespace TemplateEngine_v3.UserControls
             InitializeComponent();
             InitializeCollections(templateStageService);
             InitializeVisibility();
+            SetBackgroundAndIconColors();
             CreateBackgroundColorButton();
             CreateIconColorButton();
 
@@ -220,7 +221,6 @@ namespace TemplateEngine_v3.UserControls
             StageIconsList = new(Enum.GetValues(typeof(PackIconKind)).Cast<PackIconKind>().ToList());
             Items = new ObservableCollection<Button>();
             IconColors = new ObservableCollection<Button>();
-            SetBackgroundAndIconColors();
         }
 
         private void InitializeVisibility()
@@ -234,7 +234,7 @@ namespace TemplateEngine_v3.UserControls
             foreach(var stage in StageList)
             {
                 CreateBackgroundColorButton(stage.BackgroundStageColor, stage.BackgroundStageColor, stage.TextStageColor, "");
-                CreateIconColorButton(stage.BackgroundStageColor, stage.BackgroundStageColor, stage.TextStageColor, "");
+                CreateIconColorButton(stage.IconStageColor, stage.IconStageColor, stage.TextStageColor, "");
             }
         }
 
@@ -243,6 +243,13 @@ namespace TemplateEngine_v3.UserControls
             background ??= new SolidColorBrush(Colors.White);
             border ??= new SolidColorBrush(Colors.LightGray);
             foreground ??= new SolidColorBrush(Colors.Black);
+
+            var isContainsColor = Items.Any(btn => btn.Background is SolidColorBrush solid && solid.Color == ((SolidColorBrush)background).Color);
+
+            if (isContainsColor)
+            {
+                return;
+            }
 
             var btnBgList = new Button
             {
@@ -265,6 +272,13 @@ namespace TemplateEngine_v3.UserControls
             background ??= new SolidColorBrush(Colors.White);
             border ??= new SolidColorBrush(Colors.LightGray);
             foreground ??= new SolidColorBrush(Colors.Black);
+
+            var isContainsColor = IconColors.Any(btn => btn.Background is SolidColorBrush solid && solid.Color == ((SolidColorBrush)background).Color);
+
+            if (isContainsColor)
+            {
+                return;
+            }
 
             var btnIconsList = new Button
             {
@@ -313,7 +327,7 @@ namespace TemplateEngine_v3.UserControls
 
         private void AddIconColorButton_Click(object sender, RoutedEventArgs e)
         {
-            var isContainsColor = IconColors.Any(btn => btn.Background is SolidColorBrush solid && solid.Color == SelectedColor);
+            var isContainsColor = IconColors.Any(btn => btn.Background is SolidColorBrush solid && solid.Color == SelectedIconColor);
 
             if (isContainsColor)
             {
@@ -413,6 +427,8 @@ namespace TemplateEngine_v3.UserControls
                     CurrentStage = new();
 
                 StageService.RemoveStage(stage);
+
+                SetBackgroundAndIconColors();
             }
         }
 

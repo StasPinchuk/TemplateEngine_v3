@@ -15,6 +15,7 @@
 
 
     <materialDesign:DialogHost Identifier="MainDialog">
+        
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="SideBar"
@@ -37,7 +38,6 @@
                         <RowDefinition MaxHeight="35"/>
                         <RowDefinition MaxHeight="35"/>
                         <RowDefinition MaxHeight="35"/>
-                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <control:SideNavigation MenuList="{Binding MenuItems, UpdateSourceTrigger=PropertyChanged}"
@@ -126,7 +126,7 @@
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Width="24"
                                                      Height="24"
-                                                     Kind="ListStatus"
+                                                     Kind="LogicGateAnd"
                                                      Foreground="#FFF"
                                                      VerticalAlignment="Center" />
 
@@ -150,26 +150,6 @@
                                                      VerticalAlignment="Center" />
 
                             <TextBlock Text="Стадии шаблонов"
-                                       TextWrapping="Wrap"
-                                       VerticalAlignment="Center"
-                                       Margin="8,0,0,0" />
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource MaterialDesignFlatButton}"
-                            HorizontalContentAlignment="Left"
-                            Foreground="#FFF"
-                            VerticalAlignment="Bottom"
-                            Visibility="{Binding IsAdminVisibility, UpdateSourceTrigger=PropertyChanged}"
-                            Command="{Binding OpenSettingsCommand}"
-                            Grid.Row="7">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Width="24"
-                                                     Height="24"
-                                                     Kind="Settings"
-                                                     Foreground="#FFF"
-                                                     VerticalAlignment="Center" />
-
-                            <TextBlock Text="Настройки"
                                        TextWrapping="Wrap"
                                        VerticalAlignment="Center"
                                        Margin="8,0,0,0" />
@@ -269,13 +249,12 @@
                         </Button>
                     </Grid>
                 </Border>
-                
+
 
                 <Frame x:Name="MainFrame"
                        Grid.Row="1"
                        NavigationUIVisibility="Hidden"/>
             </Grid>
-
         </Grid>
     </materialDesign:DialogHost>
 </Window>

@@ -1,4 +1,5 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿using Aspose.Cells.Charts;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -58,6 +59,10 @@ namespace TemplateEngine_v3.VM.Windows
             {
                 if(value != null && MenuItems.Any(item => item.Title.Equals(value.Title)))
                     _sideBar.Width = GridLength.Auto;
+
+                var selectedPage = MenuItems.FirstOrDefault(item => item.Title.Equals(value.Title));
+                if (selectedPage != null)
+                    selectedPage.IsSelected = true;
 
                 value.Page.ClearPage();
 
@@ -139,16 +144,8 @@ namespace TemplateEngine_v3.VM.Windows
                 },
                 new PageModel
                 {
-                    Title = "Черновики",
-                    Icon = PackIconKind.Draft,
-                    PageType = typeof(ReferencePage),
-                    GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _templateManager, _technologiesManager, _branchManager, _userManager, _stageService, TemplateClass.Draft, sideBar }
-                },
-                new PageModel
-                {
-                    Title = "Корзина",
-                    Icon = PackIconKind.TrashCan,
+                    Title = "Архив",
+                    Icon = PackIconKind.Archive,
                     PageType = typeof(ReferencePage),
                     GroupName = "MainSideBar",
                     ConstructorParameters = new object[] { _templateManager, _branchManager, _userManager, _stageService, TemplateClass.TrashCan, sideBar }
@@ -268,10 +265,7 @@ namespace TemplateEngine_v3.VM.Windows
         /// <param name="parameter">Параметр команды (не используется).</param>
         private void SaveToJson(object parameter)
         {
-            FileService.WriteToFolder("saveTemplate\\Ready", _templateManager.GetReadyTemplate(),
-                t => t.Name.Replace('\"', '_'), t => t.ObjectStruct);
-
-            FileService.WriteToFolder("saveTemplate\\Draft", _templateManager.GetDraftTemplates(),
+            FileService.WriteToFolder("saveTemplate\\AllTemplate", _templateManager.GetReadyTemplate(),
                 t => t.Name.Replace('\"', '_'), t => t.ObjectStruct);
 
             FileService.WriteToFolder("saveTemplate\\TrahCan", _templateManager.GetTrashCanTemplates(),

@@ -46,6 +46,14 @@
                     Padding="10,5"
                     Grid.Row="2">
 
+                <Border.Effect>
+                    <DropShadowEffect Color="Black"
+                          Direction="320"
+                          ShadowDepth="2"
+                          Opacity="0.5"
+                          BlurRadius="5" />
+                </Border.Effect>
+
                 <StackPanel Orientation="Horizontal"
                             VerticalAlignment="Center">
 
@@ -100,21 +108,23 @@
 
             </Grid>
 
-            <UniformGrid Grid.Row="6"
-                         Columns="3">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Grid.Row="6">
 
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
                         Background="Red"
-                        ToolTip="Удалить"
+                        ToolTip="{Binding ButtonRemoveToolTip, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                         Width="45"
                         Height="40"
                         Padding="0"
+                        Margin="0 0 20 0"
                         IsEnabled="{Binding CanRemove, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                         BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
                         Command="{Binding RemoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}">
 
-                    <materialDesign:PackIcon Kind="TrashCan"
+                    <materialDesign:PackIcon Kind="{Binding ButtonRemoveIcon, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                                              Width="25"
                                              Height="25"/>
 
@@ -125,8 +135,10 @@
                         Width="45"
                         Height="40"
                         Padding="0"
+                        Margin="0 0 20 0"
                         Background="LightGray"
                         BorderBrush="LightGray"
+                        Visibility="{Binding CopyButtonVisibility, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                         IsEnabled="{Binding CanCopy, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                         Command="{Binding CloneCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         CommandParameter="{Binding CurrentReferenceModel, RelativeSource={RelativeSource AncestorType=UserControl}}">
@@ -155,7 +167,7 @@
 
                 </Button>
 
-            </UniformGrid>
+            </StackPanel>
         </Grid>
         
     </Border>

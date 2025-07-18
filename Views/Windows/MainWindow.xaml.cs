@@ -134,7 +134,5 @@ namespace TemplateEngine_v3.Views.Windows
             ScrollLeftButton.IsEnabled = _tabsScrollViewer.HorizontalOffset > 0;
             ScrollRightButton.IsEnabled = _tabsScrollViewer.HorizontalOffset < _tabsScrollViewer.ScrollableWidth;
         }
-
-
     }
 }

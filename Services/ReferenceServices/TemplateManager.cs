@@ -74,16 +74,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         }
 
         /// <summary>
-        /// Получить коллекцию незавершённых шаблонов.
-        /// </summary>
-        /// <returns>Коллекция незавершённых шаблонов.</returns>
-        public ObservableCollection<ReferenceModelInfo> GetDraftTemplates()
-        {
-            EnsureTemplatesLoaded();
-            return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates.Where(template => template.Type.Equals(_draftTemplateType)));
-        }
-
-        /// <summary>
         /// Получить коллекцию готовых шаблонов.
         /// </summary>
         /// <returns>Коллекция готовых шаблонов, отсортированных по имени в обратном порядке.</returns>
@@ -91,7 +81,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             EnsureTemplatesLoaded();
             return new ObservableCollection<ReferenceModelInfo>(_cachedTemplates
-                .Where(template => template.Type.Equals(_readyTemplateType)
+                .Where(template => (template.Type.Equals(_readyTemplateType)
+                                || template.Type.Equals(_draftTemplateType))
                                 && template.Name != "LogsObject (Не удалять)")
                 .OrderBy(template => template.Name)
                 .Reverse());
@@ -370,7 +361,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 var findTemplate = await _reference.FindAsync(template.Id);
                 if(findTemplate != null && findTemplate.Changing)
                     await findTemplate.EndChangesAsync();
-                var currentList = type.Equals("Final") ? GetReadyTemplate() : GetDraftTemplates();
+                var currentList = GetReadyTemplate();
 
                 if (currentList.Any(temp => temp.Id.Equals(template.Id)))
                 {
@@ -403,7 +394,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 await _reference.Objects.ReloadAsync();
                 await SetTemplateAsync(reference);
                 var findTemplate = await _reference.FindAsync(SelectedTemplate.Id);
-                await findTemplate.EndChangesAsync();
                 await findTemplate.DeleteAsync();
                 bool isRestore = await AddTemplateAsync(SelectedTemplate, _readyTemplateType);
                 return isRestore;

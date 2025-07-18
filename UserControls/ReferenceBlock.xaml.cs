@@ -95,6 +95,20 @@ namespace TemplateEngine_v3.UserControls
                 typeof(ReferenceBlock),
                 new PropertyMetadata("Изменить"));
 
+        public static readonly DependencyProperty ButtonRemoveToolTipProperty =
+            DependencyProperty.Register(
+                "ButtonRemoveToolTip",
+                typeof(string),
+                typeof(ReferenceBlock),
+                new PropertyMetadata("Архивировать"));
+
+        public static readonly DependencyProperty ButtonRemoveIconProperty =
+            DependencyProperty.Register(
+                "ButtonRemoveIcon",
+                typeof(PackIconKind),
+                typeof(ReferenceBlock),
+                new PropertyMetadata(PackIconKind.ArchiveAdd));
+
         public static readonly DependencyProperty StageServiceProperty =
             DependencyProperty.Register(
                 "StageService",
@@ -109,12 +123,26 @@ namespace TemplateEngine_v3.UserControls
                 typeof(ReferenceBlock),
                 new PropertyMetadata(Visibility.Visible));
 
+        public static readonly DependencyProperty CopyButtonVisibilityProperty =
+            DependencyProperty.Register(
+                "CopyButtonVisibility",
+                typeof(Visibility),
+                typeof(ReferenceBlock),
+                new PropertyMetadata(Visibility.Visible));
+
         public static readonly DependencyProperty StageProperty =
             DependencyProperty.Register(
                 "Stage",
                 typeof(StageModel),
                 typeof(ReferenceBlock),
                 new PropertyMetadata(null));
+
+        public static readonly DependencyProperty ColumnsCountProperty =
+            DependencyProperty.Register(
+                "ColumnsCount",
+                typeof(int),
+                typeof(ReferenceBlock),
+                new PropertyMetadata(3));
 
         public ReferenceModelInfo CurrentReferenceModel
         {
@@ -182,6 +210,24 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(ButtonToolTipProperty, value);
         }
 
+        public PackIconKind ButtonRemoveIcon
+        {
+            get => (PackIconKind)GetValue(ButtonRemoveIconProperty);
+            set => SetValue(ButtonRemoveIconProperty, value);
+        }
+
+        public Visibility CopyButtonVisibility
+        {
+            get => (Visibility)GetValue(CopyButtonVisibilityProperty);
+            set => SetValue(CopyButtonVisibilityProperty, value);
+        }
+
+        public string ButtonRemoveToolTip
+        {
+            get => (string)GetValue(ButtonRemoveToolTipProperty);
+            set => SetValue(ButtonRemoveToolTipProperty, value);
+        }
+
         public Visibility BlockVisibility
         {
             get => (Visibility)GetValue(BlockVisibilityProperty);
@@ -198,6 +244,12 @@ namespace TemplateEngine_v3.UserControls
         {
             get => (StageModel)GetValue(StageProperty);
             set => SetValue(StageProperty, value);
+        }
+
+        public int ColumnsCount
+        {
+            get => (int)GetValue(ColumnsCountProperty);
+            set => SetValue(ColumnsCountProperty, value);
         }
 
         public ReferenceBlock()
@@ -269,17 +321,34 @@ namespace TemplateEngine_v3.UserControls
                     if (stage != null)
                     {
                         control.Stage = stage;
+
+
+                        bool canRemove = stage.StageType == StatusType.Archive ||
+                                         control.CurrentReferenceModel.Type.ToString() == "ТП" ||
+                                         control.CurrentReferenceModel.Type.ToString() == "Филиалы";
+
+                        control.ButtonRemoveIcon = canRemove ? PackIconKind.TrashCan : PackIconKind.ArchiveAdd;
+                        control.ButtonRemoveToolTip = canRemove ? "Удалить" : "Архивировать";
+
+                        control.CopyButtonVisibility = stage.StageType == StatusType.Archive ? Visibility.Collapsed : Visibility.Visible;
+                        control.ColumnsCount = stage.StageType == StatusType.Archive ? 2 : 3;
                     }
                     else
                     {
-                        control.Stage = new()
-                        {
-                            StageName = "Завершен",
-                            StageIcon = PackIconKind.Check,
-                            TextStageColor = new SolidColorBrush(Colors.White),
-                            IconStageColor = new SolidColorBrush(Colors.White),
-                            BackgroundStageColor = new SolidColorBrush(Colors.Green),
-                        };
+                        stage = stageService.StageList.FirstOrDefault(st => st.StageType == StatusType.Final);
+
+                        if (stage != null)
+                            control.Stage = stage;
+
+                        bool canRemove = stage.StageType == StatusType.Archive ||
+                                         control.CurrentReferenceModel.Type.ToString() == "ТП" ||
+                                         control.CurrentReferenceModel.Type.ToString() == "Филиалы";
+
+                        control.ButtonRemoveIcon = canRemove ? PackIconKind.TrashCan : PackIconKind.ArchiveAdd;
+                        control.ButtonRemoveToolTip = canRemove ? "Удалить" : "Архивировать";
+
+                        control.CopyButtonVisibility = stage.StageType == StatusType.Archive ? Visibility.Collapsed : Visibility.Visible;
+                        control.ColumnsCount = stage.StageType == StatusType.Archive ? 2 : 3;
                     }
                 }
             }
