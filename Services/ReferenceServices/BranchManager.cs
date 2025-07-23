@@ -20,8 +20,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
     public class BranchManager : BaseNotifyPropertyChanged
     {
         private readonly ServerReferenceLoader _referenceLoader;
-        private readonly ReferenceInfo _branchInfo;
-        private readonly Reference _reference;
+        private ReferenceInfo _branchInfo;
+        private Reference _reference;
         private readonly ParameterInfo _nameParameter;
         private readonly ParameterInfo _objectStringParameter;
         private readonly ClassObject _branchClass;
@@ -214,8 +214,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         public BranchManager DeepCopy()
         {
-            var json = new JsonSerializer().Serialize(this);
-            return new JsonSerializer().Deserialize<BranchManager>(json);
+            var branch = new BranchManager(_referenceLoader, _branchInfo);
+            return branch;
         }
     }
 }

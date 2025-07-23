@@ -96,6 +96,8 @@ namespace TemplateEngine_v3.UserControls
             set => SetValue(CancelCommandProperty, value);
         }
 
+        string _lastTypeName = string.Empty;
+
         public DeteilTypeChoiceDialog()
         {
             InitializeComponent();
@@ -129,7 +131,7 @@ namespace TemplateEngine_v3.UserControls
 
         private void EditType()
         {
-            bool IsEdit = NodeTypeManager.EditNodeType(DeteilType);
+            bool IsEdit = NodeTypeManager.EditNodeType(_lastTypeName, DeteilType);
             if (IsEdit)
             {
                 SetValue(DeteilTypyProperty, string.Empty);
@@ -170,6 +172,7 @@ namespace TemplateEngine_v3.UserControls
         {
             if (sender is ListBox listBox && listBox.SelectedItem is string selectedType)
             {
+                _lastTypeName = selectedType;
                 SetValue(DeteilTypyProperty, selectedType);
                 SetValue(ButtonTextProperty, "Изменить");
                 ModifyTypeCommand = new RelayCommand(EditType, CanEditType);

@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
-using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TFlex.DOCs.Common;
-using TFlex.DOCs.Model.References.Macros;
 
 namespace TemplateEngine_v3.VM.Pages
 {
@@ -182,7 +180,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="node">Новый текущий узел.</param>
         private void OnCurrentNodeChanged(Node node)
         {
-            if(node != null)
+            if (node != null)
             {
                 Evaluator = node.Parameters;
 

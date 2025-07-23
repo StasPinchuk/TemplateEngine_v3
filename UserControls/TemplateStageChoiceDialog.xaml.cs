@@ -207,7 +207,7 @@ namespace TemplateEngine_v3.UserControls
 
             ModifyStageCommand = new RelayCommand(ModifyStage, CanModifyStage);
             RemoveStageCommand = new RelayCommand(RemoveStage);
-            CancelStageCommand = new RelayCommand(CancelStage);
+            CancelStageCommand = new RelayCommand(CancelStage, CanCancelStage);
         }
 
 
@@ -432,12 +432,16 @@ namespace TemplateEngine_v3.UserControls
             }
         }
 
+        private bool CanCancelStage(object parameter)
+        {
+            return !(CurrentStage?.StageName.Equals("Название статуса") ?? false);
+        }
+
         private void CancelStage(object parameter)
         {
-            if(parameter is StageModel stage)
-            {
-                CurrentStage = new();
-            }
+
+            StageListBox.SelectedItem = null;
+            CurrentStage = new();
         }
 
         private void StageListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

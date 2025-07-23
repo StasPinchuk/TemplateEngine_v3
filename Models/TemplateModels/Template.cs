@@ -9,20 +9,24 @@ using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
 {
+    /// <summary>
+    /// Представляет шаблон, содержащий информацию о технологических ветках и связях.
+    /// </summary>
     public class Template : BaseNotifyPropertyChanged, ITemplatedFile
     {
         [JsonIgnore]
         private bool _onDeserialized = false;
 
         /// <summary>
-        /// Unique identifier of the template
+        /// Уникальный идентификатор шаблона.
         /// </summary>
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        /// <summary>
-        /// Name of the template
-        /// </summary>
         private string _name = string.Empty;
+
+        /// <summary>
+        /// Название шаблона.
+        /// </summary>
         public string Name
         {
             get => _name;
@@ -37,16 +41,21 @@ namespace TemplateEngine_v3.Models
         }
 
         private Guid _stage;
+
+        /// <summary>
+        /// Идентификатор этапа шаблона.
+        /// </summary>
         public Guid Stage
         {
             get => _stage;
             set => SetValue(ref _stage, value, nameof(Stage));
         }
 
+        private ObservableCollection<TemplateRelations> _templateRelations = new();
+
         /// <summary>
-        /// Designation of the template.
+        /// Коллекция связей шаблона.
         /// </summary>
-        private ObservableCollection<TemplateRelations> _templateRelations = [];
         public ObservableCollection<TemplateRelations> TemplateRelations
         {
             get => _templateRelations;
@@ -60,23 +69,24 @@ namespace TemplateEngine_v3.Models
         /// <summary>
         /// Коллекция веток, связанных с шаблоном.
         /// </summary>
-        public ObservableCollection<Branch> Branches { get; set; } = [];
+        public ObservableCollection<Branch> Branches { get; set; } = new();
 
         /// <summary>
-        /// Collection of product marking attributes.
+        /// Список атрибутов маркировки продукта.
         /// </summary>
         [JsonConverter(typeof(ProductMarkingAttributesNameListConverter))]
-        public List<string> ProductMarkingAttributes = [];
+        public List<string> ProductMarkingAttributes = new();
 
         /// <summary>
-        /// List of markings.
+        /// Коллекция примеров маркировок.
         /// </summary>
-        public ObservableCollection<string> ExampleMarkings { get; set; } = [];
+        public ObservableCollection<string> ExampleMarkings { get; set; } = new();
 
-        /// <summary>
-        /// Template creation date.
-        /// </summary>
         private DateTime _creationDate = DateTime.Now;
+
+        /// <summary>
+        /// Дата создания шаблона.
+        /// </summary>
         public DateTime CreationDate
         {
             get => _creationDate;
@@ -87,10 +97,11 @@ namespace TemplateEngine_v3.Models
             }
         }
 
-        /// <summary>
-        /// Template last modified date.
-        /// </summary>
         private DateTime _lastModifiedDate = DateTime.MinValue;
+
+        /// <summary>
+        /// Дата последнего изменения шаблона.
+        /// </summary>
         public DateTime LastModifiedDate
         {
             get => _lastModifiedDate;
@@ -101,17 +112,22 @@ namespace TemplateEngine_v3.Models
             }
         }
 
-        /// <summary>
-        /// File name associated with the template.
-        /// </summary>
         private string _templateLastId = string.Empty;
+
+        /// <summary>
+        /// Имя файла, связанного с шаблоном.
+        /// </summary>
         public string TemplateLastId
         {
-            get => _templateLastId; set => _templateLastId = value;
+            get => _templateLastId;
+            set => _templateLastId = value;
         }
 
         private bool _isTemplateComplete = false;
 
+        /// <summary>
+        /// Флаг, указывающий, завершён ли шаблон.
+        /// </summary>
         public bool IsTemplateComplete
         {
             get => _isTemplateComplete;
@@ -122,27 +138,51 @@ namespace TemplateEngine_v3.Models
             }
         }
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="Template"/>.
+        /// </summary>
         public Template() { }
 
+        /// <summary>
+        /// Создает глубокую копию текущего шаблона.
+        /// </summary>
+        /// <returns>Копия объекта <see cref="Template"/>.</returns>
         public Template Copy()
         {
             string json = JsonConvert.SerializeObject(this);
             return JsonConvert.DeserializeObject<Template>(json);
         }
 
+        /// <summary>
+        /// Возвращает строковое представление шаблона.
+        /// </summary>
+        /// <returns>Название шаблона.</returns>
         public override string ToString()
         {
             return Name;
         }
 
+        /// <summary>
+        /// Определяет, следует ли логировать изменение значения.
+        /// </summary>
+        /// <param name="oldValue">Старое значение.</param>
+        /// <param name="newValue">Новое значение.</param>
+        /// <returns>True, если изменение нужно логировать, иначе false.</returns>
         private bool ShouldLogChange(string oldValue, string newValue)
         {
             return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
         }
 
+        /// <summary>
+        /// Включена ли запись логов изменений.
+        /// </summary>
         [JsonIgnore]
         public bool IsLoggingEnabled { get; set; } = true;
 
+        /// <summary>
+        /// Обработчик, вызываемый после десериализации объекта.
+        /// </summary>
+        /// <param name="context">Контекст сериализации.</param>
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {

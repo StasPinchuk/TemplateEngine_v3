@@ -9,15 +9,35 @@ using TFlex.DOCs.Model.References.Files;
 
 namespace TemplateEngine_v3.Helpers
 {
+    /// <summary>
+    /// Класс, обеспечивающий проверку и запуск обновления приложения.
+    /// </summary>
     public static class Updater
     {
-        private static readonly string _version = "1.2.11";
+        /// <summary>
+        /// Текущая версия приложения.
+        /// </summary>
+        private static readonly string _version = "1.3.1";
+
         private static ServerConnection _connection;
         private static FileReference _fileReference;
         private static FolderObject _updateFolder;
+
+        /// <summary>
+        /// Имя вложенной папки с обновлением.
+        /// </summary>
         private static readonly string innerFolder = "Редактор шаблонов";
+
+        /// <summary>
+        /// Папка назначения (директория запуска приложения).
+        /// </summary>
         private static readonly string targetFolder = AppDomain.CurrentDomain.BaseDirectory;
 
+        /// <summary>
+        /// Проверяет наличие обновлений при запуске.
+        /// </summary>
+        /// <param name="connection">Подключение к серверу T-Flex DOCs.</param>
+        /// <returns><c>true</c>, если обновление доступно; иначе <c>false</c>.</returns>
         public static async Task<bool> CheckForUpdatesOnStartup(ServerConnection connection)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
@@ -26,6 +46,10 @@ namespace TemplateEngine_v3.Helpers
             return await CheckForUpdatesSafeAsync();
         }
 
+        /// <summary>
+        /// Безопасно выполняет проверку обновлений с обработкой ошибок.
+        /// </summary>
+        /// <returns><c>true</c>, если обновление найдено и будет установлено; иначе <c>false</c>.</returns>
         private static async Task<bool> CheckForUpdatesSafeAsync()
         {
             try
@@ -39,6 +63,10 @@ namespace TemplateEngine_v3.Helpers
             }
         }
 
+        /// <summary>
+        /// Проверяет наличие новой версии и инициирует запуск обновления, если оно доступно.
+        /// </summary>
+        /// <returns><c>true</c>, если обновление найдено и запущено; иначе <c>false</c>.</returns>
         public static async Task<bool> CheckForUpdatesAsync()
         {
             _updateFolder = _fileReference.FindByRelativePath(@"Генератор шаблонов\Программа редактора шаблонов") as FolderObject;
@@ -49,7 +77,7 @@ namespace TemplateEngine_v3.Helpers
                 return false;
             }
 
-            var updateInfoFile = _fileReference.FindByRelativePath(@$"Генератор шаблонов\Программа редактора шаблонов\UpdateProgramm.json") as FileObject;
+            var updateInfoFile = _fileReference.FindByRelativePath(@"Генератор шаблонов\Программа редактора шаблонов\UpdateProgramm.json") as FileObject;
             if (updateInfoFile == null)
                 return false;
 
@@ -62,7 +90,7 @@ namespace TemplateEngine_v3.Helpers
             if (!IsNewVersionAvailable(updateInfo.Version))
                 return false;
 
-            var updateArchive = _fileReference.FindByRelativePath(@$"Генератор шаблонов\Программа редактора шаблонов\Редактор шаблонов.zip") as FileObject;
+            var updateArchive = _fileReference.FindByRelativePath(@"Генератор шаблонов\Программа редактора шаблонов\Редактор шаблонов.zip") as FileObject;
             if (updateArchive == null)
                 return false;
 
@@ -83,7 +111,6 @@ namespace TemplateEngine_v3.Helpers
             }
 
             string savePath = Path.Combine("Updater", "update_path.txt");
-
             File.WriteAllText(savePath, updateArchive.LocalPath);
 
             await Task.Delay(1000);
@@ -104,6 +131,11 @@ namespace TemplateEngine_v3.Helpers
             return true;
         }
 
+        /// <summary>
+        /// Сравнивает текущую и полученную версии, чтобы определить, доступна ли новая.
+        /// </summary>
+        /// <param name="receivedVersion">Полученная с сервера версия.</param>
+        /// <returns><c>true</c>, если полученная версия новее текущей; иначе <c>false</c>.</returns>
         public static bool IsNewVersionAvailable(string receivedVersion)
         {
             if (!Version.TryParse(_version, out var current))
@@ -115,9 +147,14 @@ namespace TemplateEngine_v3.Helpers
             return received.CompareTo(current) > 0;
         }
 
-
+        /// <summary>
+        /// Класс модели данных для файла UpdateProgramm.json.
+        /// </summary>
         public class UpdateInfo
         {
+            /// <summary>
+            /// Версия доступного обновления.
+            /// </summary>
             public string Version { get; set; }
         }
     }

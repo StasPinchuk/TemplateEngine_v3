@@ -41,7 +41,7 @@
                 Grid.Row="2"
                 Padding="10">
             <ListBox ItemsSource="{Binding DeteilTypeList, ElementName=deteilTypeChoice, UpdateSourceTrigger=PropertyChanged}"
-                     SelectedItem="{Binding DeteilType, ElementName=deteilTypeChoice, UpdateSourceTrigger=PropertyChanged}"
+                     SelectionChanged="ListBox_Selected"
                      Cursor="Hand">
                 <ListBox.ItemTemplate>
                     <DataTemplate>

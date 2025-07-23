@@ -36,6 +36,10 @@ namespace TemplateEngine_v3.Models
         }
 
         private Guid _stage;
+
+        /// <summary>
+        /// Идентификатор стадии, к которой относится филиал.
+        /// </summary>
         public Guid Stage
         {
             get => _stage;
@@ -45,21 +49,18 @@ namespace TemplateEngine_v3.Models
         private string _editName = string.Empty;
 
         /// <summary>
-        /// Редактируемое имя филиала (временное значение).
+        /// Временное редактируемое имя филиала (не сохраняется напрямую).
         /// </summary>
         public string EditName
         {
             get => _editName;
-            set
-            {
-                _editName = value;
-            }
+            set => _editName = value;
         }
 
         private string _designation = string.Empty;
 
         /// <summary>
-        /// Обозначение филиала.
+        /// Обозначение филиала (например, код или номер).
         /// </summary>
         public string Designation
         {
@@ -107,7 +108,7 @@ namespace TemplateEngine_v3.Models
         #region Конструкторы
 
         /// <summary>
-        /// Конструктор по умолчанию.
+        /// Инициализирует новый экземпляр класса <see cref="Branch"/>.
         /// </summary>
         public Branch() { }
 
@@ -116,9 +117,9 @@ namespace TemplateEngine_v3.Models
         #region Методы
 
         /// <summary>
-        /// Создаёт глубокую копию объекта Branch.
+        /// Создаёт глубокую копию объекта <see cref="Branch"/>.
         /// </summary>
-        /// <returns>Копия текущего объекта Branch.</returns>
+        /// <returns>Глубокая копия текущего объекта <see cref="Branch"/>.</returns>
         public Branch Copy()
         {
             string json = JsonConvert.SerializeObject(this);
@@ -126,9 +127,9 @@ namespace TemplateEngine_v3.Models
         }
 
         /// <summary>
-        /// Устанавливает значения текущего филиала на основе другого объекта Branch.
+        /// Копирует значения из другого объекта <see cref="Branch"/> в текущий.
         /// </summary>
-        /// <param name="branch">Объект Branch, из которого копируются значения.</param>
+        /// <param name="branch">Источник данных.</param>
         public void SetBranch(Branch branch)
         {
             Name = branch.Name;
@@ -137,22 +138,37 @@ namespace TemplateEngine_v3.Models
             LastModifiedDate = branch.LastModifiedDate;
         }
 
+        /// <summary>
+        /// Проверяет необходимость логирования изменения свойства.
+        /// </summary>
+        /// <param name="oldValue">Старое значение.</param>
+        /// <param name="newValue">Новое значение.</param>
+        /// <returns><c>true</c>, если требуется логирование; иначе <c>false</c>.</returns>
         private bool ShouldLogChange(string oldValue, string newValue)
         {
             return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
         }
 
+        /// <summary>
+        /// Флаг, указывающий, разрешено ли логирование.
+        /// </summary>
         [JsonIgnore]
         public bool IsLoggingEnabled { get; set; } = true;
 
         [JsonIgnore]
         private bool _onDeserialized = false;
 
+        /// <summary>
+        /// Метод, вызываемый после десериализации JSON.
+        /// Устанавливает флаг для разрешения логирования.
+        /// </summary>
+        /// <param name="context">Контекст десериализации.</param>
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
             _onDeserialized = true;
         }
+
         #endregion
     }
 }

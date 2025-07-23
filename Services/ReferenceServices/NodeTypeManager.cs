@@ -90,7 +90,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
-        public static bool EditNodeType(string typeName)
+        public static bool EditNodeType(string oldTypeName, string typeName)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
                     reference.Objects.Reload();
 
-                    var editNodeType = reference.Objects.FirstOrDefault(type => type.ToString().Equals(typeName));
+                    var editNodeType = reference.Objects.FirstOrDefault(type => type.ToString().Equals(oldTypeName));
 
                     if (editNodeType != null)
                     {

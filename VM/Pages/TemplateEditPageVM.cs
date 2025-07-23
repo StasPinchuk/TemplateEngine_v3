@@ -1,12 +1,9 @@
 ﻿using MaterialDesignThemes.Wpf;
-using Microsoft.Xaml.Behaviors.Core;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
-using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
 using TemplateEngine_v3.Services;
@@ -22,12 +19,29 @@ namespace TemplateEngine_v3.VM.Pages
     /// </summary>
     public class TemplateEditPageVM : BaseNotifyPropertyChanged
     {
+        /// <summary>
+        /// Фрейм, в котором отображаются страницы шаблона.
+        /// </summary>
         private Frame _frame;
 
+        /// <summary>
+        /// Менеджер шаблонов.
+        /// </summary>
         private readonly TemplateManager _templateManager;
+
+        /// <summary>
+        /// Сервис этапов шаблона.
+        /// </summary>
         private readonly TemplateStageService _stageService;
+
+        /// <summary>
+        /// Менеджер филиалов.
+        /// </summary>
         private readonly BranchManager _branchManager;
 
+        /// <summary>
+        /// Коллекция с историей открытых страниц.
+        /// </summary>
         private ObservableCollection<PageModel> _pagesHistory = new();
 
         /// <summary>
@@ -67,7 +81,7 @@ namespace TemplateEngine_v3.VM.Pages
             NavigationService.SetSecondaryFrame(frame);
 
             PagesHistory = NavigationService.GetPageHistory();
-            if(_templateManager.GetSelectedTemplate() != null)
+            if (_templateManager.GetSelectedTemplate() != null)
             {
                 var mainTemplateInfo = new PageModel(_templateManager.GetSelectedTemplate().Name, typeof(MainTemplateInfoPage), new object[] { technologiesManager, _templateManager });
 
@@ -111,6 +125,10 @@ namespace TemplateEngine_v3.VM.Pages
             NavigationService.SetPageInSecondaryFrame();
         }
 
+        /// <summary>
+        /// Обновляет коллекцию истории страниц.
+        /// Вызывается при изменении истории навигации.
+        /// </summary>
         private void UpdatePageHistory()
         {
             PagesHistory = NavigationService.GetPageHistory();

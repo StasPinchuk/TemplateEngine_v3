@@ -6,14 +6,12 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
-using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
 using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.UserControls;
 using TemplateEngine_v3.Views.Pages;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace TemplateEngine_v3.VM.Pages
 {
@@ -180,7 +178,7 @@ namespace TemplateEngine_v3.VM.Pages
                 var group = NodeGroups.FirstOrDefault(g => g.Key == node.Type);
                 group?.Nodes.Remove(removeNode);
                 if (group?.Nodes.Count == 0) NodeGroups.Remove(group);
-                if(Nodes.Count == 0)
+                if (Nodes.Count == 0)
                 {
                     PageCollection.Clear();
                 }
@@ -243,19 +241,19 @@ namespace TemplateEngine_v3.VM.Pages
 
                 if (isAssembly)
                 {
-                    foreach(var page in PageCollection)
+                    foreach (var page in PageCollection)
                         VisibilitePageCollection.Add(page);
                 }
 
                 if (isDetail)
                 {
-                    foreach(var page in PageCollection.Take(PageCollection.Count-1))
+                    foreach (var page in PageCollection.Take(PageCollection.Count - 1))
                         VisibilitePageCollection.Add(page);
                 }
 
                 if (needParamsAndTech)
                 {
-                    foreach(var page in PageCollection.Take(2))
+                    foreach (var page in PageCollection.Take(2))
                         VisibilitePageCollection.Add(page);
                 }
 

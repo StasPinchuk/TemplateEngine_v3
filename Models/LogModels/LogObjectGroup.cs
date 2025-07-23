@@ -1,25 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TemplateEngine_v3.Models.LogModels
 {
+    /// <summary>
+    /// Группа записей журнала, относящихся к одному объекту.
+    /// </summary>
     public class LogObjectGroup
     {
-        public string ObjectName { get; set; }       // ID или имя объекта (шаблон, ТП и т.д.)
-        public string ObjectType { get; set; }     // Тип объекта (Template, TechProcess, Branch и т.д.)
+        /// <summary>
+        /// Имя или идентификатор объекта (например, шаблон, ТП и т.д.).
+        /// </summary>
+        public string ObjectName { get; set; }
+
+        /// <summary>
+        /// Тип объекта (например, Template, TechProcess, Branch и т.д.).
+        /// </summary>
+        public string ObjectType { get; set; }
+
+        /// <summary>
+        /// Пользователь, выполнивший действия над объектом.
+        /// </summary>
         public string User { get; set; }
+
+        /// <summary>
+        /// Список записей журнала, связанных с данным объектом.
+        /// </summary>
         public List<LogEntry> Entries { get; set; } = new();
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="LogObjectGroup"/>.
+        /// </summary>
         public LogObjectGroup() { }
+
+        /// <summary>
+        /// Инициализирует группу журнала с указанным именем объекта, его типом и пользователем.
+        /// </summary>
+        /// <param name="objectName">Имя или ID объекта.</param>
+        /// <param name="objectType">Тип объекта.</param>
+        /// <param name="user">Пользователь, совершивший действия.</param>
         public LogObjectGroup(string objectName, string objectType, string user)
         {
-            ObjectName = objectName; 
+            ObjectName = objectName;
             ObjectType = objectType;
             User = user;
         }
     }
-
 }

@@ -11,30 +11,38 @@ using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
 {
+    /// <summary>
+    /// Детали подразделения филиала с набором свойств и материалов.
+    /// </summary>
     public class BranchDivisionDetails : BaseNotifyPropertyChanged
     {
-        public string Id = Guid.NewGuid().ToString().Substring(0,8);
+        /// <summary>
+        /// Уникальный идентификатор объекта (первые 8 символов GUID).
+        /// </summary>
+        public string Id = Guid.NewGuid().ToString().Substring(0, 8);
+
+        private Branch _branch = new();
 
         /// <summary>
-        /// The branch to which this division belongs.
+        /// Филиал, к которому относится данное подразделение.
         /// </summary>
-        private Branch _branch = new();
         public Branch Branch
         {
             get => _branch;
             set
             {
-                if(value != null)
+                if (value != null)
                     if (ShouldLogChange(_branch.Name, value.Name))
                         LogManager.CreateLogEntry(LogActionType.Edit, $"Редактирование названия филиала ТП с '{_branch.Name}' на '{value.Name}'");
                 SetValue(ref _branch, value, nameof(Branch));
             }
         }
 
-        /// <summary>
-        /// The name of the division.
-        /// </summary>
         private string _unitEquipment = string.Empty;
+
+        /// <summary>
+        /// Наименование оборудования подразделения.
+        /// </summary>
         public string UnitEquipment
         {
             get => _unitEquipment;
@@ -46,10 +54,11 @@ namespace TemplateEngine_v3.Models
             }
         }
 
-        /// <summary>
-        /// The code of the division.
-        /// </summary>
         private string _divisionCode = string.Empty;
+
+        /// <summary>
+        /// Код подразделения.
+        /// </summary>
         public string DivisionCode
         {
             get => _divisionCode;
@@ -61,10 +70,11 @@ namespace TemplateEngine_v3.Models
             }
         }
 
-        /// <summary>
-        /// A collection of materials associated with this division.
-        /// </summary>
         private Materials _materials = new();
+
+        /// <summary>
+        /// Коллекция материалов, связанных с подразделением.
+        /// </summary>
         public Materials Materials
         {
             get => _materials;
@@ -75,10 +85,11 @@ namespace TemplateEngine_v3.Models
             }
         }
 
-        /// <summary>
-        /// Условия использования операции.
-        /// </summary>
         private string _usageCondition = string.Empty;
+
+        /// <summary>
+        /// Условия применения операции.
+        /// </summary>
         public string UsageCondition
         {
             get => _usageCondition;
@@ -91,12 +102,16 @@ namespace TemplateEngine_v3.Models
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BranchDivisionDetails"/> class and adds an empty material to the collection.
+        /// Инициализирует новый экземпляр класса <see cref="BranchDivisionDetails"/>.
         /// </summary>
         public BranchDivisionDetails()
         {
         }
 
+        /// <summary>
+        /// Копирует значения свойств из другого объекта <see cref="BranchDivisionDetails"/>.
+        /// </summary>
+        /// <param name="branchDivisionDetails">Источник данных.</param>
         public void SetValue(BranchDivisionDetails branchDivisionDetails)
         {
             this.Branch = branchDivisionDetails.Branch;
@@ -106,6 +121,10 @@ namespace TemplateEngine_v3.Models
             this.UsageCondition = branchDivisionDetails.UsageCondition;
         }
 
+        /// <summary>
+        /// Создаёт неглубокую копию текущего объекта с помощью сериализации JSON.
+        /// </summary>
+        /// <returns>Копия объекта <see cref="BranchDivisionDetails"/>.</returns>
         public BranchDivisionDetails ShallowCopy()
         {
             string json = JsonConvert.SerializeObject(this);
@@ -114,6 +133,9 @@ namespace TemplateEngine_v3.Models
 
         private ObservableCollection<GroupNode> _groups;
 
+        /// <summary>
+        /// Коллекция групп для отображения свойств подразделения.
+        /// </summary>
         [JsonIgnore]
         public ObservableCollection<GroupNode> Groups
         {
@@ -122,11 +144,11 @@ namespace TemplateEngine_v3.Models
                 if (_groups == null)
                 {
                     _groups = new ObservableCollection<GroupNode>
-            {
-                new GroupNode("Свойства", BuildPropertiesGroup())
-            };
+                    {
+                        new GroupNode("Свойства", BuildPropertiesGroup())
+                    };
 
-                    // Пример: подписка на изменения нужных свойств
+                    // Подписка на изменения свойств для обновления группы "Свойства"
                     PropertyChanged += (s, e) =>
                     {
                         if (e.PropertyName is nameof(UnitEquipment) or
@@ -143,6 +165,10 @@ namespace TemplateEngine_v3.Models
             }
         }
 
+        /// <summary>
+        /// Создаёт коллекцию свойств для отображения в группе "Свойства".
+        /// </summary>
+        /// <returns>Коллекция объектов со строковыми описаниями свойств.</returns>
         private ObservableCollection<object> BuildPropertiesGroup()
         {
             var children = new ObservableCollection<object>();
@@ -170,6 +196,9 @@ namespace TemplateEngine_v3.Models
             return children;
         }
 
+        /// <summary>
+        /// Обновляет содержимое группы "Свойства" при изменении соответствующих свойств.
+        /// </summary>
         private void UpdatePropertiesGroup()
         {
             var group = _groups?.FirstOrDefault(g => g.Name == "Свойства");
@@ -181,17 +210,31 @@ namespace TemplateEngine_v3.Models
             }
         }
 
+        /// <summary>
+        /// Проверяет необходимость логирования изменения свойства.
+        /// </summary>
+        /// <param name="oldValue">Старое значение.</param>
+        /// <param name="newValue">Новое значение.</param>
+        /// <returns>True, если нужно логировать изменение; иначе false.</returns>
         private bool ShouldLogChange(string oldValue, string newValue)
         {
             return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
         }
 
+        /// <summary>
+        /// Флаг разрешения логирования изменений.
+        /// </summary>
         [JsonIgnore]
         public bool IsLoggingEnabled { get; set; } = true;
 
         [JsonIgnore]
         private bool _onDeserialized = false;
 
+        /// <summary>
+        /// Метод вызывается после десериализации объекта из JSON.
+        /// Устанавливает флаг для разрешения логирования.
+        /// </summary>
+        /// <param name="context">Контекст десериализации.</param>
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {

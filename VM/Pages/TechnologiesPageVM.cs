@@ -1,11 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
-using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.FileServices;
 using TemplateEngine_v3.Services.ReferenceServices;
@@ -146,7 +144,7 @@ namespace TemplateEngine_v3.VM.Pages
             CurrentTechnologies = _technologiesManager.CurrentTechnologies;
             OperationNames = new ObservableCollection<string>(_operationNamesManager.OperationNameList);
             Technologies = _technologiesManager.GetAllTechnologies();
-            
+
             InitializeCommand();
         }
 
@@ -292,7 +290,7 @@ namespace TemplateEngine_v3.VM.Pages
 
         private bool CanSaveOrEditCurrentTechnologies(object parameter)
         {
-            if(CurrentTechnologies != null)
+            if (CurrentTechnologies != null)
                 return !string.IsNullOrEmpty(CurrentTechnologies.Name);
             return true;
         }

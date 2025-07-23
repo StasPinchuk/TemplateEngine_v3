@@ -1,15 +1,11 @@
-﻿using Aspose.Cells.Charts;
-using MaterialDesignThemes.Wpf;
-using System;
+﻿using MaterialDesignThemes.Wpf;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
-using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
 using TemplateEngine_v3.Services;
@@ -19,7 +15,6 @@ using TemplateEngine_v3.Services.UsersServices;
 using TemplateEngine_v3.UserControls;
 using TemplateEngine_v3.Views.Pages;
 using TemplateEngine_v3.VM.Pages;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace TemplateEngine_v3.VM.Windows
 {
@@ -57,7 +52,7 @@ namespace TemplateEngine_v3.VM.Windows
             get => _selectedTabs;
             set
             {
-                if(value != null && MenuItems.Any(item => item.Title.Equals(value.Title)))
+                if (value != null && MenuItems.Any(item => item.Title.Equals(value.Title)))
                     _sideBar.Width = GridLength.Auto;
 
                 var selectedPage = MenuItems.FirstOrDefault(item => item.Title.Equals(value.Title));
@@ -105,9 +100,22 @@ namespace TemplateEngine_v3.VM.Windows
         /// Команда для открытия окна настроек.
         /// </summary>
         public ICommand OpenSettingsCommand { get; set; }
+
+        /// <summary>
+        /// Команда открытия окна логов.
+        /// </summary>
         public ICommand OpenLogsCommand { get; set; }
-        public ICommand CloseTabCommand { get; set; }
+
+        /// <summary>
+        /// Команда открытия диалога этапов шаблонов.
+        /// </summary>
         public ICommand OpenTemplateStagesCommand { get; set; }
+
+        /// <summary>
+        /// Команда закрытия вкладки.
+        /// </summary>
+        public ICommand CloseTabCommand { get; set; }
+
 
         /// <summary>
         /// Конструктор ViewModel главного окна.
@@ -228,7 +236,7 @@ namespace TemplateEngine_v3.VM.Windows
                     SelectedTab = findPage;
                     _sideBar.Width = GridLength.Auto;
                     UpdateManagers(findPage.Page);
-                }                    
+                }
                 else
                 {
                     pageModel.ClearPage();
@@ -245,6 +253,10 @@ namespace TemplateEngine_v3.VM.Windows
             }
         }
 
+        /// <summary>
+        /// Обновляет текущие менеджеры на основе переданной страницы.
+        /// </summary>
+        /// <param name="page">Модель страницы для анализа.</param>
         private void UpdateManagers(PageModel page)
         {
             var findTemplateManager = page.ConstructorParameters.FirstOrDefault(param => param is TemplateManager) as TemplateManager;
@@ -276,6 +288,8 @@ namespace TemplateEngine_v3.VM.Windows
 
             FileService.WriteToFolder("saveTemplate\\Branch", _branchManager.GetAllBranches(),
                 b => b.Name.Replace('\"', '_'), b => b.ObjectStruct);
+
+            MessageBox.Show("Все данные успешно сохранены в файлы", "Сохранение в файлы");
         }
 
         /// <summary>
@@ -308,18 +322,30 @@ namespace TemplateEngine_v3.VM.Windows
             await DialogHost.Show(dialog, "MainDialog");
         }
 
+        /// <summary>
+        /// Обрабатывает команду открытия окна логов.
+        /// </summary>
+        /// <param name="parameter">Параметр команды.</param>
         private async void OpenLogs(object parameter)
         {
             var dialog = new LogsChoiceDialog();
             await DialogHost.Show(dialog, "MainDialog");
         }
 
+        /// <summary>
+        /// Обрабатывает команду открытия окна этапов шаблонов.
+        /// </summary>
+        /// <param name="parameter">Параметр команды.</param>
         private async void OpenTemplateStages(object parameter)
         {
             var dialog = new TemplateStageChoiceDialog(_stageService);
             await DialogHost.Show(dialog, "MainDialog");
         }
 
+        /// <summary>
+        /// Закрывает указанную вкладку, очищает ресурсы и обновляет текущую вкладку.
+        /// </summary>
+        /// <param name="parameter">Вкладка, которую требуется закрыть.</param>
         private void CloseTab(object parameter)
         {
             if (parameter is NavigationTabs tabPanel)

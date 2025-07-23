@@ -27,6 +27,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         private readonly OperationNamesManager _operationNamesManager;
         private readonly ServerReferenceLoader _referenceLoader;
+        private readonly BranchManager _branchManager;
         private readonly ReferenceInfo _technologiesInfo;
         private readonly Reference _reference;
         private readonly ParameterInfo _nameParameter;
@@ -87,6 +88,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             _technologiesClass = _technologiesInfo.Classes.Find("ТП");
             _nameParameter = _reference.ParameterGroup.Parameters.FindByName("Наименование");
             _objectStringParameter = _reference.ParameterGroup.Parameters.FindByName("Структура файла");
+            _branchManager = branchManager;
             _branches = branchManager.GetAllBranches();
         }
 
@@ -249,8 +251,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         public TechnologiesManager DeepCopy()
         {
-            var json = new JsonSerializer().Serialize(this);
-            return new JsonSerializer().Deserialize<TechnologiesManager>(json);
+            var technologies = new TechnologiesManager(_referenceLoader, _technologiesInfo, _branchManager, _operationNamesManager);
+            return technologies;
         }
 
     }
