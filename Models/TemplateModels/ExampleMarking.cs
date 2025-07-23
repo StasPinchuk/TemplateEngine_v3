@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TemplateEngine_v3.Models.TemplateModels
+﻿namespace TemplateEngine_v3.Models.TemplateModels
 {
+    /// <summary>
+    /// Пример класса с простым текстовым свойством для демонстрации реализации INotifyPropertyChanged.
+    /// </summary>
     public class ExampleMarking : BaseNotifyPropertyChanged
     {
-        private string _text;
+        private string _text = string.Empty;
 
+        /// <summary>
+        /// Текстовое свойство с поддержкой уведомления об изменении.
+        /// </summary>
         public string Text
         {
             get => _text;

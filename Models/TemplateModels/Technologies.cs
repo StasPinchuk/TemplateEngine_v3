@@ -1,27 +1,29 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Xml.Linq;
+using System.Windows.Media.Media3D;
 using TemplateEngine_v3.Models.LogModels;
-using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
 {
+    /// <summary>
+    /// Представляет технологию, состоящую из набора операций.
+    /// </summary>
     public class Technologies : BaseNotifyPropertyChanged, ITemplatedFile
     {
         /// <summary>
-        /// Unique identifier of the technology.
+        /// Уникальный идентификатор технологии.
         /// </summary>
         public Guid Id { get; set; } = Guid.Empty;
 
-        /// <summary>
-        /// Name of the technology.
-        /// </summary>
         private string _name = string.Empty;
+
+        /// <summary>
+        /// Название технологии.
+        /// </summary>
         public string Name
         {
             get => _name;
@@ -32,16 +34,21 @@ namespace TemplateEngine_v3.Models
         }
 
         private Guid _stage;
+
+        /// <summary>
+        /// Идентификатор этапа технологии.
+        /// </summary>
         public Guid Stage
         {
             get => _stage;
             set => SetValue(ref _stage, value, nameof(Stage));
         }
 
-        /// <summary>
-        /// Name of the technology.
-        /// </summary>
         private string _editName = string.Empty;
+
+        /// <summary>
+        /// Название технологии для редактирования (альтернативное имя).
+        /// </summary>
         public string EditName
         {
             get => _editName;
@@ -51,10 +58,11 @@ namespace TemplateEngine_v3.Models
             }
         }
 
+        private ObservableCollection<Operation> _operations = new();
+
         /// <summary>
-        /// Collection of operations associated with the technology.
+        /// Коллекция операций, связанных с технологией.
         /// </summary>
-        private ObservableCollection<Operation> _operations = [];
         public ObservableCollection<Operation> Operations
         {
             get => _operations;
@@ -64,10 +72,11 @@ namespace TemplateEngine_v3.Models
             }
         }
 
-        /// <summary>
-        /// Technologies creation date.
-        /// </summary>
         private DateTime _creationDate = DateTime.Now;
+
+        /// <summary>
+        /// Дата создания технологии.
+        /// </summary>
         public DateTime CreationDate
         {
             get => _creationDate;
@@ -77,10 +86,11 @@ namespace TemplateEngine_v3.Models
             }
         }
 
-        /// <summary>
-        /// Technologies last modified date.
-        /// </summary>
         private DateTime _lastModifiedDate = DateTime.MinValue;
+
+        /// <summary>
+        /// Дата последнего изменения технологии.
+        /// </summary>
         public DateTime LastModifiedDate
         {
             get => _lastModifiedDate;
@@ -91,49 +101,72 @@ namespace TemplateEngine_v3.Models
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Technologies"/> class.
+        /// Создает новый экземпляр класса <see cref="Technologies"/>.
         /// </summary>
         public Technologies() { }
 
+        /// <summary>
+        /// Создает глубокую копию текущего объекта <see cref="Technologies"/>.
+        /// </summary>
+        /// <returns>Новая копия объекта технологии.</returns>
         public Technologies Copy()
         {
             string json = JsonConvert.SerializeObject(this);
             return JsonConvert.DeserializeObject<Technologies>(json);
         }
 
+        /// <summary>
+        /// Копирует значения из другого объекта <see cref="Technologies"/> в текущий.
+        /// Создает новый идентификатор для текущей технологии.
+        /// </summary>
+        /// <param name="technologies">Объект для копирования значений.</param>
         public void SetValue(Technologies technologies)
         {
             Id = Guid.NewGuid();
             Name = technologies.Name;
-            Operations = new(technologies.Operations);
-            foreach(var operation in Operations)
+            Operations = new ObservableCollection<Operation>(technologies.Operations);
+            foreach (var operation in Operations)
             {
-                operation.BranchDivisionDetails = new(operation.BranchDivisionDetails
-                    .Select(division =>
-                    {
-                        division.Materials = new();
-                        return division;
-                    }));
+                operation.BranchDivisionDetails = new ObservableCollection<BranchDivisionDetails>(
+                    operation.BranchDivisionDetails
+                        .Select(division =>
+                        {
+                            division.Materials = new();
+                            return division;
+                        }));
             }
             CreationDate = technologies.CreationDate;
             LastModifiedDate = technologies.LastModifiedDate;
         }
 
-        private bool ShouldLogChange(string oldValue, string newValue)
-        {
-            return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
-        }
-
+        /// <summary>
+        /// Включена ли запись логов изменений.
+        /// </summary>
         [JsonIgnore]
         public bool IsLoggingEnabled { get; set; } = true;
 
         [JsonIgnore]
         private bool _onDeserialized = false;
 
+        /// <summary>
+        /// Обработчик, вызываемый после десериализации объекта.
+        /// </summary>
+        /// <param name="context">Контекст сериализации.</param>
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
             _onDeserialized = true;
+        }
+
+        /// <summary>
+        /// Проверяет, следует ли записывать изменения в лог.
+        /// </summary>
+        /// <param name="oldValue">Старое значение.</param>
+        /// <param name="newValue">Новое значение.</param>
+        /// <returns>True, если изменение следует логировать; иначе false.</returns>
+        private bool ShouldLogChange(string oldValue, string newValue)
+        {
+            return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
         }
     }
 }

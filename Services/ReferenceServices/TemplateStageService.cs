@@ -12,14 +12,24 @@ using TFlex.DOCs.Model.Structure;
 
 namespace TemplateEngine_v3.Services.ReferenceServices
 {
+    /// <summary>
+    /// Сервис для работы с этапами шаблона, основанный на справочнике TFlex.
+    /// </summary>
     public class TemplateStageService : BaseNotifyPropertyChanged
     {
         private readonly Reference _reference;
         private readonly ParameterInfo _nameParameter;
         private readonly ParameterInfo _structParameter;
 
+        /// <summary>
+        /// Коллекция этапов шаблона.
+        /// </summary>
         public ObservableCollection<StageModel> StageList { get; set; } = [];
 
+        /// <summary>
+        /// Инициализирует новый экземпляр <see cref="TemplateStageService"/> на основе <see cref="ReferenceInfo"/>.
+        /// </summary>
+        /// <param name="referenceInfo">Информация о справочнике.</param>
         public TemplateStageService(ReferenceInfo referenceInfo)
         {
             _reference = referenceInfo.CreateReference();
@@ -28,18 +38,25 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             _structParameter = _reference.ParameterGroup.Parameters.FindByName("Структура файла");
         }
 
+        /// <summary>
+        /// Загружает этапы из справочника в коллекцию <see cref="StageList"/>.
+        /// </summary>
         public void SetStageList()
         {
             StageList.Clear();
             _reference.Objects.Reload();
 
-            foreach(var stage in _reference.Objects)
+            foreach (var stage in _reference.Objects)
             {
                 var stageModel = new JsonSerializer().Deserialize<StageModel>(stage[_structParameter.Guid].Value.ToString());
                 StageList.Add(stageModel);
             }
         }
 
+        /// <summary>
+        /// Добавляет новый этап в справочник и коллекцию.
+        /// </summary>
+        /// <param name="stage">Добавляемый этап.</param>
         public async void AddStage(StageModel stage)
         {
             var newStage = _reference.CreateReferenceObject();
@@ -53,6 +70,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             StageList.Add(stage);
         }
 
+        /// <summary>
+        /// Редактирует существующий этап в справочнике.
+        /// </summary>
+        /// <param name="stage">Редактируемый этап.</param>
         public async void EditStage(StageModel stage)
         {
             _reference.Objects.Reload();
@@ -69,6 +90,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             SetStageList();
         }
 
+        /// <summary>
+        /// Удаляет этап из справочника и коллекции.
+        /// </summary>
+        /// <param name="stage">Удаляемый этап.</param>
         public async void RemoveStage(StageModel stage)
         {
             _reference.Objects.Reload();
@@ -82,6 +107,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
+        /// <summary>
+        /// Возвращает список описаний значений перечисления <see cref="StatusType"/>.
+        /// </summary>
+        /// <returns>Список строковых описаний.</returns>
         public List<string> GetStatusTypeList()
         {
             return Enum.GetValues(typeof(StatusType))
@@ -90,6 +119,11 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                     .ToList();
         }
 
+        /// <summary>
+        /// Возвращает описание значения перечисления, указанного через <see cref="DescriptionAttribute"/>.
+        /// </summary>
+        /// <param name="value">Значение перечисления.</param>
+        /// <returns>Описание или имя значения перечисления.</returns>
         public string GetEnumDescription(Enum value)
         {
             var field = value.GetType().GetField(value.ToString());
@@ -97,6 +131,12 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             return attr?.Description ?? value.ToString();
         }
 
+        /// <summary>
+        /// Возвращает значение перечисления по его описанию <see cref="DescriptionAttribute"/>.
+        /// </summary>
+        /// <typeparam name="TEnum">Тип перечисления.</typeparam>
+        /// <param name="description">Описание значения.</param>
+        /// <returns>Значение перечисления или null, если не найдено.</returns>
         public TEnum? GetEnumValueByDescription<TEnum>(string description) where TEnum : struct, Enum
         {
             foreach (var field in typeof(TEnum).GetFields())

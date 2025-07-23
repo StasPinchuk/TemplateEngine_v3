@@ -15,6 +15,9 @@ namespace TemplateEngine_v3.Models
         /// </summary>
         public ObservableCollection<ConditionEvaluator> Terms { get; set; } = [];
 
+        /// <summary>
+        /// Создаёт глубокую копию текущего репозитория.
+        /// </summary>
         public ExpressionRepository Copy()
         {
             string json = JsonConvert.SerializeObject(this);

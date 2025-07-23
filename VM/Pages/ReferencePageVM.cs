@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -273,6 +274,7 @@ namespace TemplateEngine_v3.VM.Pages
                     var archiveStage = _stageService.StageList.FirstOrDefault(stage => stage.StageType == StatusType.Archive);
                     await _templateManager.SetTemplateAsync(referenceModel);
                     _templateManager.SelectedTemplate.Stage = archiveStage.ID;
+                    referenceModel.Stage = archiveStage.ID;
                     bool isRemove = await _templateManager.RemoveTemplateAsync(referenceModel);
                     if (isRemove)
                     {
@@ -429,7 +431,6 @@ namespace TemplateEngine_v3.VM.Pages
         {
             if (parameter is ReferenceModelInfo referenceModel)
             {
-
                 _technologiesManager.CurrentTechnologies = new JsonSerializer().Deserialize<Technologies>(referenceModel.ObjectStruct);
 
                 var technologiesManager = _technologiesManager.DeepCopy();
@@ -470,14 +471,14 @@ namespace TemplateEngine_v3.VM.Pages
         /// Создаёт новый шаблон и открывает страницу редактирования.
         /// </summary>
         /// <param name="parameter">Параметры команды (не используются).</param>
-        private void CreateTemplate(object parameter)
+        private async void CreateTemplate(object parameter)
         {
             LogManager.CreateLogObjectGroup("Новый шаблон", "Шаблоны");
             var template = new Template() { Name = "Новый шаблон" };
 
             var templateManager = _templateManager.Clone();
 
-            templateManager.SetTemplateAsync(template);
+            await templateManager.SetTemplateAsync(template);
 
             NavigationService.RenameSelectedTab(template.Name);
 
