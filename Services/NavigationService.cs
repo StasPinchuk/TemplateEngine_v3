@@ -38,7 +38,13 @@ namespace TemplateEngine_v3.Services
 
         public static void RenameSelectedTab(string tabName) => _selectedTab.Title = tabName;
 
-        public static void AddPageToPageHistory(PageModel page) => _selectedTab.PageHistory.Add(page);
+        public static void AddPageToPageHistory(PageModel page)
+        {
+            if (!_selectedTab.PageHistory.Any(p => p.Title.Equals(page.Title)))
+            {
+                _selectedTab.PageHistory.Add(page);
+            }
+        }
 
         public static void RemovePageToPageHistory(PageModel page)
         {

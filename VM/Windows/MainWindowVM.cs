@@ -65,13 +65,14 @@ namespace TemplateEngine_v3.VM.Windows
 
                 NavigationService.SetSelectedTab(value);
 
+                UpdateManagers(value.Page);
+
                 _mainFrame.Navigate(value.Page.ModelPage);
                 if (value.PageHistory.Count > 0)
                 {
                     NavigationService.SetPageInSecondaryFrame();
                 }
 
-                UpdateManagers(SelectedTab.Page);
             }
 
         }
@@ -266,7 +267,10 @@ namespace TemplateEngine_v3.VM.Windows
 
             if (findTechnologiesManager != null)
                 _technologiesManager = findTechnologiesManager;
+        }
 
+        private void ClearManager()
+        {
             _templateManager.ClearTemplate();
             _technologiesManager.CurrentTechnologies = null;
         }

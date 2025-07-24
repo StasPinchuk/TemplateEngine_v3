@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using TFlex.DOCs.Common.PreprocessorArrays;
 using TFlex.DOCs.Model;
 
 namespace TemplateEngine_v3.Services.ReferenceServices
@@ -83,7 +82,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: логировать ex
                 return false;
@@ -125,7 +124,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                     return false;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -154,7 +153,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: логировать ex
                 return false;

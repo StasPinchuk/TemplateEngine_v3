@@ -17,7 +17,7 @@ namespace TemplateEngine_v3.Helpers
         /// <summary>
         /// Текущая версия приложения.
         /// </summary>
-        private static readonly string _version = "1.3.1";
+        private static readonly string _version = "1.3.2";
 
         private static ServerConnection _connection;
         private static FileReference _fileReference;

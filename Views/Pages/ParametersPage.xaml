@@ -48,13 +48,13 @@
                     Grid.Column="0">
                 <ListBox ItemsSource="{Binding Evaluator, UpdateSourceTrigger=PropertyChanged}"
                          SelectedItem="{Binding SelectedEvaluator, UpdateSourceTrigger=PropertyChanged}"
-                         HorizontalContentAlignment="Stretch"
-                         Cursor="Hand">
+                         HorizontalContentAlignment="Stretch">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <control:EvalutorBlock Evalutor="{Binding}"
                                                    CopyEvalutorCommand="{Binding DataContext.CopyEvalutorCommand, ElementName=parametersPage}"
-                                                   RemoveEvalutorCommand="{Binding DataContext.RemoveEvalutorCommand, ElementName=parametersPage}"/>
+                                                   RemoveEvalutorCommand="{Binding DataContext.RemoveEvalutorCommand, ElementName=parametersPage}"
+                                                   Cursor="Hand"/>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
@@ -88,7 +88,8 @@
                             Command="{Binding DataContext.SetTableCommand, ElementName=formulasAndTermsPage}"
                             CommandParameter="{Binding Value}"/>
                     
-                    <TabControl Grid.Row="1">
+                    <TabControl Grid.Row="1"
+                                Cursor="Hand">
                         <TabControl.Template>
                             <ControlTemplate TargetType="TabControl">
                                 <Grid>
@@ -119,15 +120,15 @@
                                      MinHeight="50"
                                      VirtualizingStackPanel.IsVirtualizing="True"
                                      HorizontalContentAlignment="Stretch"
-                                     VerticalAlignment="Stretch"
-                                     Cursor="Hand">
+                                     VerticalAlignment="Stretch">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Name}"
                                                    ToolTip="{Binding Value}"
                                                    TextAlignment="Center"
                                                    TextWrapping="Wrap"
-                                                   MouseLeftButtonUp="SetSystemFormulaCommand"/>
+                                                   MouseLeftButtonUp="SetSystemFormulaCommand"
+                                                   Cursor="Hand"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -140,14 +141,14 @@
                                      VirtualizingStackPanel.IsVirtualizing="True"
                                      VirtualizingStackPanel.VirtualizationMode="Recycling"
                                      HorizontalContentAlignment="Stretch"
-                                     VerticalAlignment="Stretch"
-                                     Cursor="Hand">
+                                     VerticalAlignment="Stretch">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding}"
                                                    MouseLeftButtonUp="SetMarkingCommand"
                                                    TextAlignment="Center"
-                                                   TextWrapping="Wrap"/>
+                                                   TextWrapping="Wrap"
+                                                   Cursor="Hand"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -160,15 +161,15 @@
                                      VirtualizingStackPanel.IsVirtualizing="True"
                                      VirtualizingStackPanel.VirtualizationMode="Recycling"
                                      HorizontalContentAlignment="Stretch"
-                                     VerticalAlignment="Stretch"
-                                     Cursor="Hand">
+                                     VerticalAlignment="Stretch">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Name}"
                                                    ToolTip="{Binding Value}"
                                                    MouseLeftButtonUp="SetCurrentEvaluatorCommand"
                                                    TextAlignment="Center"
-                                                   TextWrapping="Wrap"/>
+                                                   TextWrapping="Wrap"
+                                                   Cursor="Hand"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -192,7 +193,6 @@
                                          VirtualizingStackPanel.VirtualizationMode="Recycling"
                                          HorizontalContentAlignment="Stretch"
                                          VerticalAlignment="Stretch"
-                                         Cursor="Hand"
                                          Grid.Row="1">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
@@ -200,7 +200,8 @@
                                                        ToolTip="{Binding Value}"
                                                        MouseLeftButtonUp="SetCurrentEvaluatorCommand"
                                                        TextAlignment="Center"
-                                                       TextWrapping="Wrap"/>
+                                                       TextWrapping="Wrap"
+                                                       Cursor="Hand"/>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
