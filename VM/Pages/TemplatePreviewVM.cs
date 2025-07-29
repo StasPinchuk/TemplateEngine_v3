@@ -10,6 +10,7 @@ using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.Views.Pages;
 
@@ -150,9 +151,9 @@ namespace TemplateEngine_v3.VM.Pages
         {
             try
             {
-                CalculateHelper calculateHelper = new CalculateHelper();
+                TemplateCalculatorService calculatorService = new TemplateCalculatorService(_templateManager);
 
-                var template = calculateHelper.CalculateTemplate(_templateManager, OrderString, Branch);
+                var template = calculatorService.Calculate(OrderString, Branch);
 
                 Relations = template.TemplateRelations.FirstOrDefault();
 

@@ -33,7 +33,7 @@ namespace TemplateEngine_v3.Models
             set => SetValue(ref _id, value, nameof(ID));
         }
 
-        private string _stageName = "Название статуса";
+        private string _stageName = "Название стадии";
         public string StageName
         {
             get => _stageName;

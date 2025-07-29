@@ -80,7 +80,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <summary>
         /// Коллекция системных оценщиков условий.
         /// </summary>
-        public ObservableCollection<ConditionEvaluator> SystemEvaluators { get; set; }
+        public List<ConditionEvaluator> SystemEvaluators { get; set; }
 
         /// <summary>
         /// Все оценщики, доступные в шаблоне.
@@ -95,7 +95,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <summary>
         /// Коллекция строковых маркировок шаблона.
         /// </summary>
-        public ObservableCollection<string> TemplateMarkings { get; set; }
+        public List<string> TemplateMarkings { get; set; }
 
         private string _filterAllTemplateEvaluator = string.Empty;
 
@@ -155,7 +155,7 @@ namespace TemplateEngine_v3.VM.Pages
             SystemEvaluators = new(_evaluatorManager.SystemEvaluators);
             AllTemplateEvaluator = new(_evaluatorManager.AllTemplateEvaluator);
             NodeEvaluators = new(_evaluatorManager.NodeEvaluators);
-            TemplateMarkings = new ObservableCollection<string>(_evaluatorManager.TemplateMarkings);
+            TemplateMarkings = new (_evaluatorManager.TemplateMarkings);
 
             InitializeCommand();
         }

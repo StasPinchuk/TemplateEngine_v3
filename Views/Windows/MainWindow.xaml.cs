@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -133,6 +134,16 @@ namespace TemplateEngine_v3.Views.Windows
 
             ScrollLeftButton.IsEnabled = _tabsScrollViewer.HorizontalOffset > 0;
             ScrollRightButton.IsEnabled = _tabsScrollViewer.HorizontalOffset < _tabsScrollViewer.ScrollableWidth;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            string filePath = @"configs\Документация пользователя_2.docx";
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = filePath,
+                UseShellExecute = true 
+            });
         }
     }
 }

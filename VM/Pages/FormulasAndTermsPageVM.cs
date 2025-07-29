@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -163,10 +164,10 @@ namespace TemplateEngine_v3.VM.Pages
         /// </summary>
         public ObservableCollection<ConditionEvaluator> Evaluator { get; set; } = new ObservableCollection<ConditionEvaluator>();
 
-        public ObservableCollection<ConditionEvaluator> SystemEvaluators { get; set; }
+        public List<ConditionEvaluator> SystemEvaluators { get; set; }
         public ObservableCollection<ConditionEvaluator> AllTemplateEvaluator { get; set; }
         public ObservableCollection<ConditionEvaluator> NodeEvaluators { get; set; }
-        public ObservableCollection<string> TemplateMarkings { get; set; }
+        public List<string> TemplateMarkings { get; set; }
 
         public ICommand CopyEvalutorCommand { get; set; }
         public ICommand RemoveEvalutorCommand { get; set; }
@@ -190,9 +191,9 @@ namespace TemplateEngine_v3.VM.Pages
             _nodeManager.CurrentNodeChanged += OnCurrentNodeChanged;
             _nodeManager.EvaluatorChanged += OnNodeChanged;
 
-            SystemEvaluators = new ObservableCollection<ConditionEvaluator>(_evaluatorManager.SystemEvaluators);
+            SystemEvaluators = _evaluatorManager.SystemEvaluators;
             AllTemplateEvaluator = new ObservableCollection<ConditionEvaluator>(_evaluatorManager.AllTemplateEvaluator);
-            TemplateMarkings = new ObservableCollection<string>(_evaluatorManager.TemplateMarkings);
+            TemplateMarkings = _evaluatorManager.TemplateMarkings;
             SetEvaluator();
 
             InitializeCommand();

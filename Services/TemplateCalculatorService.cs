@@ -1,34 +1,29 @@
-﻿using NCalc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
-using TemplateEngine_v3.Interfaces;
+using System.Threading.Tasks;
+using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.ReferenceServices;
-using TFlex.DOCs.Common;
 
-namespace TemplateEngine_v3.Helpers
+namespace TemplateEngine_v3.Services
 {
-    public class CalculateHelper
+    public class TemplateCalculatorService
     {
-        private TemplateManager _templateManager;
-        private TableService _tableService;
+        private readonly TemplateManager _templateManager;
+        private readonly TableService _tableService;
         private readonly ExpressionResolver _resolver;
 
-        /// <summary>
-        /// Выполняет вычисление и построение шаблона на основе текущего выбранного шаблона из менеджера,
-        /// строки заказа и названия ветки (branch).
-        /// </summary>
-        /// <param name="templateManager">Менеджер шаблонов, предоставляющий доступ к текущему шаблону и вспомогательным сервисам.</param>
-        /// <param name="orderString">Строка заказа, используемая для обработки маркировок и подбора материалов.</param>
-        /// <param name="branchString">Название ветки (branch), используемое для фильтрации шаблона по веткам.</param>
-        /// <returns>
-        /// Возвращает вычисленный шаблон <see cref="Template"/>, в котором отфильтрованы и обработаны отношения и узлы.
-        /// Если шаблон не содержит указанной ветки, возвращается <c>null</c>.
-        /// </returns>
+        public TemplateCalculatorService(TemplateManager templateManager)
+        {
+            _templateManager = templateManager;
+            _tableService = templateManager.TableService;
+            _resolver = new ExpressionResolver(_tableService);
+        }
+
         public Template Calculate(string orderString, string branchName)
         {
             var template = _templateManager.GetSelectedTemplate().Copy();
@@ -37,6 +32,8 @@ namespace TemplateEngine_v3.Helpers
 
             var material = ExtractMaterial(orderString);
             var markDictionary = MarkingSpliter.ProcessMarking(orderString, template.ExampleMarkings.ToList());
+            _resolver.SetMarkDictionary(markDictionary);
+
             var relation = SelectValidRelation(template.TemplateRelations);
 
             if (relation == null)
@@ -46,7 +43,7 @@ namespace TemplateEngine_v3.Helpers
             }
 
             var nodes = FlattenNodes(relation.Nodes);
-            _resolver.Prepare(nodes, material, branchName, markDictionary);
+            _resolver.Prepare(nodes, material, branchName);
             _resolver.ResolveAll();
 
             ReplaceNodeValues(nodes);
@@ -58,10 +55,9 @@ namespace TemplateEngine_v3.Helpers
             return template;
         }
 
-        private string ExtractMaterial(string orderString)
+        private string ExtractMaterial(string order)
         {
-            string pattern = @"RAL\d+";
-            Match match = Regex.Match(orderString, pattern, RegexOptions.IgnoreCase);
+            var match = Regex.Match(order, @"RAL\d+", RegexOptions.IgnoreCase);
             if (match.Success)
             {
                 var formatted = Regex.Replace(match.Value, @"RAL\s*(\d+)", "RAL $1");
@@ -114,6 +110,6 @@ namespace TemplateEngine_v3.Helpers
                     nodes.ToList().Remove(node);
             }
         }
-
     }
+
 }

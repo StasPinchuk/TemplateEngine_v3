@@ -247,8 +247,11 @@ namespace TemplateEngine_v3.VM.Pages
         /// <param name="parameters">Параметры команды. Ожидается строка примера маркировки.</param>
         private void RemoveExampleMarkingsAsync(object parameters)
         {
-            if (parameters is string exampleMarkings)
-                CurrentTemplate.ExampleMarkings.Remove(exampleMarkings);
+            if (parameters is ExampleMarking exampleMarking)
+            {
+                CurrentTemplate.ExampleMarkings.Remove(exampleMarking.Text);
+                ExampleMarkings.Remove(exampleMarking);
+            }
             UpdateContextMenu();
         }
 

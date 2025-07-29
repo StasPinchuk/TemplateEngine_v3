@@ -41,7 +41,7 @@
                                          Height="24"
                                          Margin="0,0,10,0"/>
 
-                <TextBlock Text="Статусы шаблона"
+                <TextBlock Text="Стадии шаблона"
                            FontWeight="SemiBold"
                            FontSize="20"
                            VerticalAlignment="Center"/>
@@ -146,8 +146,8 @@
 
 
                         <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}" 
-                                   materialDesign:HintAssist.Hint="Название статуса"
-                                   Text="{Binding CurrentStage.StageName, FallbackValue='Название статуса', Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ElementName=templateStageChoiceDialog}"
+                                   materialDesign:HintAssist.Hint="Название стадии"
+                                   Text="{Binding CurrentStage.StageName, FallbackValue='Название стадии', Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ElementName=templateStageChoiceDialog}"
                                    Foreground="{Binding CurrentStage.TextStageColor, UpdateSourceTrigger=PropertyChanged, ElementName=templateStageChoiceDialog}"
                                    VerticalAlignment="Center"
                                    TextWrapping="Wrap"
@@ -156,8 +156,8 @@
 
                     </StackPanel>
                 </Border>
-                
-                <TextBox materialDesign:HintAssist.Hint="Название статуса"
+
+                <TextBox materialDesign:HintAssist.Hint="Название стадии"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Text="{Binding CurrentStage.StageName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ElementName=templateStageChoiceDialog}"
                          MaxLength="16"
@@ -165,7 +165,7 @@
                          Margin="0,20"/>
 
                 <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                          materialDesign:HintAssist.Hint="Тип статуса"
+                          materialDesign:HintAssist.Hint="Тип стадии"
                           ItemsSource="{Binding StatusTypeList, ElementName=templateStageChoiceDialog}"
                           SelectedItem="{Binding StatusTypeString, ElementName=templateStageChoiceDialog}"
                           Padding="10"
@@ -185,7 +185,7 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Цвет статуса"
+                    <TextBlock Text="Цвет фона для стадии"
                                FontWeight="SemiBold"
                                FontSize="18"
                                VerticalAlignment="Center"/>

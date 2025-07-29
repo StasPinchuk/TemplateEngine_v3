@@ -236,6 +236,7 @@
     <Compile Include="Helpers\AvalonEditHelper.cs" />
     <Compile Include="Helpers\CalculateHelper.cs" />
     <Compile Include="Helpers\ContextMenuHelper.cs" />
+    <Compile Include="Helpers\ExpressionResolver.cs" />
     <Compile Include="Helpers\MarkingSpliter.cs" />
     <Compile Include="Helpers\Permissions.cs" />
     <Compile Include="Helpers\Updater.cs" />
@@ -292,6 +293,7 @@
     <Compile Include="Services\ServerServices\DefaultConnectionService.cs" />
     <Compile Include="Services\ServerServices\DefaultManagerInitializer.cs" />
     <Compile Include="Services\ServerServices\ServerManager.cs" />
+    <Compile Include="Services\TemplateCalculatorService.cs" />
     <Compile Include="Services\UsersServices\AllowedUsersManager.cs" />
     <Compile Include="Services\UsersServices\AllUsersManager.cs" />
     <Compile Include="Services\UsersServices\UserManager.cs" />

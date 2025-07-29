@@ -99,7 +99,7 @@ namespace TemplateEngine_v3.UserControls
                 "ButtonText",
                 typeof(string),
                 typeof(TemplateStageChoiceDialog),
-                new PropertyMetadata("Добавить статус")
+                new PropertyMetadata("Добавить стадию")
             );
 
         public static readonly DependencyProperty StatusTypeStringProperty =
@@ -396,7 +396,7 @@ namespace TemplateEngine_v3.UserControls
         private bool CanModifyStage(object parameter)
         {
             return !string.IsNullOrEmpty(CurrentStage?.StageName)
-                   && !(CurrentStage?.StageName.Equals("Название статуса") ?? false);
+                   && !(CurrentStage?.StageName.Equals("Название стадии") ?? false);
         }
 
         private void ModifyStage(object parameter)
@@ -409,7 +409,7 @@ namespace TemplateEngine_v3.UserControls
             StageListBox.SelectedItem = null;
 
             isEdit = false;
-            ButtonText = "Добавить статус";
+            ButtonText = "Добавить стадию";
 
             CurrentStage = new();
         }
@@ -434,7 +434,7 @@ namespace TemplateEngine_v3.UserControls
 
         private bool CanCancelStage(object parameter)
         {
-            return !(CurrentStage?.StageName.Equals("Название статуса") ?? false);
+            return !(CurrentStage?.StageName.Equals("Название стадии") ?? false);
         }
 
         private void CancelStage(object parameter)
@@ -455,7 +455,7 @@ namespace TemplateEngine_v3.UserControls
                 SelectedColor = ((SolidColorBrush)CurrentStage.BackgroundStageColor).Color;
                 SelectedIconColor = ((SolidColorBrush)CurrentStage.IconStageColor).Color;
 
-                ButtonText = "Изменить статус";
+                ButtonText = "Изменить стадию";
             }
 
         }

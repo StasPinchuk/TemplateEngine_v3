@@ -45,7 +45,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <summary>
         /// Коллекция маркировок из шаблона.
         /// </summary>
-        public ObservableCollection<string> TemplateMarkings { get; set; } = new();
+        public List<string> TemplateMarkings { get; set; } = new();
 
         /// <summary>
         /// Вычислители, принадлежащие конкретному узлу.
@@ -69,7 +69,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// <param name="relations">Отношения шаблона.</param>
         public EvaluatorManager(Template template, TemplateRelations relations)
         {
-            TemplateMarkings = new ObservableCollection<string>(template.ProductMarkingAttributes);
+            TemplateMarkings = new List<string>(template.ProductMarkingAttributes);
             SetAllTemplateEvaluator(ref relations);
             SetAllTemplateParameters(ref relations);
         }
