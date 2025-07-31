@@ -41,5 +41,11 @@ namespace TemplateEngine_v3.Views.Pages
             vm = new ReferencePageVM(templateManager, technologiesManager, branchManager, userManager, templateClass, stageService, sideBar);
             DataContext = vm;
         }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox textBox)
+                vm.SearchReferenceModel(textBox.Text);
+        }
     }
 }

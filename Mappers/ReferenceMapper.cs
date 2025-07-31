@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows;
 using TemplateEngine_v3.Models;
 using TFlex.DOCs.Model;
 using TFlex.DOCs.Model.References;
@@ -79,8 +80,7 @@ namespace TemplateEngine_v3.Mappers
                     Type = reference.Class,
                     LastEditDate = Convert.ToDateTime(reference[_lastEditParameterGuid].ToString()),
                     CreateDate = Convert.ToDateTime(reference[_createDateParameterGuid].ToString()),
-                    ObjectStruct = reference[_structObjectParameterGuid].ToString(),
-                    IsLocked = !string.IsNullOrEmpty(reference[_lockedParameterGuid].ToString()) ? reference[_lockedParameterGuid].ToString().Contains(UserFio) : false
+                    ObjectStruct = reference[_structObjectParameterGuid].ToString()
                 };
 
             }

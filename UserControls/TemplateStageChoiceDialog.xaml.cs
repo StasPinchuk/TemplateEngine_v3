@@ -355,12 +355,26 @@ namespace TemplateEngine_v3.UserControls
 
         private void OpenColorPickerPanel_Click(object sender, RoutedEventArgs e)
         {
-            ColorPickerPanel.Visibility = Visibility.Visible;
+            if(ColorPickerPanel.Visibility == Visibility.Visible)
+            {
+                ColorPickerPanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ColorPickerPanel.Visibility = Visibility.Visible;
+            }
         }
 
         private void OpenIconColorPickerPanel_Click(object sender, RoutedEventArgs e)
         {
-            IconColorPickerPanel.Visibility = Visibility.Visible;
+            if (IconColorPickerPanel.Visibility == Visibility.Visible)
+            {
+                IconColorPickerPanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                IconColorPickerPanel.Visibility = Visibility.Visible;
+            }
         }
 
         private void SelectStageBackgroundColor_Click(object sender, RoutedEventArgs e)

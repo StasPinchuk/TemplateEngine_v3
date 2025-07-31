@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Models.CustomEventArgs;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TFlex.DOCs.Common;
 
@@ -178,8 +179,9 @@ namespace TemplateEngine_v3.VM.Pages
         /// Обработчик смены текущего узла.
         /// </summary>
         /// <param name="node">Новый текущий узел.</param>
-        private void OnCurrentNodeChanged(Node node)
+        private void OnCurrentNodeChanged(object sender, NodeChangedEventArgs e)
         {
+            var node = e.NewNode;
             if (node != null)
             {
                 Evaluator = node.Parameters;
@@ -196,7 +198,7 @@ namespace TemplateEngine_v3.VM.Pages
         /// <summary>
         /// Обработчик изменения данных оценщиков.
         /// </summary>
-        private void OnNodeChanged()
+        private void OnNodeChanged(object sender, EventArgs e)
         {
             _evaluatorManager.SetNodeEvaluators(_nodeManager.CurrentNode);
             NodeEvaluators = new ObservableCollection<ConditionEvaluator>(_evaluatorManager.NodeEvaluators);

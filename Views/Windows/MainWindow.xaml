@@ -82,6 +82,7 @@
                         </StackPanel>
                     </Button>
                     <Button Style="{StaticResource MaterialDesignFlatButton}"
+                            AutomationProperties.Name="Тип детали"
                             HorizontalContentAlignment="Left"
                             Command="{Binding DetailTypeListCommand}"
                             Foreground="#FFF"
@@ -102,6 +103,7 @@
                     </Button>
                     <Button Style="{StaticResource MaterialDesignFlatButton}"
                             HorizontalContentAlignment="Left"
+                            AutomationProperties.Name="Открыть справку"
                             Foreground="#FFF"
                             Click="Button_Click"
                             Grid.Row="4">
@@ -123,6 +125,7 @@
                             HorizontalContentAlignment="Left"
                             Foreground="#FFF"
                             Visibility="{Binding IsAdminVisibility, UpdateSourceTrigger=PropertyChanged}"
+                            AutomationProperties.Name="Открыть логи"
                             Grid.Row="5">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Width="24"
@@ -142,6 +145,7 @@
                             HorizontalContentAlignment="Left"
                             Foreground="#FFF"
                             Visibility="{Binding IsAdminVisibility, UpdateSourceTrigger=PropertyChanged}"
+                            AutomationProperties.Name="Стадии шаблонов"
                             Grid.Row="6">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Width="24"
@@ -188,6 +192,7 @@
                         </Grid.ColumnDefinitions>
 
                         <ListBox x:Name="TabsListBox"
+                                 AutomationProperties.Name="Список разделов"
                                  ItemsSource="{Binding TabsItem, UpdateSourceTrigger=PropertyChanged}"
                                  SelectedItem="{Binding SelectedTab, UpdateSourceTrigger=PropertyChanged}"
                                  SelectionChanged="TabsListBox_SelectionChanged"

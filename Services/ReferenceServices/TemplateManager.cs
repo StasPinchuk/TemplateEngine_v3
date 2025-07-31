@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.UI;
 using System.Windows;
 using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Interfaces;
@@ -203,12 +204,21 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// </summary>
         /// <param name="editTemplate">Шаблон с изменениями.</param>
         /// <returns>True при успешном редактировании, иначе false.</returns>
-        public async Task<bool> EditTemplateAsync(Template editTemplate)
+        public async Task<bool> EditTemplateAsync(Template editTemplate, string type)
         {
             try
             {
                 await _reference.Objects.ReloadAsync();
                 var editReference = await _reference.FindAsync(editTemplate.Id);
+
+                if (type.Equals("Archive"))
+                {
+                    ClassObject templateType = type.Equals("Final") ? _readyTemplateType : type.Equals("Archive") ? _trashCanType : _draftTemplateType;
+                    bool isSave = await AddTemplateAsync(editTemplate, templateType);
+                    if (isSave)
+                        await editReference.DeleteAsync();
+                    return isSave;
+                }
 
                 if (editReference == null || _nameParameter == null || _objectStringParameter == null)
                     return false;
@@ -365,14 +375,14 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
                 if (currentList.Any(temp => temp.Id.Equals(template.Id)))
                 {
-                    bool isEdit = await EditTemplateAsync(template);
+                    bool isEdit = await EditTemplateAsync(template, type);
                     if (isEdit)
                         await LogManager.SaveLog();
                     return isEdit;
                 }
                 else
                 {
-                    ClassObject templateType = type.Equals("Final") ? _readyTemplateType : _draftTemplateType;
+                    ClassObject templateType = type.Equals("Final") ? _readyTemplateType : type.Equals("Archive") ? _trashCanType : _draftTemplateType;
                     bool isSave = await AddTemplateAsync(template, templateType);
                     if(isSave) 
                         await LogManager.SaveLog();

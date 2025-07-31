@@ -120,12 +120,20 @@ namespace TemplateEngine_v3.Helpers
             var psi = new ProcessStartInfo
             {
                 FileName = updaterExe,
-                UseShellExecute = true
+                UseShellExecute = true,
+                Verb = "runas" 
             };
 
             await Task.Delay(1000);
             _connection?.Close();
-            Process.Start(psi);
+            try
+            {
+                Process.Start(psi);
+            }
+            catch (System.ComponentModel.Win32Exception ex)
+            {
+                Console.WriteLine("Запуск с правами администратора отменён: " + ex.Message);
+            }
 
             Application.Current?.Dispatcher.Invoke(() => Application.Current.Shutdown());
             return true;

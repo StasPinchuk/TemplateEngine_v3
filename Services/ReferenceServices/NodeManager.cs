@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Models.CustomEventArgs;
 
 namespace TemplateEngine_v3.Services.ReferenceServices
 {
@@ -34,8 +35,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// Событие, вызываемое при изменении текущего узла.
         /// Передаёт новый текущий узел.
         /// </summary>
-        public event Action<Node> CurrentNodeChanged;
-        public event Action EvaluatorChanged;
+        public event EventHandler<NodeChangedEventArgs> CurrentNodeChanged;
+        public event EventHandler EvaluatorChanged;
 
         private Node _currentNode;
 
@@ -52,7 +53,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 {
                     _currentNode = value;
                     EvaluatorManager?.SetNodeEvaluators(_currentNode);
-                    CurrentNodeChanged?.Invoke(_currentNode);
+                    CurrentNodeChanged?.Invoke(this, new NodeChangedEventArgs(_currentNode));
                 }
             }
         }
@@ -69,7 +70,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         public void NotifyChange()
         {
-            EvaluatorChanged?.Invoke(); 
+            EvaluatorChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void ClearAction()

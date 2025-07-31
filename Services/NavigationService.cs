@@ -40,7 +40,7 @@ namespace TemplateEngine_v3.Services
 
         public static void AddPageToPageHistory(PageModel page)
         {
-            if (!_selectedTab.PageHistory.Any(p => p.Title.Equals(page.Title)))
+            if (!_selectedTab.PageHistory.Any(p => p.Title.Equals(page.Title) && !p.Title.Equals("Детали")))
             {
                 _selectedTab.PageHistory.Add(page);
             }
