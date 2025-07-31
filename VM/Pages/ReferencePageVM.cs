@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -44,6 +45,7 @@ namespace TemplateEngine_v3.VM.Pages
         private readonly TechnologiesManager _technologiesManager;
         private readonly TemplateClass _templateClass;
         private readonly ColumnDefinition _sideBar;
+        private readonly Action _setListAction;
 
         private object _permission = null;
 
@@ -108,6 +110,9 @@ namespace TemplateEngine_v3.VM.Pages
                 CanCreate = (templatePermission.HasFlag(TemplatePermissions.All) || templatePermission.HasFlag(TemplatePermissions.Create));
 
             SetReferenceList();
+
+            _setListAction += SetReferenceList;
+
             InitializeTemplateCommand();
         }
 
@@ -129,6 +134,7 @@ namespace TemplateEngine_v3.VM.Pages
                 CanCreate = (templatePermission.HasFlag(TemplatePermissions.All) || templatePermission.HasFlag(TemplatePermissions.Create));
 
             SetReferenceList();
+            _setListAction += SetReferenceList;
             InitializeTemplateCommand();
         }
 
@@ -158,6 +164,7 @@ namespace TemplateEngine_v3.VM.Pages
                 CanCreate = (branchPermissions == BranchPermissions.All || branchPermissions.HasFlag(BranchPermissions.Create));
 
             SetBranchesList();
+            _setListAction += SetBranchesList;
         }
 
         /// <summary>
@@ -187,6 +194,7 @@ namespace TemplateEngine_v3.VM.Pages
                 CanCreate = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Create));
 
             SetTechnologiesList();
+            _setListAction += SetTechnologiesList;
         }
 
         /// <summary>
@@ -526,6 +534,18 @@ namespace TemplateEngine_v3.VM.Pages
             NavigationService.SetPageInMainFrame(branchCreatePage);
 
             _sideBar.Width = new GridLength(80);
+        }
+
+        public void SearchReferenceModel(string searchString)
+        {
+            if (string.IsNullOrEmpty(searchString))
+                _setListAction?.Invoke();
+            else
+            {
+                _setListAction?.Invoke();
+                ReferencesList = new(ReferencesList.Where(reference => reference.Name.StartsWith(searchString,StringComparison.OrdinalIgnoreCase)));
+                OnPropertyChanged(nameof(ReferencesList));
+            }
         }
     }
 }

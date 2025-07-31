@@ -11,8 +11,25 @@
       Title="ReferencePage">
 
     <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <TextBox materialDesign:HintAssist.Hint="Поиск"
+                 AutomationProperties.Name="Поиск"
+                 Width="250"
+                 Margin="0 0 40 0"
+                 TextChanged="TextBox_TextChanged"
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Bottom"
+                 Grid.Row="0"/>
+
         <ScrollViewer VerticalScrollBarVisibility="Auto"
-                  HorizontalScrollBarVisibility="Disabled">
+                      HorizontalScrollBarVisibility="Disabled"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      Grid.Row="1">
             <Grid>
                 <ItemsControl ItemsSource="{Binding ReferencesList}"
                               VirtualizingStackPanel.IsVirtualizing="True">
@@ -49,6 +66,8 @@
                 Width="35"
                 Height="35"
                 Margin="25, 10"
+                Grid.Row="1"
+                AutomationProperties.Name="Кнопка добавления элемента"
                 Command="{Binding CreateCommand}">
             <materialDesign:PackIcon Kind="Plus"
                                      Width="25"

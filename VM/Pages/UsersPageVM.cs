@@ -1,5 +1,8 @@
 ﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -103,6 +106,24 @@ namespace TemplateEngine_v3.VM.Pages
                 {
                     AlloweUsers.Add(user);
                 }
+            }
+        }
+
+        public void SearchUser(string searchUser)
+        {
+            if (string.IsNullOrEmpty(searchUser))
+            {
+                AlloweUsers = new ObservableCollection<UserModel>(_userManager.GetAlloweUsers());
+                OnPropertyChanged(nameof(AlloweUsers));
+            }
+            else
+            {
+                AlloweUsers = new ObservableCollection<UserModel>(_userManager.GetAlloweUsers());
+
+                AlloweUsers = new(AlloweUsers.Where(reference => reference.FirstName.StartsWith(searchUser, StringComparison.OrdinalIgnoreCase) 
+                                                                 || reference.LastName.StartsWith(searchUser, StringComparison.OrdinalIgnoreCase)
+                                                                 || reference.Patronymic.StartsWith(searchUser, StringComparison.OrdinalIgnoreCase)));
+                OnPropertyChanged(nameof(AlloweUsers));
             }
         }
     }

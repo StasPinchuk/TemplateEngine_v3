@@ -9,6 +9,7 @@ using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Models.CustomEventArgs;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.UserControls;
 using TFlex.DOCs.Common;
@@ -188,7 +189,7 @@ namespace TemplateEngine_v3.VM.Pages
             _nodeManager = nodeManager;
             _evaluatorManager = _nodeManager.EvaluatorManager;
             CurrentNode = _nodeManager.CurrentNode;
-            _nodeManager.CurrentNodeChanged += OnCurrentNodeChanged;
+            _nodeManager.CurrentNodeChanged += HandleCurrentNodeChanged;
             _nodeManager.EvaluatorChanged += OnNodeChanged;
 
             SystemEvaluators = _evaluatorManager.SystemEvaluators;
@@ -216,22 +217,28 @@ namespace TemplateEngine_v3.VM.Pages
         /// Обновляет списки формул и условий.
         /// </summary>
         /// <param name="node">Новый текущий узел</param>
-        private void OnCurrentNodeChanged(Node node)
+        private void HandleCurrentNodeChanged(object sender, NodeChangedEventArgs e)
         {
+            var node = e.NewNode;
+
             CurrentNode = node;
             _evaluatorManager.SetNodeEvaluators(node);
             OnPropertyChanged(nameof(CurrentNode));
-            if(node != null)
+
+            if (node != null)
             {
                 Formulas = node.ExpressionRepository.Formulas;
                 Terms = node.ExpressionRepository.Terms;
             }
+
             NodeEvaluators = _evaluatorManager.NodeEvaluators;
             OnPropertyChanged(nameof(NodeEvaluators));
+
             SetEvaluator();
         }
 
-        private void OnNodeChanged()
+
+        private void OnNodeChanged(object sender, EventArgs e)
         {
             _evaluatorManager.SetNodeEvaluators(CurrentNode);
             NodeEvaluators = _evaluatorManager.NodeEvaluators;
@@ -490,7 +497,7 @@ namespace TemplateEngine_v3.VM.Pages
 
         public void Dispose()
         {
-            _nodeManager.CurrentNodeChanged -= OnCurrentNodeChanged;
+            _nodeManager.CurrentNodeChanged -= HandleCurrentNodeChanged;
             _nodeManager.EvaluatorChanged -= OnNodeChanged;
         }
     }

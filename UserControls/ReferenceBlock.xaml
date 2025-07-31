@@ -113,6 +113,7 @@
                         Grid.Row="6">
 
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                        AutomationProperties.Name="Удалить элемент"
                         Background="Red"
                         ToolTip="{Binding ButtonRemoveToolTip, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                         Width="45"
@@ -131,6 +132,7 @@
                 </Button>
 
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                        AutomationProperties.Name="Копировать элемент"
                         ToolTip="Копировать"
                         Width="45"
                         Height="40"
@@ -151,6 +153,7 @@
                 </Button>
 
                 <Button Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                        AutomationProperties.Name="Изменить/восстановить"
                         Background="Green"
                         BorderBrush="Green"
                         Width="45"

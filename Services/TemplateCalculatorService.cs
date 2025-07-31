@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.ReferenceServices;
+using static TFlex.DOCs.Model.References.Links.RelationTree;
 
 namespace TemplateEngine_v3.Services
 {
@@ -49,9 +50,11 @@ namespace TemplateEngine_v3.Services
             ReplaceNodeValues(nodes);
             FilterNodes(nodes);
 
-            relation.Nodes = new ObservableCollection<Node>(nodes.Where(n => _resolver.IsNodeUsed(n)));
+            relation.Nodes = new (relation.Nodes.Where(node => string.IsNullOrEmpty(node.UsageCondition) || (bool.TryParse(node.UsageCondition, out bool usage) && usage)));
             relation.Designation = _resolver.ReplaceDesignation(relation.Designation);
             relation.IsLoggingEnabled = true;
+            template.TemplateRelations.Clear();
+            template.TemplateRelations.Add(relation);
             return template;
         }
 

@@ -248,6 +248,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <TextBox x:Name="EvalutorName"
+                             Style="{StaticResource MaterialDesignTextBox}"
                              Text="{Binding CurrentEvaluator.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                              materialDesign:HintAssist.Hint="Название формулы/условия"
                              BorderBrush="#D9D9D9"

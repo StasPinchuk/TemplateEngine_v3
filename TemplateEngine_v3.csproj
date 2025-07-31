@@ -234,7 +234,6 @@
     <Compile Include="Converters\MaxWidthConverter.cs" />
     <Compile Include="Converters\ProductMarkingAttributesNameListConverter.cs" />
     <Compile Include="Helpers\AvalonEditHelper.cs" />
-    <Compile Include="Helpers\CalculateHelper.cs" />
     <Compile Include="Helpers\ContextMenuHelper.cs" />
     <Compile Include="Helpers\ExpressionResolver.cs" />
     <Compile Include="Helpers\MarkingSpliter.cs" />
@@ -244,6 +243,7 @@
     <Compile Include="Mappers\ReferenceMapper.cs" />
     <Compile Include="Mappers\UserMapper.cs" />
     <Compile Include="Models\BaseNotifyPropertyChanged.cs" />
+    <Compile Include="Models\CustomEventArgs\NodeChangedEventArgs.cs" />
     <Compile Include="Models\FormulaCompletionData.cs" />
     <Compile Include="Models\GroupNode.cs" />
     <Compile Include="Models\LogModels\DailyLog.cs" />

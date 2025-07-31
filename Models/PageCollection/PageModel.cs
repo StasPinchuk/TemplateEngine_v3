@@ -125,28 +125,6 @@ namespace TemplateEngine_v3.Models.PageCollection
         }
 
         /// <summary>
-        /// Инициализирует новый экземпляр <see cref="PageModel"/> с заголовком, типом страницы, состоянием выбора и иконкой.
-        /// </summary>
-        public PageModel(string title, Type pageType, PackIconKind icon, bool isSelected)
-        {
-            Title = title;
-            PageType = pageType;
-            IsSelected = isSelected;
-            Icon = icon;
-        }
-
-        /// <summary>
-        /// Инициализирует новый экземпляр <see cref="PageModel"/> с заголовком, типом страницы, состоянием выбора и доступности.
-        /// </summary>
-        public PageModel(string title, Type pageType, bool isSelected, bool isEnabled)
-        {
-            Title = title;
-            PageType = pageType;
-            IsSelected = isSelected;
-            IsEnabled = isEnabled;
-        }
-
-        /// <summary>
         /// Инициализирует новый экземпляр <see cref="PageModel"/> с заголовком, типом страницы и параметрами конструктора.
         /// </summary>
         public PageModel(string title, Type pageType, object[] constructorParameters)

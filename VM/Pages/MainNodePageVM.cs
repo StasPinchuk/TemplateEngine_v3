@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Models.CustomEventArgs;
 using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.VM.Pages
@@ -93,8 +94,9 @@ namespace TemplateEngine_v3.VM.Pages
         /// Обновляет свойство CurrentNode и синхронизирует NodeType.
         /// </summary>
         /// <param name="node">Новый текущий узел.</param>
-        private void OnCurrentNodeChanged(Node node)
+        private void OnCurrentNodeChanged(object sender, NodeChangedEventArgs e)
         {
+            var node = e.NewNode;
             OnPropertyChanged(nameof(CurrentNode));
             NodeType = node?.Type ?? string.Empty;
         }

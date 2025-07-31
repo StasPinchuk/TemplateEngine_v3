@@ -12,8 +12,21 @@
       Title="UsersPage">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBox materialDesign:HintAssist.Hint="Поиск"
+                 Width="250"
+                 Margin="0 0 40 0"
+                 TextChanged="TextBox_TextChanged"
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Bottom"
+                 Grid.Row="0"/>
         <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                      VerticalScrollBarVisibility="Auto">
+                      VerticalScrollBarVisibility="Auto"
+                      Grid.Row="1">
             <ItemsControl ItemsSource="{Binding AlloweUsers, UpdateSourceTrigger=PropertyChanged}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -42,6 +55,7 @@
                 Width="35"
                 Height="35"
                 Margin="25, 10"
+                Grid.Row="1"
                 Command="{Binding DataContext.SetUserPermissionsCommand, ElementName=usersPage}">
             <materialDesign:PackIcon Kind="Plus"
                                      Width="25"

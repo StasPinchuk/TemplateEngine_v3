@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using TFlex.DOCs.Model.Classes;
 
 namespace TemplateEngine_v3.Models
@@ -25,7 +26,6 @@ namespace TemplateEngine_v3.Models
         private DateTime _createDate = DateTime.MinValue;
         private DateTime _lastEditDate = DateTime.MinValue;
         private string _objectStruct = string.Empty;
-        private bool _isLocked;
 
         /// <summary>
         /// Уникальный идентификатор объекта.
@@ -85,15 +85,6 @@ namespace TemplateEngine_v3.Models
         {
             get => _objectStruct;
             set => SetValue(ref _objectStruct, value, nameof(ObjectStruct));
-        }
-
-        /// <summary>
-        /// Заблокирован ли объект для редактирования.
-        /// </summary>
-        public bool IsLocked
-        {
-            get => _isLocked;
-            set => SetValue(ref _isLocked, value, nameof(IsLocked));
         }
 
         /// <summary>

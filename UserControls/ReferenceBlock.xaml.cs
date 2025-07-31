@@ -275,7 +275,6 @@ namespace TemplateEngine_v3.UserControls
                         control.ButtonToolTip = "Восстановить";
                     }
 
-                    control.IsLocked = reference.IsLocked;
                 }
             }
         }
@@ -287,21 +286,21 @@ namespace TemplateEngine_v3.UserControls
             {
                 if (e.NewValue is TemplatePermissions templatePermission)
                 {
-                    control.CanCopy = (templatePermission.HasFlag(TemplatePermissions.All) || templatePermission.HasFlag(TemplatePermissions.Copy)) && !control.IsLocked;
-                    control.CanEdit = (templatePermission == TemplatePermissions.All || templatePermission.HasFlag(TemplatePermissions.Edit)) && !control.IsLocked;
-                    control.CanRemove = (templatePermission == TemplatePermissions.All || templatePermission.HasFlag(TemplatePermissions.Delete)) && !control.IsLocked;
+                    control.CanCopy = (templatePermission.HasFlag(TemplatePermissions.All) || templatePermission.HasFlag(TemplatePermissions.Copy));
+                    control.CanEdit = (templatePermission == TemplatePermissions.All || templatePermission.HasFlag(TemplatePermissions.Edit));
+                    control.CanRemove = (templatePermission == TemplatePermissions.All || templatePermission.HasFlag(TemplatePermissions.Delete));
                 }
                 if (e.NewValue is BranchPermissions branchPermissions)
                 {
-                    control.CanCopy = (branchPermissions == BranchPermissions.All || branchPermissions.HasFlag(BranchPermissions.Copy)) && !control.IsLocked;
-                    control.CanEdit = (branchPermissions == BranchPermissions.All || branchPermissions.HasFlag(BranchPermissions.Edit)) && !control.IsLocked;
-                    control.CanRemove = (branchPermissions == BranchPermissions.All || branchPermissions.HasFlag(BranchPermissions.Delete)) && !control.IsLocked;
+                    control.CanCopy = (branchPermissions == BranchPermissions.All || branchPermissions.HasFlag(BranchPermissions.Copy));
+                    control.CanEdit = (branchPermissions == BranchPermissions.All || branchPermissions.HasFlag(BranchPermissions.Edit));
+                    control.CanRemove = (branchPermissions == BranchPermissions.All || branchPermissions.HasFlag(BranchPermissions.Delete));
                 }
                 if (e.NewValue is TechnologiesPermissions technologiesPermissions)
                 {
-                    control.CanCopy = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Copy)) && !control.IsLocked;
-                    control.CanEdit = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Edit)) && !control.IsLocked;
-                    control.CanRemove = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Delete)) && !control.IsLocked;
+                    control.CanCopy = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Copy));
+                    control.CanEdit = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Edit));
+                    control.CanRemove = (technologiesPermissions == TechnologiesPermissions.All || technologiesPermissions.HasFlag(TechnologiesPermissions.Delete));
                 }
             }
         }
