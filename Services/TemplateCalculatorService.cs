@@ -48,9 +48,8 @@ namespace TemplateEngine_v3.Services
             _resolver.ResolveAll();
 
             ReplaceNodeValues(nodes);
-            FilterNodes(nodes);
+            FilterNodes(relation.Nodes);
 
-            relation.Nodes = new (relation.Nodes.Where(node => string.IsNullOrEmpty(node.UsageCondition) || (bool.TryParse(node.UsageCondition, out bool usage) && usage)));
             relation.Designation = _resolver.ReplaceDesignation(relation.Designation);
             relation.IsLoggingEnabled = true;
             template.TemplateRelations.Clear();
@@ -100,17 +99,27 @@ namespace TemplateEngine_v3.Services
             {
                 node.Designation = _resolver.ReplaceDesignation(node.Designation);
                 node.Name = _resolver.ReplaceDesignation(node.Name);
-                node.UsageCondition = _resolver.Calculate(node.UsageCondition)?.ToString();
+                var usage = _resolver.Calculate(node.UsageCondition)?.ToString();
+                node.UsageCondition = string.IsNullOrEmpty(usage) ? "True" : usage;
                 node.IsLoggingEnabled = true;
             }
         }
 
-        private void FilterNodes(IEnumerable<Node> nodes)
+        private void FilterNodes(ObservableCollection<Node> nodes)
         {
-            foreach (var node in nodes.ToList())
+            List<Node> removeNode = [];
+            foreach (var node in nodes)
             {
-                if (!string.IsNullOrEmpty(node.UsageCondition) && bool.TryParse(node.UsageCondition, out var use) && !use)
-                    nodes.ToList().Remove(node);
+                if (!node.UsageCondition.Equals("True"))
+                    removeNode.Add(node);
+                else
+                    if (node.Nodes.Count > 0)
+                        FilterNodes(node.Nodes);
+            }
+
+            foreach(var node in removeNode)
+            {
+                nodes.Remove(node);
             }
         }
     }
