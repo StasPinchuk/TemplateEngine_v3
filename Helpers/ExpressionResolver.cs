@@ -182,7 +182,7 @@ namespace TemplateEngine_v3.Helpers
             if (!double.TryParse(input, out _) && !bool.TryParse(input, out _))
             {
                 if (!input.StartsWith("'"))
-                    return $"{input.Replace("'", "")}'";
+                    return $"'{input.Replace("'", "")}'";
             }
             else
             {
