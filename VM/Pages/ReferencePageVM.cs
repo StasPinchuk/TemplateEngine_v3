@@ -277,11 +277,7 @@ namespace TemplateEngine_v3.VM.Pages
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    var archiveStage = _stageService.StageList.FirstOrDefault(stage => stage.StageType == StatusType.Archive);
-                    await _templateManager.SetTemplateAsync(referenceModel);
-                    _templateManager.SelectedTemplate.Stage = archiveStage.ID;
-                    referenceModel.Stage = archiveStage.ID;
-                    bool isRemove = await _templateManager.RemoveTemplateAsync(referenceModel);
+                    bool isRemove = await _templateManager.RemoveTemplateAsync(referenceModel, StageService);
                     if (isRemove)
                     {
                         _templateManager.ClearTemplate();

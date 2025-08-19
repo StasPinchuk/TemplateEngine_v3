@@ -79,7 +79,7 @@ namespace TemplateEngine_v3.UserControls
                     StageList.Clear();
                     bool isVerification = currentStage.StageType != StatusType.Verification && currentStage.StageType != StatusType.Final;
                     var filterStage = _stageService.StageList
-                        .Where(stage => isVerification ? stage.StageType != StatusType.Final && stage.StageType != StatusType.Archive : true).ToList();
+                        .Where(stage => isVerification ? stage.StageType != StatusType.Final : true).ToList();
                     foreach (var stage in filterStage)
                         StageList.Add(stage);
 
@@ -88,7 +88,7 @@ namespace TemplateEngine_v3.UserControls
                 else
                 {
                     StageList.Clear();
-                    var filterStage = _stageService.StageList.Where(stage => stage.StageType != StatusType.Final && stage.StageType != StatusType.Archive).ToList();
+                    var filterStage = _stageService.StageList.Where(stage => stage.StageType != StatusType.Final).ToList();
                     foreach (var stage in filterStage)
                         StageList.Add(stage);
 

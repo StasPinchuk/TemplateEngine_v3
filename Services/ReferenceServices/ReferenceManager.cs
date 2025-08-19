@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Services.FileServices;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TFlex.DOCs.Model;
@@ -44,14 +44,21 @@ public class ReferenceManager
     /// </summary>
     private void FillMissingReferences(ServerConnection connection)
     {
-        foreach (var key in ReferenceMappings.Keys.ToList())
+        try
         {
-            if (ReferenceMappings[key] == null)
+            foreach (var key in ReferenceMappings.Keys.ToList())
             {
-                var reference = connection.ReferenceCatalog.Find(key);
-                if (reference != null)
-                    ReferenceMappings[key] = reference;
+                if (ReferenceMappings[key] == null)
+                {
+                    var reference = connection.ReferenceCatalog.Find(key);
+                    if (reference != null)
+                        ReferenceMappings[key] = reference;
+                }
             }
+        }
+        catch (Exception)
+        {
+
         }
     }
 

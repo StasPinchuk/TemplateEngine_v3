@@ -252,6 +252,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         public TechnologiesManager DeepCopy()
         {
             var technologies = new TechnologiesManager(_referenceLoader, _technologiesInfo, _branchManager, _operationNamesManager);
+            technologies.CurrentTechnologies = CurrentTechnologies;
             return technologies;
         }
 

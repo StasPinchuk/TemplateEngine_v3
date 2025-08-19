@@ -158,7 +158,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// </summary>
         /// <param name="referenceModelInfo">Шаблон для удаления.</param>
         /// <returns>True при успешном удалении, иначе false.</returns>
-        public async Task<bool> RemoveTemplateAsync(ReferenceModelInfo referenceModelInfo)
+        public async Task<bool> RemoveTemplateAsync(ReferenceModelInfo referenceModelInfo, TemplateStageService templateStageService)
         {
             try
             {
@@ -170,17 +170,10 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
                 if (templateToRemove.Class == _readyTemplateType || templateToRemove.Class == _draftTemplateType)
                 {
-                    var trashCopy = templateToRemove.CreateCopy(_trashCanType);
+                    await SetTemplateAsync(referenceModelInfo, true);
+                    SelectedTemplate.Stage = templateStageService.StageList.FirstOrDefault(stage => stage.StageType == StatusType.Archive).ID;
+                    bool trashCopy = await AddTemplateAsync(SelectedTemplate, _trashCanType);
 
-                    if (_objectStringParameter != null)
-                    {
-                        referenceModelInfo.ObjectStruct = referenceModelInfo.ObjectStruct?
-                            .Replace(referenceModelInfo.Id.ToString(), trashCopy.Guid.ToString());
-
-                        trashCopy[_objectStringParameter.Guid].Value = referenceModelInfo.ObjectStruct;
-                    }
-
-                    await trashCopy.EndChangesAsync();
                     await templateToRemove.DeleteAsync();
 
                     referenceModelInfo = null;
@@ -211,9 +204,9 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 await _reference.Objects.ReloadAsync();
                 var editReference = await _reference.FindAsync(editTemplate.Id);
 
-                if (type.Equals("Archive"))
+                ClassObject templateType = type.Equals("Final") ? _readyTemplateType : type.Equals("Archive") ? _trashCanType : _draftTemplateType;
+                if (type.Equals("Archive") || editReference.Class != templateType)
                 {
-                    ClassObject templateType = type.Equals("Final") ? _readyTemplateType : type.Equals("Archive") ? _trashCanType : _draftTemplateType;
                     bool isSave = await AddTemplateAsync(editTemplate, templateType);
                     if (isSave)
                         await editReference.DeleteAsync();
@@ -281,16 +274,17 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         /// Устанавливает текущий выбранный шаблон из объекта ReferenceModelInfo.
         /// </summary>
         /// <param name="referenceModel">Объект модели справочника шаблонов.</param>
-        public async Task<bool> SetTemplateAsync(ReferenceModelInfo referenceModel)
+        public async Task<bool> SetTemplateAsync(ReferenceModelInfo referenceModel, bool isRemove = false)
         {
             await _reference.Objects.ReloadAsync();
             var findTemplate = await _reference.FindAsync(referenceModel.Id);
 
             if (findTemplate == null)
                 return false;
-
             Template template = new JsonSerializer().Deserialize<Template>(referenceModel.ObjectStruct);
 
+            if (!isRemove)
+                Services.NavigationService.RenameSelectedTab(template.Name);
             template.ProductMarkingAttributes = SetMarkingAttributes(template.ExampleMarkings);
 
             MenuHelper = new ContextMenuHelper(template, MaterialManager);
@@ -443,7 +437,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             var clone = new TemplateManager(_referenceLoader, _templateInfo, MaterialManager, TableService)
             {
-                MenuHelper = this.MenuHelper, // если MenuHelper можно шарить (в противном случае — создать новый)
+                MenuHelper = this.MenuHelper,
                 SelectedTemplate = this.SelectedTemplate != null
                     ? new JsonSerializer().Deserialize<Template>(
                         new JsonSerializer().Serialize(this.SelectedTemplate))

@@ -161,7 +161,25 @@ namespace TemplateEngine_v3.Helpers
 
                 string val = ResolveParts(child);
                 val = WrapStringIfNeeded(val); // ← добавляем
-                result = result.Replace($"[{child.Name}]", val);
+                string placeholder = $"[{child.Name}]";
+
+                // ищем вхождение плейсхолдера
+                int index = result.IndexOf(placeholder);
+                if (index >= 0)
+                {
+                    bool insideQuotes = false;
+
+                    // проверяем, стоит ли слева апостроф
+                    if (index > 0 && result[index - 1] == '\'')
+                        insideQuotes = true;
+
+                    // проверяем, стоит ли справа апостроф
+                    if (index + placeholder.Length < result.Length && result[index + placeholder.Length] == '\'')
+                        insideQuotes = true;
+
+                    string newVal = insideQuotes ? val.Trim('\'') : val;
+                    result = result.Replace(placeholder, newVal);
+                }
             }
 
             if (result.StartsWith("-") &&
