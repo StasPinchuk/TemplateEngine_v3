@@ -82,7 +82,7 @@
 * Панель вкладок;
 * Основной блок;
 
-<img width="1426" height="746" alt="image" src="https://github.com/user-attachments/assets/4e5fc117-36d7-4e8d-8782-d1d57e276f85" />
+![изображение_2025-08-19_092026023](https://github.com/user-attachments/assets/11c09794-0c57-4d8f-a4aa-12488b85bf1a)
 
 #### Боковое меню
 Боковое меню предназначено для навигации по программе и доступа к основным функциям.
@@ -117,7 +117,7 @@
    
 После заполнения всех полей кнопка "Заменить" станет активной, и будет произведена замена.
 
- <img width="421" height="388" alt="image" src="https://github.com/user-attachments/assets/3559d146-1418-4955-b5fd-defd6c3ddb29" />
+![изображение_2025-08-19_092455489](https://github.com/user-attachments/assets/867a7ea9-0f01-43fc-90f0-3c6b0e928cf6)
 
 ### Типы деталей
 Откроется диалоговое окно, в котором представлены:
@@ -161,7 +161,7 @@ e.	Архив
 ### Раздел «Шаблоны»
 Раздел **"Шаблоны"** предназначен для просмотра и управления всеми активными шаблонами, используемыми в производственном процессе для автоматического формирования спецификаций.
 
- <img width="1426" height="746" alt="image" src="https://github.com/user-attachments/assets/4b989061-b32b-462c-8443-8a5c12ba32cf" />
+![изображение_2025-08-19_092026023](https://github.com/user-attachments/assets/11c09794-0c57-4d8f-a4aa-12488b85bf1a)
 
 Информация о каждом шаблоне представлена в виде отдельного блока (карточки), включающего:
 *	Название шаблона
@@ -169,7 +169,7 @@ e.	Архив
 *	Дату его создания
 *	Дату последнего внесения изменений
 
-  <img width="252" height="245" alt="image" src="https://github.com/user-attachments/assets/60b0c888-7faa-4ead-9905-d134fe5d6d50" />
+<img width="262" height="252" alt="image" src="https://github.com/user-attachments/assets/8e3fad67-d824-41fb-a65c-1ee204844516" />
 
 Функциональные кнопки блока:
 *	**Архивировать**   <img width="31" height="30" alt="image" src="https://github.com/user-attachments/assets/e8e95132-8aee-4ddb-9a6c-980fbf7b898a" />
@@ -187,13 +187,13 @@ e.	Архив
 *	Вместо кнопки **"Архивировать"** здесь расположена кнопка **"Удалить"**  <img width="45" height="40" alt="image" src="https://github.com/user-attachments/assets/fda56588-52df-459a-ae4a-baeb8d9da32e" />
 . Ее нажатие выполняет полное, безвозвратное удаление шаблона из базы.
 
- <img width="1426" height="746" alt="image" src="https://github.com/user-attachments/assets/486f2e10-81f5-4d52-88a5-93b3f6071e2c" />
+<img width="1426" height="746" alt="image" src="https://github.com/user-attachments/assets/4d37b764-cb52-4854-a942-87257fadb1ba" />
 
 ### Раздел «Тех. процессы»
 Раздел **"Тех. процессы"** отображает полный список технологических процессов, созданных и сохраненных в данном программном обеспечении.
 Функционал кнопок в блоке информации аналогичен описанному ранее, однако их действия теперь применяются непосредственно к технологическим процессам.
 
- <img width="1426" height="746" alt="image" src="https://github.com/user-attachments/assets/a30f040f-8684-43ad-a5d4-f5c8a46cfc4e" />
+![изображение_2025-08-19_092957404](https://github.com/user-attachments/assets/9a895b52-84ab-4bb1-aca8-21767ef8ee1b)
 
 ### Раздел «Филиалы»
 Раздел **"Филиалы"** отображает полный список филиалов, добавленных в данном программном обеспечении.
