@@ -14,7 +14,7 @@ namespace TemplateEngine_v3.Views.Windows
         public SignInWindow(ServerManager serverManager)
         {
             InitializeComponent();
-            _singInVM = new(serverManager, PassworBox, this);
+            _singInVM = new(serverManager, this);
             DataContext = _singInVM;
         }
     }

@@ -241,8 +241,10 @@
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    
+
                     <TextBox Text="{Binding CurrentEvaluator.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                             Style="{StaticResource MaterialDesignTextBox}"                             
+                             materialDesign:HintAssist.Hint="Название параметра"
                              BorderBrush="#D9D9D9"
                              BorderThickness="0,0,0,1"
                              VerticalAlignment="Stretch"

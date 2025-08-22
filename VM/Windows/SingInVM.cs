@@ -15,7 +15,6 @@ namespace TemplateEngine_v3.VM.Windows
     /// </summary>
     public class SingInVM
     {
-        private readonly PasswordBox _passwordBox;
         private readonly Window _window;
         private readonly ServerManager _serverManager;
 
@@ -43,12 +42,10 @@ namespace TemplateEngine_v3.VM.Windows
         /// Конструктор ViewModel.
         /// </summary>
         /// <param name="serverManager">Менеджер для подключения к серверу.</param>
-        /// <param name="passwordBox">Контрол для ввода пароля.</param>
         /// <param name="window">Окно входа.</param>
-        public SingInVM(ServerManager serverManager, PasswordBox passwordBox, Window window)
+        public SingInVM(ServerManager serverManager, Window window)
         {
             _serverManager = serverManager;
-            _passwordBox = passwordBox;
             _window = window;
             InitializeCommands();
         }
@@ -68,7 +65,6 @@ namespace TemplateEngine_v3.VM.Windows
         /// </summary>
         private async void SingIn()
         {
-            Credentials.Password = _passwordBox.Password;
             _serverManager.CurrentCredentials = Credentials;
 
             var loadWindow = new LoadWindow();
@@ -108,9 +104,7 @@ namespace TemplateEngine_v3.VM.Windows
         /// <returns>True, если данные корректны.</returns>
         private bool CanSingIn()
         {
-            return !string.IsNullOrEmpty(_passwordBox.Password)
-                && !string.IsNullOrEmpty(Credentials.Login)
-                && !string.IsNullOrEmpty(Credentials.ApiPath)
+            return !string.IsNullOrEmpty(Credentials.ApiPath)
                 && !string.IsNullOrEmpty(Credentials.ServerIp);
         }
 

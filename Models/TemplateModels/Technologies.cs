@@ -134,6 +134,7 @@ namespace TemplateEngine_v3.Models
                             division.Materials = new();
                             return division;
                         }));
+
             }
             CreationDate = technologies.CreationDate;
             LastModifiedDate = technologies.LastModifiedDate;

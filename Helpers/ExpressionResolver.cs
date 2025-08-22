@@ -87,23 +87,53 @@ namespace TemplateEngine_v3.Helpers
 
             foreach (var kvp in _markDictionary)
             {
-                text = text.Replace($"[{kvp.Key}]", kvp.Value);
+                text = ReplaceWithQuotesIfNeeded(text, kvp.Key, kvp.Value);
             }
 
             foreach (var formula in _formulas)
             {
-                text = text.Replace($"[{formula.Name}]", Sanitize(formula.Value));
+                text = ReplaceWithQuotesIfNeeded(text, formula.Name, Sanitize(formula.Value));
             }
 
+            // Удаляем конструкции вида -[...]
             text = Regex.Replace(text, @"-
 
-                \[[^\]
+            \[[^\]
 
-                ]+\]
+            ]+\]
 
-                ", "");
-            return text.Replace("'", "");
+            ", "");
+
+            return text;
         }
+
+        private string ReplaceWithQuotesIfNeeded(string input, string key, string value)
+        {
+            bool isNumber = double.TryParse(value, out _);
+
+            // 1. Случай: маркер уже в одинарных кавычках
+            string inQuotesPattern = $@"'(\[{Regex.Escape(key)}\])'";
+            input = Regex.Replace(input, inQuotesPattern, m =>
+            {
+                // Заменяем внутри кавычек без добавления новых
+                return $"'{value}'";
+            });
+
+            // 2. Случай: маркер без кавычек
+            string noQuotesPattern = $@"\[{Regex.Escape(key)}\]";
+            input = Regex.Replace(input, noQuotesPattern, m =>
+            {
+                if (isNumber)
+                    return value; // число — без кавычек
+                else
+                    return $"'{value}'"; // текст — в кавычки
+            });
+
+            return input;
+        }
+
+
+
 
         public bool IsNodeUsed(Node node)
         {

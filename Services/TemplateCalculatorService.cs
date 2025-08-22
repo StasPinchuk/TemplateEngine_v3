@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using TemplateEngine_v3.Helpers;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.ReferenceServices;
-using static TFlex.DOCs.Model.References.Links.RelationTree;
 
 namespace TemplateEngine_v3.Services
 {
@@ -97,9 +93,10 @@ namespace TemplateEngine_v3.Services
         {
             foreach (var node in nodes)
             {
-                node.Designation = _resolver.ReplaceDesignation(node.Designation);
+                node.Designation = _resolver.ReplaceDesignation(node.Designation).Replace("'", "");
                 node.Name = _resolver.ReplaceDesignation(node.Name);
-                var usage = _resolver.Calculate(node.UsageCondition)?.ToString();
+                var usage = _resolver.ReplaceDesignation(node.UsageCondition);
+                usage = _resolver.Calculate(usage)?.ToString().Replace("'", "");
                 node.UsageCondition = string.IsNullOrEmpty(usage) ? "True" : usage;
                 node.IsLoggingEnabled = true;
             }
@@ -114,10 +111,10 @@ namespace TemplateEngine_v3.Services
                     removeNode.Add(node);
                 else
                     if (node.Nodes.Count > 0)
-                        FilterNodes(node.Nodes);
+                    FilterNodes(node.Nodes);
             }
 
-            foreach(var node in removeNode)
+            foreach (var node in removeNode)
             {
                 nodes.Remove(node);
             }

@@ -1,6 +1,8 @@
-﻿using NPOI.SS.UserModel;
+﻿using Aspose.Cells;
+using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -11,10 +13,6 @@ using TFlex.DOCs.Model.References.Files;
 
 namespace TemplateEngine_v3.Services.ReferenceServices
 {
-    /// <summary>
-    /// Сервис для работы с таблицами Excel из папки "Генератор шаблонов\Таблицы" через TFlex и NPOI.
-    /// Позволяет получать список таблиц, листов, параметры листов и работать с их значениями.
-    /// </summary>
     public class TableService
     {
         private readonly ServerConnection _connection;
@@ -50,7 +48,32 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
-        private void SetWorkbook(string tableName)
+        private string GetSelectedTable(string tableName)
+        {
+            var file = _fileReference.FindByRelativePath(@$"Генератор шаблонов\Таблицы\{tableName}") as FileObject;
+            string newFilePath = $@"configs\Таблицы\{tableName}";
+
+            if (!Directory.Exists(@"configs\Таблицы"))
+                Directory.CreateDirectory(@"configs\Таблицы");
+
+            if (File.Exists(newFilePath))
+            {
+                if (file.LastChangeDate != File.GetCreationTime(newFilePath))
+                {
+                    var fileInfo = new FileInfo(newFilePath);
+                    if (fileInfo.IsReadOnly) fileInfo.IsReadOnly = false;
+                    File.Delete(newFilePath);
+                }
+            }
+
+            File.Copy(file.LocalPath, newFilePath, true);
+            var fileInfo2 = new FileInfo(newFilePath);
+            if (fileInfo2.IsReadOnly) fileInfo2.IsReadOnly = false;
+
+            return newFilePath;
+        }
+
+        public void SetWorkbook(string tableName)
         {
             string tablePath = GetSelectedTable(tableName);
             if (!string.IsNullOrEmpty(tablePath))
@@ -64,49 +87,13 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         public ObservableCollection<string> GetWorksheets(string tableName)
         {
+            SetWorkbook(tableName);
             var worksheetNames = new ObservableCollection<string>();
-
-            string tablePath = GetSelectedTable(tableName);
-            if (string.IsNullOrEmpty(tablePath))
-                return worksheetNames;
-
-            using (FileStream fs = new FileStream(tablePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                _workbook = new XSSFWorkbook(fs);
-            }
-
             for (int i = 0; i < _workbook.NumberOfSheets; i++)
             {
                 worksheetNames.Add(_workbook.GetSheetName(i));
             }
-
             return worksheetNames;
-        }
-
-        private string GetSelectedTable(string tableName)
-        {
-            var file = _fileReference.FindByRelativePath(@$"Генератор шаблонов\Таблицы\{tableName}") as FileObject;
-
-            string newFilePath = $@"configs\Таблицы\{tableName}";
-            if (!Directory.Exists(@"configs\Таблицы"))
-                Directory.CreateDirectory(@"configs\Таблицы");
-
-            if (File.Exists(newFilePath))
-                if (file.LastChangeDate != File.GetCreationTime(newFilePath))
-                {
-                    FileInfo fileInfo = new FileInfo(newFilePath);
-                    if (fileInfo.IsReadOnly)
-                        fileInfo.IsReadOnly = false;
-                    File.Delete(newFilePath);
-                }
-
-            File.Copy(file.LocalPath, newFilePath, true);
-
-            FileInfo fileInfo2 = new FileInfo(newFilePath);
-            if (fileInfo2.IsReadOnly)
-                fileInfo2.IsReadOnly = false;
-
-            return $@"configs\Таблицы\{tableName}";
         }
 
         public void SetCurrentWorkSheet(string worksheetName)
@@ -118,25 +105,20 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             SetCurrentWorkSheet(worksheetName);
             var parameterDictionary = new Dictionary<string, string>();
-            if (_currentWorksheet == null)
-                return parameterDictionary;
+            if (_currentWorksheet == null) return parameterDictionary;
 
             for (int rowIndex = 0; rowIndex <= _currentWorksheet.LastRowNum; rowIndex++)
             {
                 IRow row = _currentWorksheet.GetRow(rowIndex);
                 if (row == null) continue;
 
-                ICell leftCell = row.GetCell(0); // A-столбец
-                if (leftCell == null || string.IsNullOrWhiteSpace(leftCell.ToString()))
-                    continue;
+                ICell leftCell = row.GetCell(0);
+                if (leftCell == null || string.IsNullOrWhiteSpace(leftCell.ToString())) continue;
 
                 IFont font = _workbook.GetFontAt(leftCell.CellStyle.FontIndex);
                 if (font != null && font.IsBold)
                 {
                     string parameterName = leftCell.ToString();
-                    ICell rightCell = row.GetCell(1);
-                    if (rightCell == null) continue;
-
                     string parameterAddress = new CellReference(rowIndex, 1).FormatAsString();
                     parameterDictionary[parameterName] = parameterAddress;
                 }
@@ -147,8 +129,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
         public void SetParameters(Dictionary<string, string> parameters)
         {
-            if (_currentWorksheet == null)
-                return;
+            if (_currentWorksheet == null) return;
 
             foreach (var kvp in parameters)
             {
@@ -159,15 +140,24 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
+        // Используем Aspose.Cells только для пересчета формул
+        public string RecalculateAndGetValue(string filePath, string sheetName, string cellAddress)
+        {
+            var workbook = new Workbook(filePath);
+            workbook.CalculateFormula();
+            var sheet = workbook.Worksheets[sheetName];
+            return sheet.Cells[cellAddress].StringValue;
+        }
+
         public string GetFindParameter(string tableName, string workSheetName, string width, string heigth, string[] parameterValue = null, bool isRange = false)
         {
             SetWorkbook(tableName);
             SetCurrentWorkSheet(workSheetName);
+
             var valueDict = GetWorksheetParameters(_currentWorksheet?.SheetName ?? string.Empty);
+            var parametersValueDict = valueDict.Values.ToDictionary(value => value, value => string.Empty);
 
-            Dictionary<string, string> parametersValueDict = valueDict.Values.ToDictionary(value => value, value => string.Empty);
-
-            if (parameterValue != null && parameterValue.Length != 0)
+            if (parameterValue != null && parameterValue.Length > 0)
             {
                 var keys = parametersValueDict.Keys.ToList();
                 for (int i = 0; i < parameterValue.Length && i < keys.Count; i++)
@@ -178,19 +168,56 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
             SetParameters(parametersValueDict);
 
-            int columnNumber = 3;
-            int rowNumber = 4;
-            int columnsCount = _currentWorksheet.GetRow(0)?.LastCellNum ?? 0;
-            int rowsCount = _currentWorksheet.LastRowNum;
+            // Сохраняем NPOI-файл во временный путь для Aspose
+            string tablePath = GetSelectedTable(tableName);
+            using (var fs = new FileStream(tablePath, FileMode.Create, FileAccess.Write))
+            {
+                _workbook.Write(fs);
+            }
 
-            string findValue = GetParameter(columnNumber, rowNumber, columnsCount, rowsCount, width, heigth);
+            if (!isRange)
+            {
+                // ищем "результат"
+                return RecalculateAndGetValue(tablePath, workSheetName, FindResultCellAddress());
+            }
+            else
+            {
+                int columnNumber = 3;
+                int rowNumber = 4;
+                int columnsCount = _currentWorksheet.GetRow(0)?.LastCellNum ?? 0;
+                int rowsCount = _currentWorksheet.LastRowNum;
 
-            return findValue;
+                return GetParameter(columnNumber, rowNumber, columnsCount, rowsCount, width, heigth);
+            }
+        }
+
+        private string FindResultCellAddress()
+        {
+            int maxRow = _currentWorksheet.LastRowNum;
+            int maxCol = _currentWorksheet.GetRow(0)?.LastCellNum ?? 0;
+
+            for (int r = 0; r <= maxRow; r++)
+            {
+                var row = _currentWorksheet.GetRow(r);
+                if (row == null) continue;
+
+                for (int c = 0; c < maxCol; c++)
+                {
+                    var cell = row.GetCell(c);
+                    if (cell != null && cell.ToString().Trim().Equals("результат", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return new CellReference(r, c + 1).FormatAsString(); // возвращаем ячейку справа
+                    }
+                }
+            }
+
+            return "B2"; // если не найдено, по умолчанию
         }
 
         private string GetParameter(int columnNumber, int rowNumber, int columnsCount, int rowsCount, string width, string heigth)
         {
             if (int.TryParse(width, out int colValue) && colValue != 0)
+            {
                 for (int i = columnNumber; i < columnsCount; i++)
                 {
                     ICell headerCell = _currentWorksheet.GetRow(0)?.GetCell(i);
@@ -206,7 +233,9 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                         }
                     }
                 }
+            }
             else
+            {
                 for (int j = rowNumber; j < rowsCount; j++)
                 {
                     ICell rowCell = _currentWorksheet.GetRow(j)?.GetCell(2);
@@ -219,6 +248,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                         return _currentWorksheet.GetRow(j)?.GetCell(3)?.ToString() ?? string.Empty;
                     }
                 }
+            }
+
             return string.Empty;
         }
 

@@ -439,7 +439,7 @@ namespace TemplateEngine_v3.VM.Pages
 
                 NavigationService.RenameSelectedTab(referenceModel.Name);
 
-                var technologiesEditPage = new PageModel(referenceModel.Name, typeof(TechnologiesPage), new object[] { technologiesManager });
+                var technologiesEditPage = new PageModel(referenceModel.Name, typeof(TechnologiesPage), new object[] { technologiesManager, new Template() });
 
                 NavigationService.SetPageInMainFrame(technologiesEditPage);
 
@@ -503,7 +503,7 @@ namespace TemplateEngine_v3.VM.Pages
 
             NavigationService.RenameSelectedTab(_technologiesManager.CurrentTechnologies.Name);
 
-            var technologiesEditPage = new PageModel(technologiesManager.CurrentTechnologies.Name, typeof(TechnologiesPage), new object[] { technologiesManager });
+            var technologiesEditPage = new PageModel(technologiesManager.CurrentTechnologies.Name, typeof(TechnologiesPage), new object[] { technologiesManager, new Template() });
 
             NavigationService.SetPageInMainFrame(technologiesEditPage);
 

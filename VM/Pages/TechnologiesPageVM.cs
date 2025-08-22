@@ -18,6 +18,7 @@ namespace TemplateEngine_v3.VM.Pages
     {
         private readonly TechnologiesManager _technologiesManager;
         private readonly OperationNamesManager _operationNamesManager;
+        private Template _currentTemplate;
         private Technologies _currentTechnologies;
 
         /// <summary>
@@ -134,9 +135,10 @@ namespace TemplateEngine_v3.VM.Pages
         /// Конструктор ViewModel, инициализирует менеджеры и подписывается на события.
         /// </summary>
         /// <param name="technologiesManager">Менеджер работы с технологическими процессами.</param>
-        public TechnologiesPageVM(TechnologiesManager technologiesManager)
+        public TechnologiesPageVM(TechnologiesManager technologiesManager, Template currentTemplate)
         {
             _technologiesManager = technologiesManager;
+            _currentTemplate = currentTemplate;
             _operationNamesManager = _technologiesManager.GetOperationNamesManager();
 
             _technologiesManager.CurrentTechnologiesChanged += OnCurrentTechnologiesChanged;
@@ -283,6 +285,19 @@ namespace TemplateEngine_v3.VM.Pages
                 if (result == MessageBoxResult.Yes)
                 {
                     var technologies = new JsonSerializer().Deserialize<Technologies>(referenceModel.ObjectStruct);
+
+                    var branches = technologies.Operations
+                        .SelectMany(op => op.BranchDivisionDetails)
+                        .Select(bd => bd.Branch)
+                        .Distinct()
+                        .ToList();
+
+                    foreach (Branch branch in branches)
+                    {
+                        if (!_currentTemplate.Branches.Any(br => br.Name.Equals(branch.Name)))
+                            _currentTemplate.Branches.Add(branch);
+                    }
+
                     CurrentTechnologies.SetValue(technologies);
                 }
             }
