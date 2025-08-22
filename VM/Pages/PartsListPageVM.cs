@@ -282,7 +282,7 @@ namespace TemplateEngine_v3.VM.Pages
             PageCollection.Add(new PageModel("Основная информация", typeof(MainNodePage), true, PackIconKind.NoteText, new object[] { _nodeManager, SetPageCollection, SetNodeGroup }));
             PageCollection.Add(new PageModel("Формулы и условия", typeof(FormulasAndTermsPage), PackIconKind.Function, new object[] { _nodeManager }));
             PageCollection.Add(new PageModel("Параметры", typeof(ParametersPage), PackIconKind.Tune, new object[] { _nodeManager }));
-            PageCollection.Add(new PageModel("Тех. процесс", typeof(TechnologiesPage), PackIconKind.Cogs, new object[] { _technologiesManager }));
+            PageCollection.Add(new PageModel("Тех. процесс", typeof(TechnologiesPage), PackIconKind.Cogs, new object[] { _technologiesManager, _templateManager.GetSelectedTemplate() }));
             PageCollection.Add(new PageModel("Детали", typeof(PartsListPage), PackIconKind.Cube, new object[] { _technologiesManager, nodeManager, _templateManager }));
 
             bool isDetail = SelectedNode?.Type == "Деталь";

@@ -125,7 +125,7 @@ namespace TemplateEngine_v3.VM.Pages
 
             var pageCollection = new ObservableCollection<PageModel>()
             {
-                new PageModel("Процесс изготовления", typeof(TechnologiesPage), new object[] { technologiesManager }),
+                new PageModel("Процесс изготовления", typeof(TechnologiesPage), new object[] { technologiesManager, _template }),
                 new PageModel("Состав изделия", typeof(PartsListPage), new object[] { _technologiesManager, _nodeManager, _templateManager }),
             };
 

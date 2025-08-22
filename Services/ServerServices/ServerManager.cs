@@ -22,6 +22,7 @@ namespace TemplateEngine_v3.Services.ServerServices
         private readonly DefaultManagerInitializer _managerInitializer = new DefaultManagerInitializer();
 
         private ServerConnection _connection;
+        private int _reconnectionCount = 0;
 
         /// <summary>
         /// Менеджер пользователей.
@@ -55,11 +56,13 @@ namespace TemplateEngine_v3.Services.ServerServices
                     CurrentCredentials = creds;
                 }
 
-                while (_connection == null)
+                while (_connection == null && _reconnectionCount < 10)
+                {
                     _connection = await _connectionService.ConnectAsync(CurrentCredentials);
+                    _reconnectionCount++;
+                }
 
-                _connection.ConnectionLost += ServerGatewayOnConnectionLost;
-                _connection.ConnectionRestored += _connection_ConnectionRestored;
+                if(_reconnectionCount >= 10);
 
                 if (_connection?.IsConnected == true)
                 {
@@ -89,11 +92,6 @@ namespace TemplateEngine_v3.Services.ServerServices
             }
         }
 
-        private void _connection_ConnectionRestored(object sender, EventArgs e)
-        {
-            MessageBox.Show("Внимание: соединения с сервером восстановлено");
-        }
-
         /// <summary>
         /// Проверяет, установлено ли соединение с сервером.
         /// </summary>
@@ -109,11 +107,6 @@ namespace TemplateEngine_v3.Services.ServerServices
         public void Disconnect()
         {
             _connection?.Close();
-        }
-
-        private static void ServerGatewayOnConnectionLost(object sender, ConnectionLostEventArgs connectionLostEventArgs)
-        {
-            MessageBox.Show("Внимание: потеря соединения с сервером");
         }
     }
 }

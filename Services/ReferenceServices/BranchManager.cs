@@ -44,7 +44,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             _objectStringParameter = _reference.ParameterGroup.Parameters.FindByName("Структура файла");
 
             if (_nameParameter == null || _objectStringParameter == null || _branchClass == null)
-                throw new InvalidOperationException("Не найдены необходимые параметры или класс филиалов в Reference");
+                throw new InvalidOperationException("[BranchManager] Не найдены необходимые параметры или класс филиалов в Reference");
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Ошибка при добавлении филиала: {ex.Message}");
+                    Debug.WriteLine($"[BranchManager] Ошибка при добавлении филиала: {ex.Message}");
                     return false;
                 }
             }
@@ -120,7 +120,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Ошибка при редактировании филиала: {ex.Message}");
+                    Debug.WriteLine($"[BranchManager] Ошибка при редактировании филиала: {ex.Message}");
                     return false;
                 }
             }
@@ -158,7 +158,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[TemplateManager] Ошибка при копировании: {ex.Message}");
+                Debug.WriteLine($"[BranchManager] Ошибка при копировании: {ex.Message}");
                 return false;
             }
         }
@@ -180,7 +180,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Ошибка при загрузке филиалов: {ex.Message}");
+                Debug.WriteLine($"[BranchManager] Ошибка при загрузке филиалов: {ex.Message}");
                 return null;
             }
         }
@@ -207,7 +207,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[TemplateManager] Ошибка при удалении: {ex.Message}");
+                Debug.WriteLine($"[BranchManager] Ошибка при удалении: {ex.Message}");
                 return false;
             }
         }

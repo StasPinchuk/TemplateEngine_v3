@@ -12,7 +12,7 @@
         Background="Transparent"
         ResizeMode="NoResize"
         Title="SignInWindow" 
-        Height="380"
+        Height="270"
         Width="450">
     <Border Padding="10"
             CornerRadius="8"
@@ -40,22 +40,6 @@
             <StackPanel Margin="10,40,10,0"
                         VerticalAlignment="Center"
                         Grid.Row="1">
-                <TextBox MaxWidth="500"
-                         VerticalAlignment="Top"
-                         materialDesign:HintAssist.Hint="Логин учетной записи TFlex DOC's"
-                         materialDesign:TextFieldAssist.HasClearButton="True"
-                         AcceptsReturn="True"
-                         Text="{Binding Credentials.Login, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         IsEnabled="{Binding Path=IsChecked, ElementName=MaterialDesignFilledTextBoxEnabledComboBox}"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         TextWrapping="Wrap"/>
-                <PasswordBox VerticalAlignment="Top"
-                             x:Name="PassworBox"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             materialDesign:HintAssist.Hint="Пароль учетной записи TFlex DOC's"
-                             IsEnabled="{Binding Path=IsChecked, ElementName=MaterialDesignFilledPasswordBoxEnabledComboBox}"
-                             Style="{StaticResource MaterialDesignOutlinedRevealPasswordBox}"
-                             Margin="0,10,0,10"/>
                 <TextBox MaxWidth="500"
                          VerticalAlignment="Top"
                          materialDesign:HintAssist.Hint="IP Сервера TFlex DOC's"

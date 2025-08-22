@@ -2,6 +2,7 @@
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using System;
+using System.Windows.Media;
 
 namespace TemplateEngine_v3.Models
 {
@@ -26,7 +27,7 @@ namespace TemplateEngine_v3.Models
         public object Content => _formulaName;
         public object Description => $"Формула: {_innerFormula.Value}";
         public double Priority => 0;
-        public System.Windows.Media.ImageSource Image => null;
+        public ImageSource Image => null;
 
         public void Complete(TextArea textArea, ISegment completionSegment, EventArgs e)
         {
@@ -63,9 +64,5 @@ namespace TemplateEngine_v3.Models
                 _updatePartTree?.Invoke();
             }
         }
-
-
-
     }
-
 }

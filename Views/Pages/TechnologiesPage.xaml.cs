@@ -18,10 +18,10 @@ namespace TemplateEngine_v3.Views.Pages
         private Point _dragStartPoint;
         private TechnologiesPageVM vm;
 
-        public TechnologiesPage(TechnologiesManager technologiesManager)
+        public TechnologiesPage(TechnologiesManager technologiesManager, Template template = null)
         {
             InitializeComponent();
-            vm = new TechnologiesPageVM(technologiesManager);
+            vm = new TechnologiesPageVM(technologiesManager, template);
             DataContext = vm;
         }
 

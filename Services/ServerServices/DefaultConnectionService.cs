@@ -15,13 +15,6 @@ namespace TemplateEngine_v3.Services.ServerServices
     /// </summary>
     public class DefaultConnectionService : BaseNotifyPropertyChanged
     {
-        // Список возможных конфигураций для подключения (GUID'ы конфигураций)
-        readonly List<Guid> configurationIds = new()
-        {
-            new Guid("4117ec3f-910a-4ac8-8698-2fbb8485b44d"),
-            new Guid("85a43024-54a0-4b4a-9ae4-e46183ebc5d7")
-        };
-
         /// <summary>
         /// Асинхронное подключение к серверу T-Flex с использованием заданных учетных данных.
         /// </summary>
@@ -38,10 +31,7 @@ namespace TemplateEngine_v3.Services.ServerServices
                 // Пытаемся открыть соединение к серверу
                 // с использованием первого GUID из списка конфигураций
                 return await ServerConnection.OpenAsync(
-                    credentials.Login,
-                    credentials.Password,
-                    credentials.ServerIp,
-                    configurationIds.First());
+                    credentials.ServerIp);
             }
             catch (Exception ex)
             {
@@ -54,9 +44,6 @@ namespace TemplateEngine_v3.Services.ServerServices
                         Application.Current.Shutdown();
                     });
                 }
-
-                if (configurationIds.Any())
-                    configurationIds.RemoveAt(0);
 
                 return null;
             }
