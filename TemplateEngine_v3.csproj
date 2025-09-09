@@ -445,7 +445,6 @@
     <Compile Include="VM\Pages\FormulasAndTermsPageVM.cs" />
     <Compile Include="VM\Pages\MainNodePageVM.cs" />
     <Compile Include="VM\Pages\MainTemplateInfoPageVM.cs" />
-    <Compile Include="VM\Pages\NodePreviewVM.cs" />
     <Compile Include="VM\Pages\ParametersPageVM.cs" />
     <Compile Include="VM\Pages\PartsListPageVM.cs" />
     <Compile Include="VM\Pages\ReferencePageVM.cs" />

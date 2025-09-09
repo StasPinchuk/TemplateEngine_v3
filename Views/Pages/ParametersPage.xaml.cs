@@ -35,7 +35,7 @@ namespace TemplateEngine_v3.Views.Pages
 
             Editor.TextArea.TextEntered += TextArea_TextEntered;
             Editor.TextArea.TextEntering += TextArea_TextEntering;
-            Editor.TextChanged += Editor_TextChanged;  
+            Editor.TextChanged += Editor_TextChanged;
 
             Unloaded += ParametersPage_Unloaded;
         }

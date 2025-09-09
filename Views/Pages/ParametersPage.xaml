@@ -85,7 +85,7 @@
                             MaxWidth="200"
                             Margin="70,0"
                             Grid.Row="0"
-                            Command="{Binding DataContext.SetTableCommand, ElementName=formulasAndTermsPage}"
+                            Command="{Binding DataContext.SetTableCommand, ElementName=parametersPage}"
                             CommandParameter="{Binding Value}"/>
                     
                     <TabControl Grid.Row="1"
