@@ -72,13 +72,11 @@ namespace TemplateEngine_v3.Helpers
             var attributeMenuItem = new MenuItem { Header = "Параметры шаблона" };
             bool isLoaded = false;
 
-            // Добавляем заглушку "Загрузка..."
             attributeMenuItem.Items.Add(new MenuItem { Header = "Загрузка..." });
 
-            // При открытии меню загружаем параметры, если они еще не загружены
             attributeMenuItem.SubmenuOpened += (s, e) =>
             {
-                if (isLoaded) return; // Уже загрузили, ничего не делать
+                if (isLoaded) return; 
 
                 attributeMenuItem.Items.Clear();
 
@@ -112,17 +110,15 @@ namespace TemplateEngine_v3.Helpers
                 var menuItem = new MenuItem
                 {
                     Header = templateRelation.Designation,
-                    Tag = false // флаг загрузки подменю
+                    Tag = false 
                 };
 
-                // Заглушка, чтобы стрелка появилась
                 menuItem.Items.Add(new MenuItem { Header = "Загрузка...", IsEnabled = false });
 
-                // При открытии подменю загружаем дочерние узлы
                 menuItem.SubmenuOpened += (s, e) =>
                 {
                     var item = (MenuItem)s;
-                    if ((bool)item.Tag!) return; // Уже загружено
+                    if ((bool)item.Tag!) return; 
 
                     item.Items.Clear();
 
@@ -160,13 +156,11 @@ namespace TemplateEngine_v3.Helpers
             var materialsMenuItem = new MenuItem { Header = "Материалы" };
             bool isLoaded = false;
 
-            // Заглушка для отображения
             materialsMenuItem.Items.Add(new MenuItem { Header = "Загрузка..." });
 
-            // При открытии подменю загружаем материалы
             materialsMenuItem.SubmenuOpened += async (s, e) =>
             {
-                if (isLoaded) return; // Чтобы не загружать повторно
+                if (isLoaded) return; 
 
                 materialsMenuItem.Items.Clear();
 
@@ -175,7 +169,6 @@ namespace TemplateEngine_v3.Helpers
 
                 foreach (string material in materialList)
                 {
-                    // Определяем тип материала по первой части строки
                     string type = material.Split(new[] { " ", "-" }, StringSplitOptions.RemoveEmptyEntries)[0];
 
                     if (!materials.ContainsKey(type))
@@ -184,7 +177,6 @@ namespace TemplateEngine_v3.Helpers
                     materials[type].Add(material);
                 }
 
-                // Создаем группы и добавляем материалы
                 foreach (var group in materials)
                 {
                     var groupItem = new MenuItem { Header = group.Key };
@@ -216,7 +208,6 @@ namespace TemplateEngine_v3.Helpers
         /// <returns>Пункт меню или null.</returns>
         private MenuItem? CreateLazyNodeMenuItem(Node node)
         {
-            // Вспомогательная функция для проверки наличия валидных подузлов
             bool HasValidSubNode(Node n)
             {
                 return n.ExpressionRepository.Formulas.Any()
@@ -224,7 +215,6 @@ namespace TemplateEngine_v3.Helpers
                     || n.Nodes.Any(HasValidSubNode);
             }
 
-            // Проверяем, есть ли формулы или условия у узла или его подузлов
             bool hasFormulasOrTerms = node.ExpressionRepository.Formulas.Any() || node.ExpressionRepository.Terms.Any();
             bool hasValidSubNodes = node.Nodes.Any(HasValidSubNode);
 
@@ -237,11 +227,9 @@ namespace TemplateEngine_v3.Helpers
                 ToolTip = !string.IsNullOrEmpty(node.NodeComment) ? node.NodeComment : null
             };
 
-            // Добавляем пункты меню для формул и условий узла
             foreach (var item in CreateEvaluatorItems(node.ExpressionRepository))
                 menuItem.Items.Add(item);
 
-            // Рекурсивно добавляем валидные подузлы
             foreach (var subNode in node.Nodes)
             {
                 var childItem = CreateLazyNodeMenuItem(subNode);

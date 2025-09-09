@@ -18,7 +18,7 @@ namespace TemplateEngine_v3.Models
         public string ServerIp
         {
             get => _encryptedServerIp;
-            set => _encryptedServerIp = value;
+            set => _encryptedServerIp = value.Replace(",", ".");
         }
 
         /// <summary>

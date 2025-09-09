@@ -1,5 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
-using System.Collections.Generic;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -43,7 +43,7 @@ namespace TemplateEngine_v3.VM.Windows
         /// Коллекция элементов меню для боковой панели.
         /// </summary>
         public ObservableCollection<PageModel> MenuItems { get; } = new();
-        public ObservableCollection<NavigationTabs> TabsItem { get; } = new();
+        public ObservableCollection<NavigationTabs> TabsItems { get; set; } = new();
 
         private NavigationTabs _selectedTabs = new();
 
@@ -52,29 +52,11 @@ namespace TemplateEngine_v3.VM.Windows
             get => _selectedTabs;
             set
             {
-                if (value != null && MenuItems.Any(item => item.Title.Equals(value.Title)))
-                    _sideBar.Width = GridLength.Auto;
+                if (Equals(_selectedTabs, value) || value == null)
+                    return;
 
-                var selectedPage = MenuItems.FirstOrDefault(item => item.Title.Equals(value.Title));
-                if (selectedPage != null)
-                    selectedPage.IsSelected = true;
-
-                value.Page.ClearPage();
-
-                SetValue(ref _selectedTabs, value, nameof(SelectedTab));
-
-                NavigationService.SetSelectedTab(value);
-
-                UpdateManagers(value.Page);
-
-                _mainFrame.Navigate(value.Page.ModelPage);
-                if (value.PageHistory.Count > 0)
-                {
-                    NavigationService.SetPageInSecondaryFrame();
-                }
-
+                ApplySelectedTab(value);
             }
-
         }
 
         /// <summary>
@@ -98,11 +80,6 @@ namespace TemplateEngine_v3.VM.Windows
         public ICommand DetailTypeListCommand { get; set; }
 
         /// <summary>
-        /// Команда для открытия окна настроек.
-        /// </summary>
-        public ICommand OpenSettingsCommand { get; set; }
-
-        /// <summary>
         /// Команда открытия окна логов.
         /// </summary>
         public ICommand OpenLogsCommand { get; set; }
@@ -119,12 +96,23 @@ namespace TemplateEngine_v3.VM.Windows
 
 
         /// <summary>
-        /// Конструктор ViewModel главного окна.
+        /// Инициализирует новый экземпляр <see cref="MainWindowVM"/> —
+        /// ViewModel главного окна приложения, настраивая менеджеры данных,
+        /// сервисы, навигацию и элементы интерфейса.
         /// </summary>
-        /// <param name="referenceManager">Менеджер ссылок для получения сервисов.</param>
-        /// <param name="userManager">Менеджер пользователей.</param>
-        /// <param name="mainFrame">Фрейм для навигации страниц.</param>
-        /// <param name="sideBar">Колонка сайдбара для управления разметкой.</param>
+        /// <param name="referenceManager">
+        /// Центральный менеджер ссылок, предоставляющий доступ к сервисам и менеджерам данных
+        /// (шаблоны, филиалы, технологии, этапы).
+        /// </param>
+        /// <param name="userManager">
+        /// Менеджер пользователей, содержащий информацию о текущем пользователе и его правах.
+        /// </param>
+        /// <param name="mainFrame">
+        /// Основной фрейм для загрузки и отображения страниц приложения.
+        /// </param>
+        /// <param name="sideBar">
+        /// Определение колонки сайдбара, используемое для управления его отображением и шириной.
+        /// </param>
         public MainWindowVM(ReferenceManager referenceManager, UserManager userManager, Frame mainFrame, ColumnDefinition sideBar)
         {
             _templateManager = referenceManager.TemplateManager;
@@ -138,60 +126,101 @@ namespace TemplateEngine_v3.VM.Windows
 
             _stageService.SetStageList();
 
-            TabsItem = NavigationService.GetTabs();
+            CreateMenuList();
+            CreateTabsList();
 
-            var menuItems = new List<PageModel>
+            InitializeCommand();
+        }
+
+        /// <summary>
+        /// Метод создания списка разделов меню
+        /// </summary>
+        private void CreateMenuList()
+        {
+            bool isAdmin = _userManager.CurrentUser.IsAdmin;
+
+            var items = new[]
             {
-                new PageModel
-                {
-                    Title = "Шаблоны",
-                    Icon = PackIconKind.DocumentSign,
-                    PageType = typeof(ReferencePage),
-                    IsSelected = true,
-                    GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _templateManager, _technologiesManager, _branchManager, _userManager, _stageService, TemplateClass.Ready, sideBar }
-                },
-                new PageModel
-                {
-                    Title = "Архив",
-                    Icon = PackIconKind.Archive,
-                    PageType = typeof(ReferencePage),
-                    GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _templateManager, _branchManager, _userManager, _stageService, TemplateClass.TrashCan, sideBar }
-                },
-                new PageModel
-                {
-                    Title = "Тех. процессы",
-                    Icon = PackIconKind.Wrench,
-                    PageType = typeof(ReferencePage),
-                    GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _technologiesManager, _userManager, _stageService, sideBar }
-                },
-                new PageModel
-                {
-                    Title = "Филиалы",
-                    Icon = PackIconKind.SourceBranch,
-                    PageType = typeof(ReferencePage),
-                    GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _branchManager, _userManager, _stageService, sideBar }
-                },
-                new PageModel
-                {
-                    Title = "Пользователи",
-                    Icon = PackIconKind.User,
-                    PageType = typeof(UsersPage),
-                    GroupName = "MainSideBar",
-                    ConstructorParameters = new object[] { _userManager, sideBar },
-                    IsEnabled = userManager.CurrentUser.IsAdmin,
-                }
+                CreatePage(
+                    title: "Шаблоны",
+                    icon: PackIconKind.DocumentSign,
+                    pageType: typeof(ReferencePage),
+                    isSelected: true,
+                    isEnabled: true,
+                    _templateManager, _technologiesManager, _branchManager, _userManager, _stageService, TemplateClass.Ready, _sideBar
+                ),
+                CreatePage(
+                    title: "Архив",
+                    icon: PackIconKind.Archive,
+                    pageType: typeof(ReferencePage),
+                    isSelected: false,
+                    isEnabled: true,
+                    _templateManager, _branchManager, _userManager, _stageService, TemplateClass.TrashCan, _sideBar
+                ),
+                CreatePage(
+                    title: "Тех. процессы",
+                    icon: PackIconKind.Wrench,
+                    pageType: typeof(ReferencePage),
+                    isSelected: false,
+                    isEnabled: true,
+                    _technologiesManager, _userManager, _stageService, _sideBar
+                ),
+                CreatePage(
+                    title: "Филиалы",
+                    icon: PackIconKind.SourceBranch,
+                    pageType: typeof(ReferencePage),
+                    isSelected: false,
+                    isEnabled: true,
+                    _branchManager, _userManager, _stageService, _sideBar
+                ),
+                CreatePage(
+                    title: "Пользователи",
+                    icon: PackIconKind.User,
+                    pageType: typeof(UsersPage),
+                    isSelected: false,
+                    isEnabled: isAdmin,
+                    _userManager, _sideBar
+                )
             };
 
-            IsAdminVisibility = userManager.CurrentUser.IsAdmin ? Visibility.Visible : Visibility.Collapsed;
+            IsAdminVisibility = isAdmin ? Visibility.Visible : Visibility.Collapsed;
 
-            foreach (var item in menuItems)
+            foreach (var item in items)
                 MenuItems.Add(item);
+        }
 
-            TabsItem.Add(
+        /// <summary>
+        /// Метод создания страницы
+        /// </summary>
+        /// <param name="title">Название страницы</param>
+        /// <param name="icon">Иконка для отображения в меню</param>
+        /// <param name="pageType">Тип страницы</param>
+        /// <param name="isSelected">Активна ли страница сейчас</param>
+        /// <param name="isEnabled">Блокировка раздела</param>
+        /// <param name="constructorParameters">Параметры страницы</param>
+        /// <returns></returns>
+        private PageModel CreatePage(string title, PackIconKind icon, Type pageType, bool isSelected, bool isEnabled, params object[] constructorParameters)
+        {
+            return new PageModel
+            {
+                Title = title,
+                Icon = icon,
+                PageType = pageType,
+                GroupName = "MainSideBar",
+                IsSelected = isSelected,
+                ConstructorParameters = constructorParameters,
+                IsEnabled = isEnabled
+            };
+        }
+
+        /// <summary>
+        /// Метод создания списка вкладок
+        /// </summary>
+        private void CreateTabsList()
+        {
+            TabsItems = NavigationService.GetTabs();
+
+            TabsItems.Add(
                     new NavigationTabs()
                     {
                         Title = MenuItems.First().Title,
@@ -200,9 +229,7 @@ namespace TemplateEngine_v3.VM.Windows
                     }
                 );
 
-            SelectedTab = TabsItem.First();
-
-            InitializeCommand();
+            SelectedTab = TabsItems.First();
         }
 
         /// <summary>
@@ -214,7 +241,6 @@ namespace TemplateEngine_v3.VM.Windows
             SaveToJsonCommand = new RelayCommand(SaveToJson);
             ReplaceValueInTemplateCommand = new RelayCommand(ReplaceValueInTemplate);
             DetailTypeListCommand = new RelayCommand(DetailTypeList);
-            OpenSettingsCommand = new RelayCommand(OpenSettings);
             OpenLogsCommand = new RelayCommand(OpenLogs);
             CloseTabCommand = new RelayCommand(CloseTab);
             OpenTemplateStagesCommand = new RelayCommand(OpenTemplateStages);
@@ -229,7 +255,7 @@ namespace TemplateEngine_v3.VM.Windows
         {
             if (parameter is PageModel pageModel)
             {
-                var findPage = TabsItem.FirstOrDefault(tab => tab.Title.Equals(pageModel.Title));
+                var findPage = TabsItems.FirstOrDefault(tab => tab.Title.Equals(pageModel.Title));
 
                 if (findPage != null)
                 {
@@ -241,7 +267,7 @@ namespace TemplateEngine_v3.VM.Windows
                 else
                 {
                     pageModel.ClearPage();
-                    TabsItem.Add(
+                    TabsItems.Add(
                             new NavigationTabs()
                             {
                                 Title = pageModel.Title,
@@ -249,7 +275,7 @@ namespace TemplateEngine_v3.VM.Windows
                                 PageHistory = new()
                             }
                         );
-                    SelectedTab = TabsItem.Last();
+                    SelectedTab = TabsItems.Last();
                 }
             }
         }
@@ -267,12 +293,6 @@ namespace TemplateEngine_v3.VM.Windows
 
             if (findTechnologiesManager != null)
                 _technologiesManager = findTechnologiesManager;
-        }
-
-        private void ClearManager()
-        {
-            _templateManager.ClearTemplate();
-            _technologiesManager.CurrentTechnologies = null;
         }
 
         /// <summary>
@@ -317,16 +337,6 @@ namespace TemplateEngine_v3.VM.Windows
         }
 
         /// <summary>
-        /// Открывает окно настроек приложения.
-        /// </summary>
-        /// <param name="parameter">Параметр команды (не используется).</param>
-        private async void OpenSettings(object parameter)
-        {
-            var dialog = new SettingsChoiceDialog();
-            await DialogHost.Show(dialog, "MainDialog");
-        }
-
-        /// <summary>
         /// Обрабатывает команду открытия окна логов.
         /// </summary>
         /// <param name="parameter">Параметр команды.</param>
@@ -356,11 +366,10 @@ namespace TemplateEngine_v3.VM.Windows
             {
                 var page = tabPanel.Page;
 
-                int tabIndex = TabsItem.IndexOf(tabPanel);
+                int tabIndex = TabsItems.IndexOf(tabPanel);
                 if (tabIndex == -1)
-                    return; // защита от некорректного элемента
+                    return;
 
-                // Очистка ресурсов страницы
                 var templateManager = page.ConstructorParameters
                     .OfType<TemplateManager>()
                     .FirstOrDefault();
@@ -372,30 +381,55 @@ namespace TemplateEngine_v3.VM.Windows
                 if (technologiesManager != null)
                     technologiesManager.CurrentTechnologies = null;
 
-                // Выбор новой активной вкладки до удаления
-                if (TabsItem.Count == 1)
+                if (TabsItems.Count == 1)
                 {
-                    // Удаляем последнюю вкладку, создаём новую
-                    TabsItem.Add(new NavigationTabs
+                    TabsItems.Add(new NavigationTabs
                     {
                         Title = MenuItems.First().Title,
                         Page = MenuItems.First(),
                         PageHistory = new()
                     });
-                    SelectedTab = TabsItem.Last();
+                    SelectedTab = TabsItems.Last();
                 }
                 else
                 {
-                    // Выбираем соседнюю вкладку
                     int newIndex = tabIndex > 0 ? tabIndex - 1 : 1;
-                    SelectedTab = TabsItem[newIndex];
+                    SelectedTab = TabsItems[newIndex];
                 }
 
-                // Очистка истории и удаление вкладки
                 tabPanel.PageHistory.Clear();
-                TabsItem.Remove(tabPanel);
+                TabsItems.Remove(tabPanel);
+            }
+        }
+
+        /// <summary>
+        /// Применяет выбранную вкладку навигации, обновляя состояние меню, 
+        /// менеджеров и выполняя переход на соответствующую страницу.
+        /// </summary>
+        /// <param name="newTab">
+        /// Вкладка навигации, которая должна быть активирована.
+        /// Содержит связанную страницу, историю переходов и метаданные.
+        /// </param>
+        private void ApplySelectedTab(NavigationTabs newTab)
+        {
+            var selectedPage = MenuItems.FirstOrDefault(item => item.Title == newTab.Title);
+            if (selectedPage != null)
+            {
+                selectedPage.IsSelected = true;
+                _sideBar.Width = GridLength.Auto;
             }
 
+            newTab.Page.ClearPage();
+
+            SetValue(ref _selectedTabs, newTab, nameof(SelectedTab));
+
+            NavigationService.SetSelectedTab(newTab);
+            UpdateManagers(newTab.Page);
+
+            _mainFrame.Navigate(newTab.Page.ModelPage);
+
+            if (newTab.PageHistory.Count > 0)
+                NavigationService.SetPageInSecondaryFrame();
         }
     }
 }

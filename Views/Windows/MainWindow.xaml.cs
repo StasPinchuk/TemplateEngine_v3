@@ -136,7 +136,7 @@ namespace TemplateEngine_v3.Views.Windows
             ScrollRightButton.IsEnabled = _tabsScrollViewer.HorizontalOffset < _tabsScrollViewer.ScrollableWidth;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void OpenDocument_Click(object sender, RoutedEventArgs e)
         {
             string filePath = @"configs\Документация пользователя_2.docx";
             Process.Start(new ProcessStartInfo

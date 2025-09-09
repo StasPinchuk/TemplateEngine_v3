@@ -3,10 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Navigation;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TFlex.DOCs.Common.DataStructures.Intervals;
@@ -95,14 +92,7 @@ namespace TemplateEngine_v3.Helpers
                 text = ReplaceWithQuotesIfNeeded(text, formula.Name, Sanitize(formula.Value));
             }
 
-            // Удаляем конструкции вида -[...]
-            text = Regex.Replace(text, @"-
-
-            \[[^\]
-
-            ]+\]
-
-            ", "");
+            text = Regex.Replace(text, @"-\[[^\]]+\]", "");
 
             return text;
         }
@@ -111,37 +101,29 @@ namespace TemplateEngine_v3.Helpers
         {
             bool isNumber = double.TryParse(value, out _);
 
-            // 1. Случай: маркер уже в одинарных кавычках
             string inQuotesPattern = $@"'(\[{Regex.Escape(key)}\])'";
             input = Regex.Replace(input, inQuotesPattern, m =>
             {
-                // Заменяем внутри кавычек без добавления новых
                 return $"'{value}'";
             });
 
-            // 2. Случай: маркер без кавычек
             string noQuotesPattern = $@"\[{Regex.Escape(key)}\]";
             input = Regex.Replace(input, noQuotesPattern, m =>
             {
                 if (isNumber)
-                    return value; // число — без кавычек
+                    return value;
                 else
-                    return $"'{value}'"; // текст — в кавычки
+                    return $"'{value}'";
             });
 
             return input;
         }
-
-
-
 
         public bool IsNodeUsed(Node node)
         {
             if (string.IsNullOrWhiteSpace(node.UsageCondition)) return true;
             return bool.TryParse(node.UsageCondition, out var used) && used;
         }
-
-        // 🔧 Вспомогательные методы — можно вынести в отдельный класс Utils
 
         private void AddNodeExpressions(Node node)
         {
@@ -190,24 +172,23 @@ namespace TemplateEngine_v3.Helpers
                 if (child == null) continue;
 
                 string val = ResolveParts(child);
-                val = WrapStringIfNeeded(val); // ← добавляем
+                val = WrapStringIfNeeded(val);
                 string placeholder = $"[{child.Name}]";
 
-                // ищем вхождение плейсхолдера
                 int index = result.IndexOf(placeholder);
                 if (index >= 0)
                 {
                     bool insideQuotes = false;
 
-                    // проверяем, стоит ли слева апостроф
                     if (index > 0 && result[index - 1] == '\'')
                         insideQuotes = true;
 
-                    // проверяем, стоит ли справа апостроф
                     if (index + placeholder.Length < result.Length && result[index + placeholder.Length] == '\'')
                         insideQuotes = true;
 
                     string newVal = insideQuotes ? val.Trim('\'') : val;
+                    if (string.IsNullOrEmpty(newVal))
+                        newVal = "''";
                     result = result.Replace(placeholder, newVal);
                 }
             }
@@ -226,7 +207,7 @@ namespace TemplateEngine_v3.Helpers
 
             if (input.Equals("''") || string.IsNullOrWhiteSpace(input))
                 return string.Empty;
-            else 
+            else
             if (!double.TryParse(input, out _) && !bool.TryParse(input, out _))
             {
                 if (!input.StartsWith("'"))
@@ -237,7 +218,7 @@ namespace TemplateEngine_v3.Helpers
                 return input.Replace(",", ".");
             }
 
-                return input;
+            return input;
         }
 
 
@@ -298,8 +279,8 @@ namespace TemplateEngine_v3.Helpers
                 _ => result?.ToString() ?? "''"
             };
 
-        private Dictionary<string, Func<FunctionArgs, object>> InitFunctions(TableService service) 
-        { 
+        private Dictionary<string, Func<FunctionArgs, object>> InitFunctions(TableService service)
+        {
             return new Dictionary<string, Func<FunctionArgs, object>>
             {
                 // Округление вниз

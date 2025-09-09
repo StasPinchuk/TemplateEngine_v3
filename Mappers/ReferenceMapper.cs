@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows;
 using TemplateEngine_v3.Models;
 using TFlex.DOCs.Model;
 using TFlex.DOCs.Model.References;

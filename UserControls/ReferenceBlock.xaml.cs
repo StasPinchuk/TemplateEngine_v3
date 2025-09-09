@@ -1,11 +1,10 @@
 ﻿using MaterialDesignThemes.Wpf;
-using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Models.TemplateModels;
 using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
 
@@ -23,7 +22,6 @@ namespace TemplateEngine_v3.UserControls
                     typeof(ReferenceBlock),
                     new PropertyMetadata(null, OnSetReferenceObject)
                 );
-
         public static DependencyProperty CurrentPermissionProperty =
             DependencyProperty.Register(
                     "CurrentPermission",
@@ -31,7 +29,6 @@ namespace TemplateEngine_v3.UserControls
                     typeof(ReferenceBlock),
                     new PropertyMetadata(null, OnSetCurrentPermission)
                 );
-
         public static readonly DependencyProperty RemoveCommandProperty =
             DependencyProperty.Register(
                 "RemoveCommand",
@@ -264,7 +261,7 @@ namespace TemplateEngine_v3.UserControls
             {
                 if (e.NewValue is ReferenceModelInfo reference)
                 {
-                    if(NavigationService.GetTabs().Any(tab => tab.Title.Equals(reference.Name)))
+                    if (NavigationService.GetTabs().Any(tab => tab.Title.Equals(reference.Name)))
                     {
                         control.BlockVisibility = Visibility.Collapsed;
                     }
@@ -310,7 +307,7 @@ namespace TemplateEngine_v3.UserControls
             var control = (ReferenceBlock)d;
             if (control != null)
             {
-                if(e.NewValue != null)
+                if (e.NewValue != null)
                 {
                     TemplateStageService stageService = e.NewValue as TemplateStageService;
 

@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Models;
+using TemplateEngine_v3.Models.TemplateModels;
 using TemplateEngine_v3.Services.UsersServices;
 
 namespace TemplateEngine_v3.UserControls

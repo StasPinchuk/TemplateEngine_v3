@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -541,8 +542,12 @@ namespace TemplateEngine_v3.VM.Pages
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(weight))
-                        materials.Add(name, double.Parse(weight.Replace('.', ',')));
+                    if (!string.IsNullOrEmpty(weight) &&
+                        double.TryParse(weight, NumberStyles.Any, CultureInfo.InvariantCulture, out double newW))
+                    {
+                        materials.Add(name, newW);
+                    }
+
                 }
             }
         }

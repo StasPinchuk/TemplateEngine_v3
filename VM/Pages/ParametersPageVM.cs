@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,6 +10,7 @@ using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.CustomEventArgs;
 using TemplateEngine_v3.Services.ReferenceServices;
+using TemplateEngine_v3.UserControls;
 using TFlex.DOCs.Common;
 
 namespace TemplateEngine_v3.VM.Pages
@@ -138,6 +140,8 @@ namespace TemplateEngine_v3.VM.Pages
         public ICommand SetSystemFormulaCommand { get; set; }
         public ICommand SetCurrentEvaluatorCommand { get; set; }
         public ICommand SetMarkingCommand { get; set; }
+        public ICommand SetTableCommand { get; set; }
+
 
         /// <summary>
         /// Конструктор, инициализирующий VM и подписывающийся на события изменения узла и оценщиков.
@@ -173,6 +177,7 @@ namespace TemplateEngine_v3.VM.Pages
             SetSystemFormulaCommand = new RelayCommand(SetSystemFormula);
             SetCurrentEvaluatorCommand = new RelayCommand(SetCurrentEvaluator);
             SetMarkingCommand = new RelayCommand(SetMarking);
+            SetTableCommand = new RelayCommand(SetTableAsync);
         }
 
         /// <summary>
@@ -421,6 +426,12 @@ namespace TemplateEngine_v3.VM.Pages
             }
 
             return null;
+        }
+
+        private async void SetTableAsync()
+        {
+            var dialog = new TableChoiceDialog(_nodeManager.TableManager, _nodeManager.MenuHelper, CurrentEvaluator);
+            await DialogHost.Show(dialog, "MainDialog");
         }
 
         public void Dispose()

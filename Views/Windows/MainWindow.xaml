@@ -105,7 +105,7 @@
                             HorizontalContentAlignment="Left"
                             AutomationProperties.Name="Открыть справку"
                             Foreground="#FFF"
-                            Click="Button_Click"
+                            Click="OpenDocument_Click"
                             Grid.Row="4">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Width="24"
@@ -193,7 +193,7 @@
 
                         <ListBox x:Name="TabsListBox"
                                  AutomationProperties.Name="Список разделов"
-                                 ItemsSource="{Binding TabsItem, UpdateSourceTrigger=PropertyChanged}"
+                                 ItemsSource="{Binding TabsItems, UpdateSourceTrigger=PropertyChanged}"
                                  SelectedItem="{Binding SelectedTab, UpdateSourceTrigger=PropertyChanged}"
                                  SelectionChanged="TabsListBox_SelectionChanged"
                                  ScrollViewer.VerticalScrollBarVisibility="Disabled"

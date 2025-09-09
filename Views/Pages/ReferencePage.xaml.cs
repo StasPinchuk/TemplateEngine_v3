@@ -1,5 +1,6 @@
 ﻿using System.Windows.Controls;
 using TemplateEngine_v3.Interfaces;
+using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.Services.UsersServices;

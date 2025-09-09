@@ -212,6 +212,9 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
+        // <summary>
+        /// Создаёт глубокую копию текущего экземпляра <see cref="BranchManager"/>.
+        /// </summary>
         public BranchManager DeepCopy()
         {
             var branch = new BranchManager(_referenceLoader, _branchInfo);

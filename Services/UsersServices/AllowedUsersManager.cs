@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
-using TemplateEngine_v3.Mappers;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.FileServices;
 using TFlex.DOCs.Model;
 using TFlex.DOCs.Model.References;
-using TFlex.DOCs.Model.References.Users;
 
 namespace TemplateEngine_v3.Services.UsersServices
 {
@@ -59,7 +56,7 @@ namespace TemplateEngine_v3.Services.UsersServices
             _allowedUsers.Clear();
             _userWithPermissionReference.Objects.Reload();
             var structObject = _userWithPermissionReference.ParameterGroup.Parameters.FindByName("Структура файла");
-            foreach(var user in _userWithPermissionReference.Objects)
+            foreach (var user in _userWithPermissionReference.Objects)
             {
                 string objectStruct = user[structObject.Guid].Value.ToString();
                 var curUser = new JsonSerializer().Deserialize<UserModel>(objectStruct);
@@ -125,7 +122,7 @@ namespace TemplateEngine_v3.Services.UsersServices
                     var removeUser = _userWithPermissionReference.Find(new Guid(userToRemove.Id));
                     if (removeUser != null)
                     {
-                       removeUser.Delete();
+                        removeUser.Delete();
                     }
                     return true;
                 }

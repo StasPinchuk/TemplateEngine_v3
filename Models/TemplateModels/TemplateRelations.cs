@@ -3,7 +3,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using TemplateEngine_v3.Models.LogModels;
-using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
@@ -13,6 +12,15 @@ namespace TemplateEngine_v3.Models
     /// </summary>
     public class TemplateRelations : BaseNotifyPropertyChanged
     {
+        /// <summary>
+        /// Флаг, включающий запись логов изменений.
+        /// </summary>
+        [JsonIgnore]
+        public bool IsLoggingEnabled { get; set; } = true;
+
+        [JsonIgnore]
+        private bool _onDeserialized = false;
+
         /// <summary>
         /// Уникальный идентификатор связи (первые 8 символов GUID).
         /// </summary>
@@ -123,15 +131,6 @@ namespace TemplateEngine_v3.Models
         {
             return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
         }
-
-        /// <summary>
-        /// Флаг, включающий запись логов изменений.
-        /// </summary>
-        [JsonIgnore]
-        public bool IsLoggingEnabled { get; set; } = true;
-
-        [JsonIgnore]
-        private bool _onDeserialized = false;
 
         /// <summary>
         /// Метод, вызываемый после десериализации объекта.

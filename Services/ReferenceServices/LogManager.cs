@@ -29,7 +29,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
         {
             try
             {
-                if(_logReference == null)
+                if (_logReference == null)
                 {
                     _logReference = LogReferenceInfo.CreateReference();
 
@@ -53,7 +53,8 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 if (CurrentDailyLog == null)
                     CreateDailyLog();
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }

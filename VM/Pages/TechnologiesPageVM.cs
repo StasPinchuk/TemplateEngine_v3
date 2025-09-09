@@ -294,8 +294,9 @@ namespace TemplateEngine_v3.VM.Pages
 
                     foreach (Branch branch in branches)
                     {
-                        if (!_currentTemplate.Branches.Any(br => br.Name.Equals(branch.Name)))
-                            _currentTemplate.Branches.Add(branch);
+                        if(branch != null)
+                            if (!_currentTemplate.Branches.Any(br => br.Name.Equals(branch?.Name)))
+                                _currentTemplate.Branches.Add(branch);
                     }
 
                     CurrentTechnologies.SetValue(technologies);

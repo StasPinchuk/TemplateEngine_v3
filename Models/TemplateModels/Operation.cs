@@ -3,7 +3,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using TemplateEngine_v3.Models.LogModels;
-using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models

@@ -178,6 +178,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
       <Private>True</Private>
@@ -277,7 +278,6 @@
     <Compile Include="Helpers\ContextMenuHelper.cs" />
     <Compile Include="Helpers\ExpressionResolver.cs" />
     <Compile Include="Helpers\MarkingSpliter.cs" />
-    <Compile Include="Helpers\Permissions.cs" />
     <Compile Include="Helpers\Updater.cs" />
     <Compile Include="Interfaces\IPermissions.cs" />
     <Compile Include="Mappers\ReferenceMapper.cs" />
@@ -287,10 +287,18 @@
     <Compile Include="Models\FormulaCompletionData.cs" />
     <Compile Include="Models\GroupNode.cs" />
     <Compile Include="Models\LogModels\DailyLog.cs" />
+    <Compile Include="Models\LogModels\LogActionType.cs" />
     <Compile Include="Models\LogModels\LogEntry.cs" />
     <Compile Include="Models\NavigationTabs.cs" />
+    <Compile Include="Models\ReferenceType.cs" />
     <Compile Include="Models\StageModel.cs" />
+    <Compile Include="Models\StatusType.cs" />
+    <Compile Include="Models\TemplateClass.cs" />
+    <Compile Include="Models\TemplateModels\BranchPermissions.cs" />
     <Compile Include="Models\TemplateModels\ExampleMarking.cs" />
+    <Compile Include="Models\TemplateModels\TechnologiesPermissions.cs" />
+    <Compile Include="Models\TemplateModels\TemplatePermissions.cs" />
+    <Compile Include="Services\BranchPermissionsManager.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\ReferenceServices\LogManager.cs" />
     <Compile Include="Models\LogModels\LogObjectGroup.cs" />
@@ -304,7 +312,7 @@
     <Compile Include="Models\TemplateModels\BranchDivisionDetails.cs" />
     <Compile Include="Models\TemplateModels\ConditionEvaluator.cs" />
     <Compile Include="Models\TemplateModels\ExpressionRepository.cs" />
-    <Compile Include="Models\TemplateModels\ITemplatedFile.cs" />
+    <Compile Include="Interfaces\ITemplatedFile.cs" />
     <Compile Include="Models\TemplateModels\Materials.cs" />
     <Compile Include="Models\TemplateModels\Node.cs" />
     <Compile Include="Models\TemplateModels\Operation.cs" />
@@ -333,7 +341,9 @@
     <Compile Include="Services\ServerServices\DefaultConnectionService.cs" />
     <Compile Include="Services\ServerServices\DefaultManagerInitializer.cs" />
     <Compile Include="Services\ServerServices\ServerManager.cs" />
+    <Compile Include="Services\TechnologiesPermissionsManager.cs" />
     <Compile Include="Services\TemplateCalculatorService.cs" />
+    <Compile Include="Services\TemplatePermissionsManager.cs" />
     <Compile Include="Services\UsersServices\AllowedUsersManager.cs" />
     <Compile Include="Services\UsersServices\AllUsersManager.cs" />
     <Compile Include="Services\UsersServices\UserManager.cs" />
@@ -364,9 +374,6 @@
     </Compile>
     <Compile Include="UserControls\SaveChoiceDialog.xaml.cs">
       <DependentUpon>SaveChoiceDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\SettingsChoiceDialog.xaml.cs">
-      <DependentUpon>SettingsChoiceDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\SideNavigation.xaml.cs">
       <DependentUpon>SideNavigation.xaml</DependentUpon>
@@ -481,10 +488,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\SaveChoiceDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\SettingsChoiceDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

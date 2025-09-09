@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using TemplateEngine_v3.Mappers;
 using TemplateEngine_v3.Models;
 using TFlex.DOCs.Model;
 using TFlex.DOCs.Model.References.Users;
@@ -76,7 +75,7 @@ namespace TemplateEngine_v3.Services.UsersServices
         /// Возвращает отфильтрованный список всех пользователей, исключая текущего и разрешённых.
         /// </summary>
         public ObservableCollection<UserModel> GetFilteredAllUsersList() =>
-            _allUsersManager.GetFilteredUsersList(_currentUser, new() /* можно заменить на GetAlloweUsers() */);
+            _allUsersManager.GetFilteredUsersList(_currentUser, new());
 
         /// <summary>
         /// Возвращает список разрешённых пользователей.

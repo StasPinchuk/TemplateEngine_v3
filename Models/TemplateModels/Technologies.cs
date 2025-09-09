@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Media.Media3D;
+using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models.LogModels;
 using TemplateEngine_v3.Services.ReferenceServices;
 
@@ -14,6 +15,15 @@ namespace TemplateEngine_v3.Models
     /// </summary>
     public class Technologies : BaseNotifyPropertyChanged, ITemplatedFile
     {
+        /// <summary>
+        /// Включена ли запись логов изменений.
+        /// </summary>
+        [JsonIgnore]
+        public bool IsLoggingEnabled { get; set; } = true;
+
+        [JsonIgnore]
+        private bool _onDeserialized = false;
+
         /// <summary>
         /// Уникальный идентификатор технологии.
         /// </summary>
@@ -141,15 +151,6 @@ namespace TemplateEngine_v3.Models
         }
 
         /// <summary>
-        /// Включена ли запись логов изменений.
-        /// </summary>
-        [JsonIgnore]
-        public bool IsLoggingEnabled { get; set; } = true;
-
-        [JsonIgnore]
-        private bool _onDeserialized = false;
-
-        /// <summary>
         /// Обработчик, вызываемый после десериализации объекта.
         /// </summary>
         /// <param name="context">Контекст сериализации.</param>
@@ -157,17 +158,6 @@ namespace TemplateEngine_v3.Models
         private void OnDeserialized(StreamingContext context)
         {
             _onDeserialized = true;
-        }
-
-        /// <summary>
-        /// Проверяет, следует ли записывать изменения в лог.
-        /// </summary>
-        /// <param name="oldValue">Старое значение.</param>
-        /// <param name="newValue">Новое значение.</param>
-        /// <returns>True, если изменение следует логировать; иначе false.</returns>
-        private bool ShouldLogChange(string oldValue, string newValue)
-        {
-            return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
         }
     }
 }

@@ -1,9 +1,7 @@
-﻿using Aspose.Cells;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Services.ReferenceServices;
 using TemplateEngine_v3.VM.Pages;
 
@@ -40,9 +38,9 @@ namespace TemplateEngine_v3.Views.Pages
             vm.UpdateContextMenu(); // обновляет vm.TextBoxMenu
 
             var menu = vm.TextBoxMenu;
-            foreach(var textBox in textBoxes)
+            foreach (var textBox in textBoxes)
             {
-                if(textBox != null)
+                if (textBox != null)
                     textBox.ContextMenu = menu;
             }
         }

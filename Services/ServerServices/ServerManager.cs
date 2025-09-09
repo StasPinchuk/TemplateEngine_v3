@@ -72,6 +72,14 @@ namespace TemplateEngine_v3.Services.ServerServices
                         return false;
 
                     UserManager = _managerInitializer.InitializeUserManager(_connection);
+
+                    if (!UserManager.IsUserInAllowedList())
+                    {
+                        MessageBox.Show($"У вас нет прав доступа к редактору", "Ошибка прав доступа");
+                        Application.Current.Shutdown();
+                        return false;
+                    }
+
                     ReferenceManager = _managerInitializer.InitializeReferenceManager(_connection);
                     var templates = FileService.ReadeFromFolder("configs\\UnhandledException");
                     foreach (var template in templates)

@@ -8,17 +8,17 @@
              DispatcherUnhandledException="Application_DispatcherUnhandledException">
     <Application.Resources>
         <ResourceDictionary>
+            <!--Подклчение MaterialDesing-->
             <ResourceDictionary.MergedDictionaries>
                 <materialDesign:BundledTheme BaseTheme="Light" 
                                              PrimaryColor="Blue" 
                                              SecondaryColor="LightBlue" 
-                                             ColorAdjustment="{materialDesign:ColorAdjustment}"
-                                             />
+                                             ColorAdjustment="{materialDesign:ColorAdjustment}"/>
 
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign2.Defaults.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
+            <!--Стиль поумолчания для TextBox-->
             <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
                 <Setter Property="Padding" Value="10 0"/>
                 <Setter Property="Height" Value="40"/>

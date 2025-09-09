@@ -71,10 +71,8 @@ namespace TemplateEngine_v3.VM.Windows
             _window.Hide();
             loadWindow.Show();
 
-            // Дать UI возможность отрисовать окно и начать анимацию
-            await Task.Delay(100); // 100 мс достаточно для начала рендеринга и анимации
+            await Task.Delay(100);
 
-            // Выполнить подключение в фоне
             bool connected = await Task.Run(() => _serverManager.SetServerConnection().Result);
 
             if (connected)

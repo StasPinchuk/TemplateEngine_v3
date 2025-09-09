@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using TemplateEngine_v3.Helpers;
-using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.FileServices;
 using TFlex.DOCs.Model;
@@ -249,6 +248,9 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
+        // <summary>
+        /// Создаёт глубокую копию текущего экземпляра <see cref="BranchManager"/>.
+        /// </summary>
         public TechnologiesManager DeepCopy()
         {
             var technologies = new TechnologiesManager(_referenceLoader, _technologiesInfo, _branchManager, _operationNamesManager);

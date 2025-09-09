@@ -198,12 +198,12 @@ namespace TemplateEngine_v3.UserControls
             evaluators.AddRange(nodeFromExisting.ExpressionRepository.Terms);
             evaluators.AddRange(nodeFromExisting.Parameters);
 
-            foreach(var eval in evaluators)
+            foreach (var eval in evaluators)
             {
                 if (eval.Value.Contains(replaceName) && !eval.Id.Equals(ReplacementEvaluator.Id))
                 {
                     eval.Value = eval.Value.Replace(replaceName, ReplacementEvaluator.Name);
-                    if(_isEvaluator)
+                    if (_isEvaluator)
                         eval.Parts.Remove(replaceId);
                     eval.Parts.Add(ReplacementEvaluator.Id);
                 }

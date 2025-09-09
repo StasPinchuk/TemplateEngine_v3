@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,8 +10,6 @@ using System.Windows.Media;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.ReferenceServices;
-using TFlex.DOCs.Model.Stages;
-using Xceed.Wpf.Toolkit;
 
 namespace TemplateEngine_v3.UserControls
 {
@@ -231,7 +227,7 @@ namespace TemplateEngine_v3.UserControls
 
         private void SetBackgroundAndIconColors()
         {
-            foreach(var stage in StageList)
+            foreach (var stage in StageList)
             {
                 CreateBackgroundColorButton(stage.BackgroundStageColor, stage.BackgroundStageColor, stage.TextStageColor, "");
                 CreateIconColorButton(stage.IconStageColor, stage.IconStageColor, stage.TextStageColor, "");
@@ -355,7 +351,7 @@ namespace TemplateEngine_v3.UserControls
 
         private void OpenColorPickerPanel_Click(object sender, RoutedEventArgs e)
         {
-            if(ColorPickerPanel.Visibility == Visibility.Visible)
+            if (ColorPickerPanel.Visibility == Visibility.Visible)
             {
                 ColorPickerPanel.Visibility = Visibility.Collapsed;
             }
@@ -415,7 +411,7 @@ namespace TemplateEngine_v3.UserControls
 
         private void ModifyStage(object parameter)
         {
-            if(isEdit)
+            if (isEdit)
                 StageService.EditStage(CurrentStage);
             else
                 StageService.AddStage(CurrentStage);
@@ -430,7 +426,7 @@ namespace TemplateEngine_v3.UserControls
 
         private void RemoveStage(object parameter)
         {
-            if(parameter is StageModel stage)
+            if (parameter is StageModel stage)
             {
                 var stageIndex = StageList.IndexOf(stage);
                 if (stageIndex < StageList.Count - 1)
@@ -483,7 +479,7 @@ namespace TemplateEngine_v3.UserControls
                 if (result.HasValue)
                     CurrentStage.StageType = result.Value;
             }
-        }        
+        }
 
     }
 }

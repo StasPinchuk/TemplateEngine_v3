@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TemplateEngine_v3.Models
+namespace TemplateEngine_v3.Interfaces
 {
     /// <summary>
     /// Интерфейс, описывающий файл с шаблоном.

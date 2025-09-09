@@ -4,10 +4,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.UI;
 using System.Windows;
 using TemplateEngine_v3.Helpers;
-using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Services.FileServices;
 using TFlex.DOCs.Model;
@@ -284,7 +282,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             Template template = new JsonSerializer().Deserialize<Template>(referenceModel.ObjectStruct);
 
             if (!isRemove)
-                Services.NavigationService.RenameSelectedTab(template.Name);
+                NavigationService.RenameSelectedTab(template.Name);
             template.ProductMarkingAttributes = SetMarkingAttributes(template.ExampleMarkings);
 
             MenuHelper = new ContextMenuHelper(template, MaterialManager);
@@ -321,7 +319,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 SelectedTemplate = template;
                 return true;
             }
-           
+
         }
 
         /// <summary>
@@ -363,7 +361,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                     template = SelectedTemplate;
                 await _reference.Objects.ReloadAsync();
                 var findTemplate = await _reference.FindAsync(template.Id);
-                if(findTemplate != null && findTemplate.Changing)
+                if (findTemplate != null && findTemplate.Changing)
                     await findTemplate.EndChangesAsync();
                 var currentList = GetReadyTemplate();
 
@@ -378,7 +376,7 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                 {
                     ClassObject templateType = type.Equals("Final") ? _readyTemplateType : type.Equals("Archive") ? _trashCanType : _draftTemplateType;
                     bool isSave = await AddTemplateAsync(template, templateType);
-                    if(isSave) 
+                    if (isSave)
                         await LogManager.SaveLog();
                     return isSave;
                 }
@@ -391,6 +389,28 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
+        /// <summary>
+        /// Восстанавливает шаблон по указанной ссылке <see cref="ReferenceModelInfo"/>.
+        /// </summary>
+        /// <param name="reference">
+        /// Модель ссылки на шаблон, который требуется восстановить.
+        /// </param>
+        /// <returns>
+        /// <c>true</c>, если восстановление прошло успешно;  
+        /// <c>false</c>, если произошла ошибка или операция была прервана.
+        /// </returns>
+        /// <remarks>
+        /// Алгоритм работы:
+        /// <list type="number">
+        /// <item><description>Перезагружает коллекцию объектов из источника данных.</description></item>
+        /// <item><description>Устанавливает текущий шаблон по переданной ссылке.</description></item>
+        /// <item><description>Находит и удаляет шаблон с тем же <c>Id</c>, что и выбранный.</description></item>
+        /// <item><description>Добавляет шаблон заново с использованием готового типа <c>_readyTemplateType</c>.</description></item>
+        /// </list>
+        /// При возникновении исключения выводит сообщение об ошибке в <see cref="MessageBox"/> и возвращает <c>false</c>.
+        /// </remarks>
+        /// <exception cref="Exception">
+        /// Может выбрасываться при ошибках загрузки, поиска, удаления или добавления шаблона.
         public async Task<bool> RestoreTemplateAsync(ReferenceModelInfo reference)
         {
             try
@@ -433,6 +453,20 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             return markings;
         }
 
+        /// <summary>
+        /// Создаёт глубокую копию текущего экземпляра <see cref="TemplateManager"/>.
+        /// </summary>
+        /// <remarks>
+        /// Клонируются:
+        /// <list type="bullet">
+        /// <item><description>Ссылки на <c>_referenceLoader</c>, <c>_templateInfo</c>, <c>MaterialManager</c>, <c>TableService</c>.</description></item>
+        /// <item><description><see cref="MenuHelper"/> — копируется по ссылке.</description></item>
+        /// <item><description><see cref="SelectedTemplate"/> — сериализуется и десериализуется для создания отдельного экземпляра.</description></item>
+        /// <item><description>Кэш <c>_cachedTemplates</c> — при наличии создаётся новая коллекция с копиями <see cref="ReferenceModelInfo"/>.</description></item>
+        /// </list>
+        /// </remarks>
+        /// <returns>
+        /// Новый экземпляр <see cref="TemplateManager"/>, содержащий копии данных текущего объекта.
         public TemplateManager Clone()
         {
             var clone = new TemplateManager(_referenceLoader, _templateInfo, MaterialManager, TableService)
@@ -444,7 +478,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                     : null
             };
 
-            // Копируем кэш, если нужно
             if (_cachedTemplates != null)
             {
                 clone._cachedTemplates = new ObservableCollection<ReferenceModelInfo>(

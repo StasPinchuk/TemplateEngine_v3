@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
+using TemplateEngine_v3.Interfaces;
 using TemplateEngine_v3.Models.LogModels;
-using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
@@ -13,6 +13,15 @@ namespace TemplateEngine_v3.Models
     public class Branch : BaseNotifyPropertyChanged, ITemplatedFile
     {
         #region Свойства
+
+        /// <summary>
+        /// Флаг, указывающий, разрешено ли логирование.
+        /// </summary>
+        [JsonIgnore]
+        public bool IsLoggingEnabled { get; set; } = true;
+
+        [JsonIgnore]
+        private bool _onDeserialized = false;
 
         /// <summary>
         /// Уникальный идентификатор филиала.
@@ -148,15 +157,6 @@ namespace TemplateEngine_v3.Models
         {
             return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
         }
-
-        /// <summary>
-        /// Флаг, указывающий, разрешено ли логирование.
-        /// </summary>
-        [JsonIgnore]
-        public bool IsLoggingEnabled { get; set; } = true;
-
-        [JsonIgnore]
-        private bool _onDeserialized = false;
 
         /// <summary>
         /// Метод, вызываемый после десериализации JSON.

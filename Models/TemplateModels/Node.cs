@@ -9,11 +9,19 @@ using TemplateEngine_v3.Services.ReferenceServices;
 
 namespace TemplateEngine_v3.Models
 {
+    /// <summary>
+    /// Класс описывающий деталь изделия
+    /// </summary>
     public class Node : BaseNotifyPropertyChanged
     {
         [JsonIgnore] // Исключаем из JSON
         private readonly bool _parameterLoaded = false;
 
+        [JsonIgnore]
+        public bool IsLoggingEnabled { get; set; } = true;
+
+        [JsonIgnore]
+        private bool _onDeserialized = false;
         /// <summary>
         /// Уникальный идентификатор узла.
         /// </summary>
@@ -377,11 +385,6 @@ namespace TemplateEngine_v3.Models
             return IsLoggingEnabled && _onDeserialized && !string.IsNullOrEmpty(oldValue) && oldValue != newValue;
         }
 
-        [JsonIgnore]
-        public bool IsLoggingEnabled { get; set; } = true;
-
-        [JsonIgnore]
-        private bool _onDeserialized = false;
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)

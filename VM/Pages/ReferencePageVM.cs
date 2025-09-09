@@ -8,6 +8,7 @@ using System.Windows.Input;
 using TemplateEngine_v3.Command;
 using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.PageCollection;
+using TemplateEngine_v3.Models.TemplateModels;
 using TemplateEngine_v3.Services;
 using TemplateEngine_v3.Services.FileServices;
 using TemplateEngine_v3.Services.ReferenceServices;
@@ -16,19 +17,6 @@ using TemplateEngine_v3.Views.Pages;
 
 namespace TemplateEngine_v3.VM.Pages
 {
-    /// <summary>
-    /// Типы классов шаблонов для отображения.
-    /// </summary>
-    public enum TemplateClass
-    {
-        /// <summary>Готовые шаблоны</summary>
-        Ready,
-        /// <summary>Черновики</summary>
-        Draft,
-        /// <summary>Корзина (удалённые)</summary>
-        TrashCan
-    }
-
     /// <summary>
     /// ViewModel для страницы со списком ссылок на шаблоны, филиалы или технологии.
     /// Обеспечивает команды для создания, удаления, клонирования и редактирования элементов.

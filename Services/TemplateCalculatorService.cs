@@ -46,7 +46,7 @@ namespace TemplateEngine_v3.Services
             ReplaceNodeValues(nodes);
             FilterNodes(relation.Nodes);
 
-            relation.Designation = _resolver.ReplaceDesignation(relation.Designation);
+            relation.Designation = _resolver.ReplaceDesignation(relation.Designation).Replace("'", "");
             relation.IsLoggingEnabled = true;
             template.TemplateRelations.Clear();
             template.TemplateRelations.Add(relation);

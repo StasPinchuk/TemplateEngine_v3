@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using TemplateEngine_v3.Models;
 using TemplateEngine_v3.Models.LogModels;
 using TemplateEngine_v3.Services.ReferenceServices;
 

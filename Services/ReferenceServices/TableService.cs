@@ -140,7 +140,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
             }
         }
 
-        // Используем Aspose.Cells только для пересчета формул
         public string RecalculateAndGetValue(string filePath, string sheetName, string cellAddress)
         {
             var workbook = new Workbook(filePath);
@@ -168,7 +167,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
             SetParameters(parametersValueDict);
 
-            // Сохраняем NPOI-файл во временный путь для Aspose
             string tablePath = GetSelectedTable(tableName);
             using (var fs = new FileStream(tablePath, FileMode.Create, FileAccess.Write))
             {
@@ -177,7 +175,6 @@ namespace TemplateEngine_v3.Services.ReferenceServices
 
             if (!isRange)
             {
-                // ищем "результат"
                 return RecalculateAndGetValue(tablePath, workSheetName, FindResultCellAddress());
             }
             else
@@ -206,12 +203,12 @@ namespace TemplateEngine_v3.Services.ReferenceServices
                     var cell = row.GetCell(c);
                     if (cell != null && cell.ToString().Trim().Equals("результат", StringComparison.OrdinalIgnoreCase))
                     {
-                        return new CellReference(r, c + 1).FormatAsString(); // возвращаем ячейку справа
+                        return new CellReference(r, c + 1).FormatAsString(); 
                     }
                 }
             }
 
-            return "B2"; // если не найдено, по умолчанию
+            return "B2"; 
         }
 
         private string GetParameter(int columnNumber, int rowNumber, int columnsCount, int rowsCount, string width, string heigth)
